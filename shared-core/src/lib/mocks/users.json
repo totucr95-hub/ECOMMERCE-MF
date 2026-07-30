@@ -1,0 +1,30 @@
+[
+  {
+    "id": "usr-1",
+    "name": "Admin Root",
+    "email": "admin@ecommerce.local",
+    "avatar": "https://i.pravatar.cc/150?img=12",
+    "role": { "id": "role-1", "name": "admin" },
+    "permissions": [
+      { "id": "perm-1", "key": "products.read", "description": "Read products" },
+      { "id": "perm-2", "key": "products.write", "description": "Write products" },
+      { "id": "perm-3", "key": "orders.read", "description": "Read orders" }
+    ],
+    "addresses": [
+      { "id": "addr-1", "street": "Calle 10 #5-20", "city": "Bogota", "state": "Cundinamarca", "country": "Colombia", "zipCode": "110111" }
+    ]
+  },
+  {
+    "id": "usr-2",
+    "name": "Cliente Demo",
+    "email": "cliente@ecommerce.local",
+    "avatar": "https://i.pravatar.cc/150?img=24",
+    "role": { "id": "role-2", "name": "customer" },
+    "permissions": [
+      { "id": "perm-4", "key": "orders.create", "description": "Create orders" }
+    ],
+    "addresses": [
+      { "id": "addr-2", "street": "Av 3 #45-18", "city": "Medellin", "state": "Antioquia", "country": "Colombia", "zipCode": "050001" }
+    ]
+  }
+]

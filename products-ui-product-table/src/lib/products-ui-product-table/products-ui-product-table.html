@@ -1,0 +1,20 @@
+<table class="product-table">
+	<thead>
+		<tr>
+			<th>Nombre</th>
+			<th>Precio</th>
+			<th>Stock</th>
+			<th>Categoria</th>
+		</tr>
+	</thead>
+	<tbody>
+		@for (product of products; track product.id) {
+			<tr>
+				<td>{{ product.name }}</td>
+				<td>${{ product.price }}</td>
+				<td>{{ product.stock }}</td>
+				<td>{{ product.categoryId }}</td>
+			</tr>
+		}
+	</tbody>
+</table>

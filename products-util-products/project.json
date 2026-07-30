@@ -1,0 +1,16 @@
+{
+  "name": "products-util-products",
+  "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "products-util-products/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "products-util-products/jest.config.cts"
+      }
+    }
+  }
+}

@@ -1,0 +1,10 @@
+<article class="product-card">
+	<img [src]="product.image" [alt]="product.name" class="product-image" />
+	<h3>{{ product.name }}</h3>
+	<p class="price">${{ product.price }}</p>
+	<p class="stock">Stock: {{ product.stock }}</p>
+	<div class="actions">
+		<button type="button" (click)="onBuy()">Comprar</button>
+		<button type="button" class="favorite" (click)="onFavorite()">Favorito</button>
+	</div>
+</article>

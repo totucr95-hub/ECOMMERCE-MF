@@ -1,0 +1,7 @@
+[
+  { "id": "cat-1", "name": "Laptops", "slug": "laptops", "description": "Portatiles para trabajo y gaming" },
+  { "id": "cat-2", "name": "Smartphones", "slug": "smartphones", "description": "Telefonos de ultima generacion" },
+  { "id": "cat-3", "name": "Audio", "slug": "audio", "description": "Audifonos y parlantes" },
+  { "id": "cat-4", "name": "Hogar", "slug": "hogar", "description": "Dispositivos para casa inteligente" },
+  { "id": "cat-5", "name": "Accesorios", "slug": "accesorios", "description": "Cables, cargadores y perifericos" }
+]

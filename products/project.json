@@ -1,0 +1,21 @@
+{
+  "name": "products",
+  "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "products/src",
+  "prefix": "lib",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "products/jest.config.cts",
+        "tsConfig": "products/tsconfig.spec.json"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    }
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "landing": "http://localhost:4201/mf-manifest.json",
+  "shop": "http://localhost:4202/mf-manifest.json",
+  "admin": "http://localhost:4203/mf-manifest.json",
+  "auth": "http://localhost:4204/mf-manifest.json"
+}

@@ -1,0 +1,18 @@
+.product-table {
+	width: 100%;
+	border-collapse: collapse;
+	border: 1px solid #e2e8f0;
+	border-radius: 12px;
+	overflow: hidden;
+}
+
+th,
+td {
+	padding: 0.7rem;
+	text-align: left;
+	border-bottom: 1px solid #e2e8f0;
+}
+
+thead {
+	background: #f8fafc;
+}

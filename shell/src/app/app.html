@@ -1,0 +1,22 @@
+<div class="app-shell">
+	<header class="topbar">
+		<a routerLink="/landing" class="brand">LifeOS Commerce</a>
+		<nav class="menu">
+			<a routerLink="/landing" routerLinkActive="active">Landing</a>
+			<a routerLink="/shop" routerLinkActive="active">Shop</a>
+			<a routerLink="/admin" routerLinkActive="active">Admin</a>
+			<a routerLink="/auth/login" routerLinkActive="active">Auth</a>
+		</nav>
+		<button type="button" class="theme-btn" (click)="toggleTheme()">Tema</button>
+	</header>
+
+	<main class="content">
+		<router-outlet></router-outlet>
+	</main>
+
+	<aside class="notifications">
+		@for (message of notifications.messages(); track message) {
+			<article class="toast">{{ message }}</article>
+		}
+	</aside>
+</div>

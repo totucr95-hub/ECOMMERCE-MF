@@ -1,0 +1,63 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "rootDir": ".",
+    "sourceMap": true,
+    "declaration": false,
+    "moduleResolution": "bundler",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "target": "es2015",
+    "module": "esnext",
+    "lib": ["es2020", "dom"],
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "strict": true,
+    "resolveJsonModule": true,
+    "paths": {
+      "landing/Routes": ["./landing/src/app/remote-entry/entry.routes.ts"],
+      "shop/Routes": ["./shop/src/app/remote-entry/entry.routes.ts"],
+      "admin/Routes": ["./admin/src/app/remote-entry/entry.routes.ts"],
+      "auth/Routes": ["./auth/src/app/remote-entry/entry.routes.ts"],
+      "@ecommerce-mf/shared-ui": ["./shared-ui/src/index.ts"],
+      "@ecommerce-mf/layout": ["./layout/src/index.ts"],
+      "@ecommerce-mf/theme": ["./theme/src/index.ts"],
+      "@ecommerce-mf/products": ["./products/src/index.ts"],
+      "@ecommerce-mf/orders": ["./orders/src/index.ts"],
+      "@ecommerce-mf/payments": ["./payments/src/index.ts"],
+      "@ecommerce-mf/dashboard": ["./dashboard/src/index.ts"],
+      "@ecommerce-mf/shared-core": ["./shared-core/src/index.ts"],
+      "@ecommerce-mf/shared-models": ["./shared-models/src/index.ts"],
+      "@ecommerce-mf/shared-utils": ["./shared-utils/src/index.ts"],
+      "@ecommerce-mf/config": ["./config/src/index.ts"],
+      "@ecommerce-mf/api": ["./api/src/index.ts"],
+      "@ecommerce-mf/products-feature-products": [
+        "./products-feature-products/src/index.ts"
+      ],
+      "@ecommerce-mf/products-ui-product-card": [
+        "./products-ui-product-card/src/index.ts"
+      ],
+      "@ecommerce-mf/products-ui-product-table": [
+        "./products-ui-product-table/src/index.ts"
+      ],
+      "@ecommerce-mf/products-data-access-products": [
+        "./products-data-access-products/src/index.ts"
+      ],
+      "@ecommerce-mf/products-domain-products": [
+        "./products-domain-products/src/index.ts"
+      ],
+      "@ecommerce-mf/products-util-products": [
+        "./products-util-products/src/index.ts"
+      ],
+      "@ecommerce-mf/auth-feature-auth": ["./auth-feature-auth/src/index.ts"],
+      "@ecommerce-mf/auth-ui-auth": ["./auth-ui-auth/src/index.ts"],
+      "@ecommerce-mf/auth-data-access-auth": [
+        "./auth-data-access-auth/src/index.ts"
+      ],
+      "@ecommerce-mf/auth-domain-auth": ["./auth-domain-auth/src/index.ts"],
+      "@ecommerce-mf/auth-util-auth": ["./auth-util-auth/src/index.ts"]
+    }
+  },
+  "exclude": ["node_modules", "tmp"]
+}

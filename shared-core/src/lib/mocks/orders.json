@@ -1,0 +1,31 @@
+[
+  {
+    "id": "ord-1001",
+    "userId": "usr-2",
+    "items": [
+      { "productId": "prod-1", "productName": "Laptop Pro 14", "quantity": 1, "unitPrice": 1499 },
+      { "productId": "prod-21", "productName": "Mouse Wireless", "quantity": 1, "unitPrice": 49 }
+    ],
+    "status": "paid",
+    "createdAt": "2026-07-01T10:00:00.000Z",
+    "payment": { "id": "pay-1", "method": "card", "status": "approved", "amount": 1548, "transactionRef": "TRX-ABC-001" },
+    "shippingAddress": { "id": "addr-2", "street": "Av 3 #45-18", "city": "Medellin", "state": "Antioquia", "country": "Colombia", "zipCode": "050001" },
+    "subtotal": 1548,
+    "taxes": 294.12,
+    "total": 1842.12
+  },
+  {
+    "id": "ord-1002",
+    "userId": "usr-2",
+    "items": [
+      { "productId": "prod-12", "productName": "Earbuds Air", "quantity": 2, "unitPrice": 149 }
+    ],
+    "status": "created",
+    "createdAt": "2026-07-10T14:30:00.000Z",
+    "payment": { "id": "pay-2", "method": "pse", "status": "pending", "amount": 298, "transactionRef": "TRX-PSE-002" },
+    "shippingAddress": { "id": "addr-2", "street": "Av 3 #45-18", "city": "Medellin", "state": "Antioquia", "country": "Colombia", "zipCode": "050001" },
+    "subtotal": 298,
+    "taxes": 56.62,
+    "total": 354.62
+  }
+]

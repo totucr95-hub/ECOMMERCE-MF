@@ -1,0 +1,93 @@
+@use '../../../../styles/tokens' as t;
+@use '../../../../styles/mixins' as m;
+
+.landing-benefits {
+  @include m.section(t.$color-white);
+
+  &__container {
+    @include m.container;
+  }
+
+  &__chip {
+    @include m.chip;
+  }
+
+  h2 {
+    margin: 0.8rem 0 0.65rem;
+    font-size: clamp(1.75rem, 3vw, 2.4rem);
+  }
+
+  &__summary {
+    margin: 0;
+    color: t.$color-text-muted;
+    max-width: 78ch;
+    line-height: 1.6;
+  }
+
+  &__content-grid {
+    margin-top: 1.8rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+
+  &__checks {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 1.1rem;
+  }
+
+  &__check-item {
+    position: relative;
+    border: 1px solid t.$color-border;
+    border-radius: t.$radius-card;
+    padding: 1rem 1rem 1rem 3rem;
+    background: t.$color-white;
+
+    &::before {
+      content: '';
+      position: absolute;
+      left: 1rem;
+      top: 1.08rem;
+      width: 1.15rem;
+      height: 1.15rem;
+      border-radius: t.$radius-pill;
+      background: radial-gradient(circle at center, #22c55e 42%, #16a34a 43%);
+      box-shadow: 0 0 0 4px t.$color-primary-soft-bg;
+    }
+  }
+
+  &__check-title {
+    display: block;
+    margin-bottom: 0.3rem;
+    color: t.$color-text-dark;
+  }
+
+  &__check-text {
+    color: t.$color-text-muted;
+    line-height: 1.45;
+  }
+
+  &__showcase {
+    margin: 0;
+  }
+
+  &__showcase-image {
+    width: 100%;
+    height: 100%;
+    min-height: 320px;
+    object-fit: cover;
+    border-radius: t.$radius-card-lg;
+    box-shadow: t.$shadow-showcase;
+  }
+}
+
+@include m.respond(md) {
+  .landing-benefits {
+    &__content-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+}

@@ -1,0 +1,35 @@
+@use 'sass:map';
+@use './tokens' as t;
+
+@mixin container {
+  max-width: t.$container-max;
+  margin: 0 auto;
+}
+
+@mixin section($bg-color) {
+  background: $bg-color;
+  padding: t.$space-section-y t.$space-page-x;
+}
+
+@mixin chip {
+  display: inline-block;
+  text-transform: uppercase;
+  color: t.$color-primary;
+  letter-spacing: 0.08em;
+  font-size: 0.72rem;
+  font-weight: 700;
+  background: t.$color-primary-soft-bg;
+  border: 1px solid t.$color-primary-soft-border;
+  border-radius: t.$radius-pill;
+  padding: 0.35rem 0.6rem;
+}
+
+@mixin respond($breakpoint) {
+  @if map.has-key(t.$breakpoints, $breakpoint) {
+    @media (max-width: map.get(t.$breakpoints, $breakpoint)) {
+      @content;
+    }
+  } @else {
+    @error "Unknown breakpoint `#{$breakpoint}`";
+  }
+}

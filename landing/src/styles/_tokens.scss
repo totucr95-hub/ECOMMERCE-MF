@@ -1,0 +1,49 @@
+$color-page-bg: #f7fafc;
+$color-text: #12263a;
+$color-text-dark: #0f172a;
+$color-text-muted: #475569;
+$color-text-soft: #64748b;
+$color-white: #fff;
+
+$color-primary: #0d9d3e;
+$color-primary-strong: #0e9f3f;
+$color-primary-border: #17bd55;
+$color-primary-soft-bg: #ecfdf3;
+$color-primary-soft-border: #c7f2d6;
+
+$color-border: #e2e8f0;
+$color-border-soft: #dbe3ec;
+$color-input-border: #d8e1eb;
+
+$color-overlay-header: rgba(6, 24, 37, 0.42);
+$color-overlay-hero-start: rgba(2, 17, 27, 0.62);
+$color-overlay-hero-end: rgba(2, 15, 23, 0.5);
+$color-hero-cta-secondary-bg: rgba(8, 16, 26, 0.35);
+$color-hero-cta-secondary-border: rgba(248, 250, 252, 0.64);
+
+$color-footer-bg: #2d2f34;
+$color-footer-text: #e2e8f0;
+$color-footer-text-soft: #cbd5e1;
+
+$radius-card: 14px;
+$radius-card-lg: 18px;
+$radius-input: 8px;
+$radius-pill: 999px;
+
+$shadow-header: 0 6px 20px rgba(15, 23, 42, 0.08);
+$shadow-card: 0 8px 26px rgba(15, 23, 42, 0.08);
+$shadow-panel: 0 10px 30px rgba(15, 23, 42, 0.06);
+$shadow-showcase: 0 20px 44px rgba(15, 23, 42, 0.16);
+
+$container-max: 1160px;
+
+$space-page-x: 1rem;
+$space-section-y: 4.5rem;
+
+$breakpoints: (
+  lg: 980px,
+  md: 920px,
+  sm: 768px,
+  xs: 660px,
+  xxs: 560px,
+);

@@ -1,0 +1,31 @@
+<section id="productos" class="landing-products">
+  <div class="landing-products__container">
+    <span class="landing-products__chip">Productos</span>
+    <h2>Catalogo de productos</h2>
+    <p class="landing-products__summary">
+      Descubre lineas para deck, revestimientos y cierres perimetrales con estilo moderno y alta
+      resistencia para exteriores.
+    </p>
+
+    <div class="landing-products__cards" *ngIf="cards.length; else emptyState">
+      @for (product of cards; track product.id) {
+        <article class="landing-products__card">
+          <img class="landing-products__card-image" [src]="product.image" [alt]="product.name" />
+          <div class="landing-products__card-body">
+            <h3 class="landing-products__card-title">{{ product.name }}</h3>
+            <p class="landing-products__card-description">{{ product.description }}</p>
+            <span class="landing-products__price">{{ product.price | currency:'USD':'symbol':'1.0-0' }}</span>
+          </div>
+        </article>
+      }
+    </div>
+
+    <ng-template #emptyState>
+      <p class="landing-products__empty">No hay productos destacados disponibles en este momento.</p>
+    </ng-template>
+
+    <div class="landing-products__actions">
+      <a href="#contacto" class="landing-products__catalog-btn">Descarga el catalogo 2025</a>
+    </div>
+  </div>
+</section>

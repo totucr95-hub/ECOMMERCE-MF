@@ -7,6 +7,48 @@
   color: t.$color-text;
 }
 
+.landing-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: grid;
+  place-items: center;
+  background: rgba(15, 23, 42, 0.24);
+  backdrop-filter: saturate(130%) blur(1px);
+
+  &__panel {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.9rem 1.1rem;
+    border-radius: 14px;
+    border: 1px solid t.$color-border;
+    background: t.$color-white;
+    box-shadow: 0 14px 45px rgba(2, 6, 23, 0.2);
+    color: t.$color-text;
+    font-weight: 600;
+  }
+
+  &__spinner {
+    width: 1.25rem;
+    height: 1.25rem;
+    border-radius: 999px;
+    border: 3px solid #cbd5e1;
+    border-top-color: #0f172a;
+    animation: landing-loader-spin 0.9s linear infinite;
+  }
+
+  p {
+    margin: 0;
+  }
+}
+
+@keyframes landing-loader-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .landing-header {
   position: fixed;
   top: 0;

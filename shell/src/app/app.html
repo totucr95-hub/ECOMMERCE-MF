@@ -19,4 +19,13 @@
 			<article class="toast">{{ message }}</article>
 		}
 	</aside>
+
+	@if (loading.isLoading()) {
+		<div class="global-loader" role="status" aria-live="polite" aria-label="Cargando contenido">
+			<div class="global-loader__panel">
+				<span class="global-loader__spinner" aria-hidden="true"></span>
+				<p>Cargando...</p>
+			</div>
+		</div>
+	}
 </div>

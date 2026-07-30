@@ -1,4 +1,12 @@
-import { HttpErrorResponse, HttpEvent, HttpHandlerFn, HttpInterceptorFn, HttpRequest } from '@angular/common/http';
+import {
+  HttpContext,
+  HttpContextToken,
+  HttpErrorResponse,
+  HttpEvent,
+  HttpHandlerFn,
+  HttpInterceptorFn,
+  HttpRequest,
+} from '@angular/common/http';
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { catchError, finalize, throwError } from 'rxjs';
@@ -49,7 +57,15 @@ export const jwtInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, nex
   return next(req.clone({ setHeaders: { Authorization: `Bearer ${token}` } }));
 };
 
+export const SKIP_GLOBAL_LOADER = new HttpContextToken<boolean>(() => false);
+
+export const skipGlobalLoaderContext = (): HttpContext => new HttpContext().set(SKIP_GLOBAL_LOADER, true);
+
 export const loadingInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, next: HttpHandlerFn) => {
+  if (req.context.get(SKIP_GLOBAL_LOADER)) {
+    return next(req);
+  }
+
   const loading = inject(LoadingService);
   loading.start();
 

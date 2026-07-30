@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component, HostListener, inject } from '@angular/core';
-import { ProductService } from '@ecommerce-mf/shared-core';
+import { ChangeDetectionStrategy, Component, ElementRef, HostListener, inject } from '@angular/core';
+import { LoadingService, ProductService } from '@ecommerce-mf/shared-core';
 import { Product } from '@ecommerce-mf/shared-models';
 import { HeroSectionComponent } from './sections/hero/hero-section';
 import { FeaturedSectionComponent } from './sections/featured/featured-section';
@@ -20,7 +20,10 @@ import { ContactSectionComponent } from './sections/contact/contact-section';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RemoteEntry {
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly productService = inject(ProductService);
+  readonly loading = inject(LoadingService);
+  readonly showLocalLoader = this.host.nativeElement.parentElement === document.body;
   featuredProducts: Product[] = [];
   isScrolled = false;
 

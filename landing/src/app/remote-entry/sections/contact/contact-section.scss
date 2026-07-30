@@ -64,8 +64,56 @@
     background: #f8fafc;
   }
 
+  &__input--invalid,
+  &__textarea--invalid {
+    border-color: #dc2626;
+    background: #fff1f2;
+  }
+
   &__textarea {
     resize: vertical;
+  }
+
+  &__honeypot {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  &__captcha {
+    margin-top: 1rem;
+    padding: 0.85rem;
+    border: 1px dashed t.$color-border;
+    border-radius: t.$radius-input;
+    background: #f8fafc;
+  }
+
+  &__captcha-title {
+    margin: 0;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: t.$color-text-dark;
+  }
+
+  &__captcha-widget {
+    display: block;
+    margin-top: 0.65rem;
+    min-height: 65px;
+  }
+
+  &__captcha-hint {
+    margin: 0.45rem 0 0;
+    color: t.$color-text-soft;
+    font-size: 0.8rem;
+  }
+
+  &__error {
+    display: block;
+    margin-top: 0.35rem;
+    color: #b91c1c;
+    font-size: 0.78rem;
   }
 
   &__submit {
@@ -82,6 +130,25 @@
     color: t.$color-white;
     background: t.$color-primary;
     cursor: pointer;
+
+    &:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+  }
+
+  &__feedback {
+    margin: 0.85rem 0 0;
+    font-size: 0.88rem;
+    line-height: 1.45;
+
+    &--success {
+      color: #166534;
+    }
+
+    &--error {
+      color: #b91c1c;
+    }
   }
 
   &__info {

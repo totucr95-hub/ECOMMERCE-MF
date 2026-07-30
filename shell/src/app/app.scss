@@ -69,6 +69,48 @@
 	color: #f8fafc;
 }
 
+.global-loader {
+	position: fixed;
+	inset: 0;
+	z-index: 1200;
+	display: grid;
+	place-items: center;
+	background: rgba(15, 23, 42, 0.25);
+	backdrop-filter: saturate(130%) blur(1px);
+
+	&__panel {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+		padding: 0.9rem 1.1rem;
+		border-radius: 14px;
+		background: var(--color-surface);
+		box-shadow: 0 14px 45px rgba(2, 6, 23, 0.2);
+		border: 1px solid var(--color-border);
+		color: var(--color-text);
+		font-weight: 600;
+	}
+
+	&__spinner {
+		width: 1.25rem;
+		height: 1.25rem;
+		border-radius: 999px;
+		border: 3px solid #cbd5e1;
+		border-top-color: #0f172a;
+		animation: global-loader-spin 0.9s linear infinite;
+	}
+
+	p {
+		margin: 0;
+	}
+}
+
+@keyframes global-loader-spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
 @media (max-width: 768px) {
 	.topbar {
 		flex-wrap: wrap;

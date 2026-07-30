@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { NotificationService, ThemeStore } from '@ecommerce-mf/shared-core';
+import { LoadingService, NotificationService, ThemeStore } from '@ecommerce-mf/shared-core';
 
 @Component({
   imports: [RouterModule],
@@ -11,6 +11,7 @@ import { NotificationService, ThemeStore } from '@ecommerce-mf/shared-core';
 })
 export class App {
   private readonly themeStore = inject(ThemeStore);
+  readonly loading = inject(LoadingService);
   readonly notifications = inject(NotificationService);
 
   constructor() {

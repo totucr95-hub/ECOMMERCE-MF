@@ -45,4 +45,13 @@
       </nav>
     </div>
   </footer>
+
+  @if (showLocalLoader && loading.isLoading()) {
+    <div class="landing-loader" role="status" aria-live="polite" aria-label="Cargando contenido">
+      <div class="landing-loader__panel">
+        <span class="landing-loader__spinner" aria-hidden="true"></span>
+        <p>Cargando...</p>
+      </div>
+    </div>
+  }
 </div>

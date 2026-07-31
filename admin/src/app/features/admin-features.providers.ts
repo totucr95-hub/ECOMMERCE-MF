@@ -3,9 +3,11 @@ import { provideAdminProductsFeature } from './products/product-feature.provider
 import { provideAdminDashboardFeature } from './dashboard/dashboard-feature.providers';
 import { provideAdminCategoriesFeature } from './categories/categories-feature.providers';
 import { provideAdminCartsFeature } from './carts/carts-feature.providers';
+import { provideAdminBrandsFeature } from './brands/brands-feature.providers';
 import { provideAdminCustomersFeature } from './customers/customers-feature.providers';
 import { provideAdminOrdersFeature } from './orders/orders-feature.providers';
 import { provideAdminPaymentsFeature } from './payments/payments-feature.providers';
+import { provideAdminReportsFeature } from './reports/reports-feature.providers';
 import { provideAdminUsersFeature } from './users/users-feature.providers';
 import { provideAdminSettingsFeature } from './settings/settings-feature.providers';
 
@@ -15,9 +17,11 @@ export const provideAdminFeatures = (): EnvironmentProviders => {
     provideAdminDashboardFeature(),
     provideAdminCategoriesFeature(),
     provideAdminCartsFeature(),
+    provideAdminBrandsFeature(),
     provideAdminCustomersFeature(),
     provideAdminOrdersFeature(),
     provideAdminPaymentsFeature(),
+    provideAdminReportsFeature(),
     provideAdminUsersFeature(),
     provideAdminSettingsFeature(),
   ]);

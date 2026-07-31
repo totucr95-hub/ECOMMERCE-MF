@@ -1,0 +1,154 @@
+<section class="admin-page">
+  <header class="admin-page__header">
+    <h1 class="admin-page__title">Marcas</h1>
+    <p class="admin-page__subtitle">
+      Gestion de partners, portafolio y estado comercial por marca.
+    </p>
+    <div class="admin-page__top-actions">
+      <button type="button" class="admin-page__button-primary" (click)="openCreateModal()">
+        + Crear marca
+      </button>
+    </div>
+    @if (feedbackMessage) {
+    <p class="admin-page__status">{{ feedbackMessage }}</p>
+    }
+  </header>
+
+  <section class="admin-page__surface">
+    <admin-reusable-table
+      [title]="'Control de marcas'"
+      [subtitle]="'Estado, categoria foco y catalogo activo'"
+      [columns]="columns"
+      [rows]="rows"
+      [actions]="tableActions"
+      [onAction]="tableActionHandler"
+      [emptyMessage]="'No hay marcas registradas.'"
+    ></admin-reusable-table>
+  </section>
+
+  @if (isEditorOpen) {
+  <button
+    type="button"
+    class="admin-page__modal-backdrop"
+    aria-label="Cerrar editor"
+    (click)="closeEditor()"
+  ></button>
+
+  <section class="admin-page__modal" role="dialog" aria-modal="true" aria-label="Editor de marca">
+    <header class="admin-page__modal-header">
+      <div>
+        <p class="admin-page__modal-eyebrow">Brands management</p>
+        <h2 class="admin-page__modal-title">
+          {{ selectedBrandId ? 'Editar marca' : 'Crear marca' }}
+        </h2>
+      </div>
+      <button type="button" class="admin-page__modal-close" (click)="closeEditor()">×</button>
+    </header>
+
+    <ol class="admin-page__stepper" aria-label="Pasos del formulario">
+      @for (step of editorSteps; track $index) {
+      <li
+        class="admin-page__step"
+        [class.is-active]="$index === editorStep"
+        [class.is-done]="$index < editorStep"
+      >
+        <button type="button" (click)="goToStep($index)">
+          <span>{{ $index + 1 }}</span>
+          <small>{{ step }}</small>
+        </button>
+      </li>
+      }
+    </ol>
+
+    <div class="admin-page__modal-body">
+      @if (editorStep === 0) {
+      <div class="admin-page__form-grid">
+        <label class="admin-control-label">
+          Codigo
+          <input class="admin-control-input" [(ngModel)]="formModel.code" name="code" placeholder="BRD-101" />
+        </label>
+
+        <label class="admin-control-label">
+          Nombre
+          <input class="admin-control-input" [(ngModel)]="formModel.name" name="name" placeholder="Nombre de la marca" />
+        </label>
+
+        <label class="admin-control-label">
+          Categoria foco
+          <input class="admin-control-input" [(ngModel)]="formModel.categoryFocus" name="categoryFocus" placeholder="Electronica" />
+        </label>
+
+        <label class="admin-control-label">
+          Pais
+          <input class="admin-control-input" [(ngModel)]="formModel.country" name="country" placeholder="Colombia" />
+        </label>
+      </div>
+      }
+
+      @if (editorStep === 1) {
+      <div class="admin-page__form-grid">
+        <label class="admin-control-label">
+          Productos activos
+          <input class="admin-control-input" [(ngModel)]="formModel.activeProducts" name="activeProducts" type="number" min="0" />
+        </label>
+
+        <label class="admin-control-label">
+          Estado
+          <select class="admin-control-select" [(ngModel)]="formModel.status" name="status">
+            <option value="Activa">Activa</option>
+            <option value="En revision">En revision</option>
+            <option value="Pausada">Pausada</option>
+            <option value="Inactiva">Inactiva</option>
+          </select>
+        </label>
+
+        <label class="admin-control-label">
+          Responsable
+          <input class="admin-control-input" [(ngModel)]="formModel.manager" name="manager" placeholder="Nombre responsable" />
+        </label>
+      </div>
+      }
+
+      @if (editorStep === 2) {
+      <div class="admin-page__form-grid admin-page__form-grid--single">
+        <label class="admin-control-label">
+          Ultima actualizacion
+          <input class="admin-control-input" [(ngModel)]="formModel.updatedAt" name="updatedAt" type="date" />
+        </label>
+
+        <label class="admin-control-label">
+          Notas
+          <textarea class="admin-control-textarea" [(ngModel)]="formModel.notes" name="notes" rows="3" placeholder="Observaciones internas"></textarea>
+        </label>
+      </div>
+      }
+    </div>
+
+    <footer class="admin-page__modal-actions">
+      <button
+        type="button"
+        class="admin-page__button-ghost"
+        (click)="previousStep()"
+        [disabled]="editorStep === 0 || isSaving"
+      >
+        Anterior
+      </button>
+
+      @if (editorStep < editorSteps.length - 1) {
+      <button type="button" class="admin-page__button-primary" (click)="nextStep()" [disabled]="isSaving">
+        Siguiente
+      </button>
+      } @else {
+      <button
+        type="button"
+        class="admin-page__button-primary"
+        (click)="submitEditor()"
+        [disabled]="isSaving || isLoading"
+      >
+        {{ selectedBrandId ? 'Actualizar marca' : 'Crear marca' }}
+      </button>
+      }
+    </footer>
+  </section>
+  }
+</section>

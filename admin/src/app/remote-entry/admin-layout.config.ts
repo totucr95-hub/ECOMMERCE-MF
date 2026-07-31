@@ -15,9 +15,11 @@ export const ADMIN_NAVIGATION_ITEMS: AdminNavigationItem[] = [
   { label: 'Productos', path: '/admin/products', icon: '▦' },
   { label: 'Categorias', path: '/admin/categories', icon: '◫' },
   { label: 'Carritos', path: '/admin/carts', icon: '◎' },
+  { label: 'Marcas', path: '/admin/brands', icon: '◈' },
   { label: 'Pedidos', path: '/admin/orders', icon: '◔' },
   { label: 'Clientes', path: '/admin/customers', icon: '◍' },
   { label: 'Pagos', path: '/admin/payments', icon: '◌' },
+  { label: 'Reportes', path: '/admin/reports', icon: '◍' },
   { label: 'Usuarios', path: '/admin/users', icon: '◉' },
   { label: 'Configuracion', path: '/admin/settings', icon: '⚙' },
 ];

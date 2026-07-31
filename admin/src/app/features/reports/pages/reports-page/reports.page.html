@@ -1,0 +1,86 @@
+<section class="admin-page">
+  <header class="admin-page__header">
+    <h1 class="admin-page__title">Reportes</h1>
+    <p class="admin-page__subtitle">
+      Consolida metricas de negocio por periodo, canal y mercado.
+    </p>
+    <p class="admin-page__status">{{ feedbackMessage }}</p>
+  </header>
+
+  <section class="admin-page__surface admin-page__surface--filters">
+    <h2 class="admin-page__block-title">Filtros</h2>
+
+    <div class="admin-page__form-grid">
+      <label class="admin-control-label">
+        Periodo
+        <select class="admin-control-select" [(ngModel)]="filters.period" name="period">
+          <option value="Hoy">Hoy</option>
+          <option value="Ultimos 7 dias">Ultimos 7 dias</option>
+          <option value="Ultimos 30 dias">Ultimos 30 dias</option>
+          <option value="Trimestre actual">Trimestre actual</option>
+        </select>
+      </label>
+
+      <label class="admin-control-label">
+        Canal
+        <select class="admin-control-select" [(ngModel)]="filters.channel" name="channel">
+          <option value="Todos">Todos</option>
+          <option value="Web">Web</option>
+          <option value="Marketplace">Marketplace</option>
+          <option value="B2B">B2B</option>
+        </select>
+      </label>
+
+      <label class="admin-control-label">
+        Estado
+        <select class="admin-control-select" [(ngModel)]="filters.status" name="status">
+          <option value="Todos">Todos</option>
+          <option value="Saludable">Saludable</option>
+          <option value="Mejorando">Mejorando</option>
+          <option value="Riesgo">Riesgo</option>
+        </select>
+      </label>
+
+      <label class="admin-control-label">
+        Pais
+        <select class="admin-control-select" [(ngModel)]="filters.country" name="country">
+          <option value="Colombia">Colombia</option>
+          <option value="Mexico">Mexico</option>
+          <option value="Chile">Chile</option>
+          <option value="Peru">Peru</option>
+        </select>
+      </label>
+    </div>
+
+    <button type="button" class="admin-page__button-primary" (click)="runReport()" [disabled]="isLoading">
+      {{ isLoading ? 'Generando...' : 'Generar reporte' }}
+    </button>
+  </section>
+
+  @if (result) {
+  <section class="admin-page__surface">
+    <header class="admin-page__kpi-header">
+      <h2 class="admin-page__block-title">{{ result.title }}</h2>
+      <small>Generado: {{ result.generatedAt | date: 'short' }}</small>
+    </header>
+
+    <div class="admin-page__kpi-grid">
+      @for (kpi of result.kpis; track kpi.key) {
+      <article class="admin-page__kpi-card">
+        <h3>{{ kpi.label }}</h3>
+        <p>{{ kpi.value }}</p>
+        <small>{{ kpi.trend }}</small>
+      </article>
+      }
+    </div>
+
+    <admin-reusable-table
+      [title]="'Detalle de metricas'"
+      [subtitle]="result.summary"
+      [columns]="columns"
+      [rows]="rows"
+      [emptyMessage]="'No hay datos para mostrar.'"
+    ></admin-reusable-table>
+  </section>
+  }
+</section>

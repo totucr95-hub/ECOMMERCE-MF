@@ -35,6 +35,13 @@ export const remoteRoutes: Route[] = [
           ),
       },
       {
+        path: 'brands',
+        loadComponent: () =>
+          import('../features/brands/pages/brands-page/brands.page').then(
+            (m) => m.BrandsPage,
+          ),
+      },
+      {
         path: 'orders',
         loadComponent: () =>
           import('../features/orders/pages/orders-page/orders.page').then(
@@ -53,6 +60,13 @@ export const remoteRoutes: Route[] = [
         loadComponent: () =>
           import('../features/payments/pages/payments-page/payments.page').then(
             (m) => m.PaymentsPage,
+          ),
+      },
+      {
+        path: 'reports',
+        loadComponent: () =>
+          import('../features/reports/pages/reports-page/reports.page').then(
+            (m) => m.ReportsPage,
           ),
       },
       {

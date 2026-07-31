@@ -4,12 +4,208 @@
     <p class="admin-page__subtitle">
       Seguimiento operacional del ciclo completo de compra.
     </p>
+    <div class="admin-page__top-actions">
+      <button
+        type="button"
+        class="admin-page__button-primary"
+        (click)="openCreateModal()"
+      >
+        + Crear pedido
+      </button>
+    </div>
+    @if (feedbackMessage) {
+    <p class="admin-page__status">{{ feedbackMessage }}</p>
+    }
   </header>
 
-  <admin-reusable-table
-    [title]="'Flujo de pedidos'"
-    [subtitle]="'Control de estado y montos por transaccion'"
-    [columns]="columns"
-    [rows]="rows"
-  />
+  <section class="admin-page__surface">
+    <admin-reusable-table
+      [title]="'Flujo de pedidos'"
+      [subtitle]="'Control de estado y montos por transaccion'"
+      [columns]="columns"
+      [rows]="rows"
+      [actions]="tableActions"
+      [onAction]="tableActionHandler"
+      [emptyMessage]="'No hay pedidos disponibles.'"
+    ></admin-reusable-table>
+  </section>
+
+  @if (isEditorOpen) {
+  <button
+    type="button"
+    class="admin-page__modal-backdrop"
+    aria-label="Cerrar editor"
+    (click)="closeEditor()"
+  ></button>
+
+  <section
+    class="admin-page__modal"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Editor de pedido"
+  >
+    <header class="admin-page__modal-header">
+      <div>
+        <p class="admin-page__modal-eyebrow">Orders control</p>
+        <h2 class="admin-page__modal-title">
+          {{ selectedOrderId ? 'Editar pedido' : 'Crear pedido' }}
+        </h2>
+      </div>
+      <button
+        type="button"
+        class="admin-page__modal-close"
+        (click)="closeEditor()"
+      >
+        ×
+      </button>
+    </header>
+
+    <ol class="admin-page__stepper" aria-label="Pasos del formulario">
+      @for (step of editorSteps; track $index) {
+      <li
+        class="admin-page__step"
+        [class.is-active]="$index === editorStep"
+        [class.is-done]="$index < editorStep"
+      >
+        <button type="button" (click)="goToStep($index)">
+          <span>{{ $index + 1 }}</span>
+          <small>{{ step }}</small>
+        </button>
+      </li>
+      }
+    </ol>
+
+    <div class="admin-page__modal-body">
+      @if (editorStep === 0) {
+      <div class="admin-page__form-grid">
+        <label class="admin-control-label">
+          Numero pedido
+          <input
+            class="admin-control-input"
+            [(ngModel)]="formModel.orderNumber"
+            name="orderNumber"
+            placeholder="ORD-1001"
+          />
+        </label>
+
+        <label class="admin-control-label">
+          Cliente
+          <input
+            class="admin-control-input"
+            [(ngModel)]="formModel.customer"
+            name="customer"
+            placeholder="Nombre cliente"
+          />
+        </label>
+      </div>
+      } @if (editorStep === 1) {
+      <div class="admin-page__form-grid">
+        <label class="admin-control-label">
+          Total
+          <input
+            class="admin-control-input"
+            [(ngModel)]="formModel.total"
+            name="total"
+            type="number"
+            min="0"
+          />
+        </label>
+
+        <label class="admin-control-label">
+          Estado
+          <select
+            class="admin-control-select"
+            [(ngModel)]="formModel.status"
+            name="status"
+          >
+            <option value="Pendiente">Pendiente</option>
+            <option value="Pagado">Pagado</option>
+            <option value="Despachado">Despachado</option>
+            <option value="Cancelado">Cancelado</option>
+          </select>
+        </label>
+
+        <label class="admin-control-label">
+          Metodo de pago
+          <select
+            class="admin-control-select"
+            [(ngModel)]="formModel.paymentMethod"
+            name="paymentMethod"
+          >
+            <option value="Tarjeta">Tarjeta</option>
+            <option value="PSE">PSE</option>
+            <option value="Transferencia">Transferencia</option>
+            <option value="Contraentrega">Contraentrega</option>
+          </select>
+        </label>
+
+        <label class="admin-control-label">
+          Fecha
+          <input
+            class="admin-control-input"
+            [(ngModel)]="formModel.createdAt"
+            name="createdAt"
+            type="date"
+          />
+        </label>
+      </div>
+      } @if (editorStep === 2) {
+      <div class="admin-page__form-grid admin-page__form-grid--single">
+        <label class="admin-control-label">
+          Direccion de envio
+          <textarea
+            class="admin-control-textarea"
+            [(ngModel)]="formModel.shippingAddress"
+            name="shippingAddress"
+            rows="2"
+            placeholder="Direccion completa"
+          ></textarea>
+        </label>
+
+        <label class="admin-control-label">
+          Notas internas
+          <textarea
+            class="admin-control-textarea"
+            [(ngModel)]="formModel.notes"
+            name="notes"
+            rows="3"
+            placeholder="Anotaciones del pedido"
+          ></textarea>
+        </label>
+      </div>
+      }
+    </div>
+
+    <footer class="admin-page__modal-actions">
+      <button
+        type="button"
+        class="admin-page__button-ghost"
+        (click)="previousStep()"
+        [disabled]="editorStep === 0 || isSaving"
+      >
+        Anterior
+      </button>
+
+      @if (editorStep < editorSteps.length - 1) {
+      <button
+        type="button"
+        class="admin-page__button-primary"
+        (click)="nextStep()"
+        [disabled]="isSaving"
+      >
+        Siguiente
+      </button>
+      } @else {
+      <button
+        type="button"
+        class="admin-page__button-primary"
+        (click)="submitEditor()"
+        [disabled]="isSaving || isLoading"
+      >
+        {{ selectedOrderId ? 'Actualizar pedido' : 'Crear pedido' }}
+      </button>
+      }
+    </footer>
+  </section>
+  }
 </section>

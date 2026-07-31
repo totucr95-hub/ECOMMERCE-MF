@@ -1,5 +1,5 @@
-export interface OrderSummary {
-  id: string;
+export interface OrderFormData {
+  id?: string;
   orderNumber: string;
   customer: string;
   total: number;

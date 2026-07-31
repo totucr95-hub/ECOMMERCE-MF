@@ -1,0 +1,174 @@
+<section class="admin-page">
+  <header class="admin-page__header">
+    <h1 class="admin-page__title">Pagos</h1>
+    <p class="admin-page__subtitle">
+      Estado de cobros, conciliacion y seguimiento de transacciones.
+    </p>
+    <div class="admin-page__top-actions">
+      <button type="button" class="admin-page__button-primary" (click)="openCreateModal()">
+        + Crear pago
+      </button>
+    </div>
+    @if (feedbackMessage) {
+    <p class="admin-page__status">{{ feedbackMessage }}</p>
+    }
+  </header>
+
+  <section class="admin-page__surface">
+    <admin-reusable-table
+      [title]="'Control de pagos'"
+      [subtitle]="'Referencias, metodos, estado y pasarela'"
+      [columns]="columns"
+      [rows]="rows"
+      [actions]="tableActions"
+      [onAction]="tableActionHandler"
+      [emptyMessage]="'No hay pagos disponibles.'"
+    ></admin-reusable-table>
+  </section>
+
+  @if (isEditorOpen) {
+  <button
+    type="button"
+    class="admin-page__modal-backdrop"
+    aria-label="Cerrar editor"
+    (click)="closeEditor()"
+  ></button>
+
+  <section class="admin-page__modal" role="dialog" aria-modal="true" aria-label="Editor de pago">
+    <header class="admin-page__modal-header">
+      <div>
+        <p class="admin-page__modal-eyebrow">Payments management</p>
+        <h2 class="admin-page__modal-title">
+          {{ selectedPaymentId ? 'Editar pago' : 'Crear pago' }}
+        </h2>
+      </div>
+      <button type="button" class="admin-page__modal-close" (click)="closeEditor()">×</button>
+    </header>
+
+    <ol class="admin-page__stepper" aria-label="Pasos del formulario">
+      @for (step of editorSteps; track $index) {
+      <li
+        class="admin-page__step"
+        [class.is-active]="$index === editorStep"
+        [class.is-done]="$index < editorStep"
+      >
+        <button type="button" (click)="goToStep($index)">
+          <span>{{ $index + 1 }}</span>
+          <small>{{ step }}</small>
+        </button>
+      </li>
+      }
+    </ol>
+
+    <div class="admin-page__modal-body">
+      @if (editorStep === 0) {
+      <div class="admin-page__form-grid">
+        <label class="admin-control-label">
+          Referencia
+          <input class="admin-control-input" [(ngModel)]="formModel.paymentRef" name="paymentRef" placeholder="TXN-123456" />
+        </label>
+
+        <label class="admin-control-label">
+          Pedido
+          <input class="admin-control-input" [(ngModel)]="formModel.orderNumber" name="orderNumber" placeholder="ORD-1001" />
+        </label>
+
+        <label class="admin-control-label">
+          Cliente
+          <input class="admin-control-input" [(ngModel)]="formModel.customer" name="customer" placeholder="Nombre cliente" />
+        </label>
+      </div>
+      }
+
+      @if (editorStep === 1) {
+      <div class="admin-page__form-grid">
+        <label class="admin-control-label">
+          Metodo
+          <select class="admin-control-select" [(ngModel)]="formModel.method" name="method">
+            <option value="Tarjeta">Tarjeta</option>
+            <option value="PSE">PSE</option>
+            <option value="Transferencia">Transferencia</option>
+            <option value="Contraentrega">Contraentrega</option>
+          </select>
+        </label>
+
+        <label class="admin-control-label">
+          Estado
+          <select class="admin-control-select" [(ngModel)]="formModel.status" name="status">
+            <option value="Pendiente">Pendiente</option>
+            <option value="Aprobado">Aprobado</option>
+            <option value="Rechazado">Rechazado</option>
+            <option value="Conciliado">Conciliado</option>
+            <option value="Reembolsado">Reembolsado</option>
+          </select>
+        </label>
+
+        <label class="admin-control-label">
+          Monto
+          <input class="admin-control-input" [(ngModel)]="formModel.amount" name="amount" type="number" min="0" />
+        </label>
+
+        <label class="admin-control-label">
+          Moneda
+          <select class="admin-control-select" [(ngModel)]="formModel.currency" name="currency">
+            <option value="COP">COP</option>
+            <option value="USD">USD</option>
+            <option value="EUR">EUR</option>
+          </select>
+        </label>
+      </div>
+      }
+
+      @if (editorStep === 2) {
+      <div class="admin-page__form-grid admin-page__form-grid--single">
+        <label class="admin-control-label">
+          Pasarela
+          <select class="admin-control-select" [(ngModel)]="formModel.gateway" name="gateway">
+            <option value="Wompi">Wompi</option>
+            <option value="PayU">PayU</option>
+            <option value="MercadoPago">MercadoPago</option>
+            <option value="Bancolombia">Bancolombia</option>
+          </select>
+        </label>
+
+        <label class="admin-control-label">
+          Ultimo intento
+          <input class="admin-control-input" [(ngModel)]="formModel.lastAttemptAt" name="lastAttemptAt" type="date" />
+        </label>
+
+        <label class="admin-control-label">
+          Notas
+          <textarea class="admin-control-textarea" [(ngModel)]="formModel.notes" name="notes" rows="3" placeholder="Observaciones internas"></textarea>
+        </label>
+      </div>
+      }
+    </div>
+
+    <footer class="admin-page__modal-actions">
+      <button
+        type="button"
+        class="admin-page__button-ghost"
+        (click)="previousStep()"
+        [disabled]="editorStep === 0 || isSaving"
+      >
+        Anterior
+      </button>
+
+      @if (editorStep < editorSteps.length - 1) {
+      <button type="button" class="admin-page__button-primary" (click)="nextStep()" [disabled]="isSaving">
+        Siguiente
+      </button>
+      } @else {
+      <button
+        type="button"
+        class="admin-page__button-primary"
+        (click)="submitEditor()"
+        [disabled]="isSaving || isLoading"
+      >
+        {{ selectedPaymentId ? 'Actualizar pago' : 'Crear pago' }}
+      </button>
+      }
+    </footer>
+  </section>
+  }
+</section>

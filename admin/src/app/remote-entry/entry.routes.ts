@@ -28,6 +28,13 @@ export const remoteRoutes: Route[] = [
           ).then((m) => m.CategoriesPage),
       },
       {
+        path: 'carts',
+        loadComponent: () =>
+          import('../features/carts/pages/carts-page/carts.page').then(
+            (m) => m.CartsPage,
+          ),
+      },
+      {
         path: 'orders',
         loadComponent: () =>
           import('../features/orders/pages/orders-page/orders.page').then(
@@ -40,6 +47,13 @@ export const remoteRoutes: Route[] = [
           import(
             '../features/customers/pages/customers-page/customers.page'
           ).then((m) => m.CustomersPage),
+      },
+      {
+        path: 'payments',
+        loadComponent: () =>
+          import('../features/payments/pages/payments-page/payments.page').then(
+            (m) => m.PaymentsPage,
+          ),
       },
       {
         path: 'users',

@@ -1,0 +1,168 @@
+<section class="admin-page">
+  <header class="admin-page__header">
+    <h1 class="admin-page__title">Carritos</h1>
+    <p class="admin-page__subtitle">
+      Seguimiento de carritos activos, abandonados y convertidos.
+    </p>
+    <div class="admin-page__top-actions">
+      <button type="button" class="admin-page__button-primary" (click)="openCreateModal()">
+        + Crear carrito
+      </button>
+    </div>
+    @if (feedbackMessage) {
+    <p class="admin-page__status">{{ feedbackMessage }}</p>
+    }
+  </header>
+
+  <section class="admin-page__surface">
+    <admin-reusable-table
+      [title]="'Control de carritos'"
+      [subtitle]="'Estado, montos y conversion de carritos'"
+      [columns]="columns"
+      [rows]="rows"
+      [actions]="tableActions"
+      [onAction]="tableActionHandler"
+      [emptyMessage]="'No hay carritos registrados.'"
+    ></admin-reusable-table>
+  </section>
+
+  @if (isEditorOpen) {
+  <button
+    type="button"
+    class="admin-page__modal-backdrop"
+    aria-label="Cerrar editor"
+    (click)="closeEditor()"
+  ></button>
+
+  <section class="admin-page__modal" role="dialog" aria-modal="true" aria-label="Editor de carrito">
+    <header class="admin-page__modal-header">
+      <div>
+        <p class="admin-page__modal-eyebrow">Carts management</p>
+        <h2 class="admin-page__modal-title">
+          {{ selectedCartId ? 'Editar carrito' : 'Crear carrito' }}
+        </h2>
+      </div>
+      <button type="button" class="admin-page__modal-close" (click)="closeEditor()">×</button>
+    </header>
+
+    <ol class="admin-page__stepper" aria-label="Pasos del formulario">
+      @for (step of editorSteps; track $index) {
+      <li
+        class="admin-page__step"
+        [class.is-active]="$index === editorStep"
+        [class.is-done]="$index < editorStep"
+      >
+        <button type="button" (click)="goToStep($index)">
+          <span>{{ $index + 1 }}</span>
+          <small>{{ step }}</small>
+        </button>
+      </li>
+      }
+    </ol>
+
+    <div class="admin-page__modal-body">
+      @if (editorStep === 0) {
+      <div class="admin-page__form-grid">
+        <label class="admin-control-label">
+          Codigo de carrito
+          <input class="admin-control-input" [(ngModel)]="formModel.cartCode" name="cartCode" placeholder="CRT-1001" />
+        </label>
+
+        <label class="admin-control-label">
+          Cliente
+          <input class="admin-control-input" [(ngModel)]="formModel.customer" name="customer" placeholder="Nombre cliente" />
+        </label>
+
+        <label class="admin-control-label">
+          Cantidad de items
+          <input class="admin-control-input" [(ngModel)]="formModel.itemsCount" name="itemsCount" type="number" min="1" />
+        </label>
+
+        <label class="admin-control-label">
+          Estado
+          <select class="admin-control-select" [(ngModel)]="formModel.status" name="status">
+            <option value="Activo">Activo</option>
+            <option value="Abandonado">Abandonado</option>
+            <option value="Convertido">Convertido</option>
+            <option value="Expirado">Expirado</option>
+          </select>
+        </label>
+      </div>
+      }
+
+      @if (editorStep === 1) {
+      <div class="admin-page__form-grid">
+        <label class="admin-control-label">
+          Subtotal
+          <input
+            class="admin-control-input"
+            [(ngModel)]="formModel.subtotal"
+            (ngModelChange)="recalculateTotal()"
+            name="subtotal"
+            type="number"
+            min="0"
+          />
+        </label>
+
+        <label class="admin-control-label">
+          Impuestos
+          <input
+            class="admin-control-input"
+            [(ngModel)]="formModel.taxes"
+            (ngModelChange)="recalculateTotal()"
+            name="taxes"
+            type="number"
+            min="0"
+          />
+        </label>
+
+        <label class="admin-control-label">
+          Total
+          <input class="admin-control-input" [(ngModel)]="formModel.total" name="total" type="number" min="0" />
+        </label>
+      </div>
+      }
+
+      @if (editorStep === 2) {
+      <div class="admin-page__form-grid admin-page__form-grid--single">
+        <label class="admin-control-label">
+          Ultima actualizacion
+          <input class="admin-control-input" [(ngModel)]="formModel.updatedAt" name="updatedAt" type="date" />
+        </label>
+
+        <label class="admin-control-label">
+          Notas
+          <textarea class="admin-control-textarea" [(ngModel)]="formModel.notes" name="notes" rows="3" placeholder="Observaciones internas"></textarea>
+        </label>
+      </div>
+      }
+    </div>
+
+    <footer class="admin-page__modal-actions">
+      <button
+        type="button"
+        class="admin-page__button-ghost"
+        (click)="previousStep()"
+        [disabled]="editorStep === 0 || isSaving"
+      >
+        Anterior
+      </button>
+
+      @if (editorStep < editorSteps.length - 1) {
+      <button type="button" class="admin-page__button-primary" (click)="nextStep()" [disabled]="isSaving">
+        Siguiente
+      </button>
+      } @else {
+      <button
+        type="button"
+        class="admin-page__button-primary"
+        (click)="submitEditor()"
+        [disabled]="isSaving || isLoading"
+      >
+        {{ selectedCartId ? 'Actualizar carrito' : 'Crear carrito' }}
+      </button>
+      }
+    </footer>
+  </section>
+  }
+</section>

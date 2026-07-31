@@ -6,6 +6,7 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
+  ReusableSortDirection,
   ReusableTableAction,
   ReusableTableColumn,
   ReusableTableComponent,
@@ -26,7 +27,13 @@ export class PaymentsPage {
   private readonly facade = inject(AdminPaymentsFacade);
   private readonly cdr = inject(ChangeDetectorRef);
 
+  allPayments: PaymentSummary[] = [];
   payments: PaymentSummary[] = [];
+  totalItems = 0;
+  pageIndex = 0;
+  pageSize = 5;
+  sortKey = 'paymentRef';
+  sortDirection: ReusableSortDirection = 'asc';
   selectedPaymentId: string | null = null;
   isSaving = false;
   isLoading = false;
@@ -47,11 +54,21 @@ export class PaymentsPage {
     { id: 'edit', label: 'Editar' },
     { id: 'delete', label: 'Eliminar', variant: 'danger' },
   ];
+  readonly pageSizeOptions: ReadonlyArray<number> = [5, 10, 20, 50];
   readonly tableActionHandler = (
     actionId: string,
     row: Record<string, unknown>,
   ): void => {
     this.onTableAction(actionId, row);
+  };
+  readonly tablePageChangeHandler = (nextPage: number, nextSize: number): void => {
+    this.onTablePageChange(nextPage, nextSize);
+  };
+  readonly tableSortChangeHandler = (
+    columnKey: string,
+    direction: ReusableSortDirection,
+  ): void => {
+    this.onTableSortChange(columnKey, direction);
   };
 
   formModel: PaymentFormData = this.createEmptyFormModel();
@@ -78,7 +95,8 @@ export class PaymentsPage {
     this.cdr.markForCheck();
 
     const summaries = await this.facade.loadSummaries();
-    this.payments = summaries.map((item) => ({ ...item }));
+    this.allPayments = summaries.map((item) => ({ ...item }));
+    this.applyServerQueryState();
     this.isLoading = false;
     this.feedbackMessage = 'Pagos sincronizados.';
     this.cdr.markForCheck();
@@ -232,6 +250,59 @@ export class PaymentsPage {
     if (actionId === 'delete') {
       void this.onDelete(payment);
     }
+  }
+
+  onTablePageChange(nextPage: number, nextSize: number): void {
+    this.pageIndex = Math.max(0, nextPage);
+    this.pageSize = Math.max(1, nextSize);
+    this.applyServerQueryState();
+    this.feedbackMessage = `Pagina ${this.pageIndex + 1} cargada desde backend simulado.`;
+    this.cdr.markForCheck();
+  }
+
+  onTableSortChange(columnKey: string, direction: ReusableSortDirection): void {
+    this.sortKey = columnKey;
+    this.sortDirection = direction;
+    this.pageIndex = 0;
+    this.applyServerQueryState();
+    this.feedbackMessage = `Orden aplicado por ${columnKey} (${direction}).`;
+    this.cdr.markForCheck();
+  }
+
+  private applyServerQueryState(): void {
+    const sorted = [...this.allPayments].sort((left, right) => {
+      const leftValue = this.toSortableValue(left, this.sortKey);
+      const rightValue = this.toSortableValue(right, this.sortKey);
+
+      if (leftValue === rightValue) {
+        return 0;
+      }
+
+      const directionFactor = this.sortDirection === 'asc' ? 1 : -1;
+      return leftValue > rightValue ? directionFactor : -directionFactor;
+    });
+
+    this.totalItems = sorted.length;
+    const totalPages = Math.max(1, Math.ceil(this.totalItems / this.pageSize));
+    if (this.pageIndex >= totalPages) {
+      this.pageIndex = totalPages - 1;
+    }
+
+    const start = this.pageIndex * this.pageSize;
+    const end = start + this.pageSize;
+    this.payments = sorted.slice(start, end);
+  }
+
+  private toSortableValue(
+    payment: PaymentSummary,
+    key: string,
+  ): number | string {
+    const dynamicValue = payment[key as keyof PaymentSummary];
+    if (typeof dynamicValue === 'number') {
+      return dynamicValue;
+    }
+
+    return String(dynamicValue ?? '').toLocaleLowerCase('es');
   }
 
   private formatCurrency(amount: number, currency: string): string {

@@ -5,40 +5,7 @@ import { CategoriesRepository } from '../../domain/repositories/categories.repos
 
 @Injectable()
 export class CategoriesInMemoryRepository implements CategoriesRepository {
-  private categoriesCache: CategorySummary[] = [
-    {
-      id: 'cat-electronics',
-      name: 'Electronica',
-      slug: 'electronica',
-      description: 'Dispositivos, tecnologia y accesorios.',
-      products: 32,
-      featured: true,
-    },
-    {
-      id: 'cat-home',
-      name: 'Hogar',
-      slug: 'hogar',
-      description: 'Productos para cocina, sala y habitaciones.',
-      products: 21,
-      featured: false,
-    },
-    {
-      id: 'cat-sports',
-      name: 'Deportes',
-      slug: 'deportes',
-      description: 'Ropa y accesorios para entrenamiento.',
-      products: 14,
-      featured: true,
-    },
-    {
-      id: 'cat-fashion',
-      name: 'Moda',
-      slug: 'moda',
-      description: 'Catalogo de ropa urbana y casual.',
-      products: 28,
-      featured: false,
-    },
-  ];
+  private categoriesCache: CategorySummary[] = this.buildInitialCategories();
 
   async findSummaries(): Promise<ReadonlyArray<CategorySummary>> {
     await this.simulateEndpointLatency();
@@ -119,5 +86,35 @@ export class CategoriesInMemoryRepository implements CategoriesRepository {
   private async simulateEndpointLatency(): Promise<void> {
     const delayMs = 240 + Math.floor(Math.random() * 360);
     await new Promise((resolve) => setTimeout(resolve, delayMs));
+  }
+
+  private buildInitialCategories(): CategorySummary[] {
+    const categoryNames = [
+      'Electronica',
+      'Hogar',
+      'Deportes',
+      'Moda',
+      'Belleza',
+      'Gaming',
+      'Mascotas',
+      'Infantil',
+      'Oficina',
+      'Salud',
+    ];
+
+    return Array.from({ length: 100 }, (_unused, index) => {
+      const item = index + 1;
+      const baseName = categoryNames[index % categoryNames.length];
+      const slug = `${baseName.toLowerCase()}-${item}`;
+
+      return {
+        id: `cat-${slug}`,
+        name: `${baseName} ${Math.ceil(item / categoryNames.length)}`,
+        slug,
+        description: `Coleccion ${baseName} para temporada ${2025 + (item % 2)}.`,
+        products: 8 + ((item * 3) % 120),
+        featured: item % 4 === 0,
+      };
+    });
   }
 }

@@ -6,40 +6,7 @@ import { ReportsRepository } from '../../domain/repositories/reports.repository'
 
 @Injectable()
 export class ReportsInMemoryRepository implements ReportsRepository {
-  private readonly baseRows: ReadonlyArray<ReportRow> = [
-    {
-      id: 'r-1',
-      metric: 'Ingresos netos',
-      value: '$182.4M',
-      comparison: '+12.8% vs periodo anterior',
-      status: 'Saludable',
-      owner: 'Finanzas',
-    },
-    {
-      id: 'r-2',
-      metric: 'Conversion checkout',
-      value: '3.9%',
-      comparison: '+0.6 pts',
-      status: 'Mejorando',
-      owner: 'CRO',
-    },
-    {
-      id: 'r-3',
-      metric: 'Ticket promedio',
-      value: '$286.000',
-      comparison: '+4.2%',
-      status: 'Estable',
-      owner: 'Comercial',
-    },
-    {
-      id: 'r-4',
-      metric: 'Reembolsos',
-      value: '1.4%',
-      comparison: '-0.3 pts',
-      status: 'Controlado',
-      owner: 'Operaciones',
-    },
-  ];
+  private readonly baseRows: ReadonlyArray<ReportRow> = this.buildRows();
 
   async generate(filters: ReportsFilterInput): Promise<ReportResult> {
     await this.simulateEndpointLatency();
@@ -87,5 +54,38 @@ export class ReportsInMemoryRepository implements ReportsRepository {
   private async simulateEndpointLatency(): Promise<void> {
     const delayMs = 280 + Math.floor(Math.random() * 420);
     await new Promise((resolve) => setTimeout(resolve, delayMs));
+  }
+
+  private buildRows(): ReadonlyArray<ReportRow> {
+    const metrics = [
+      'Ingresos netos',
+      'Conversion checkout',
+      'Ticket promedio',
+      'Reembolsos',
+      'CAC',
+      'Retencion 30d',
+      'NPS',
+      'Margen bruto',
+    ];
+    const statuses = ['Saludable', 'Mejorando', 'Estable', 'Controlado', 'Riesgo'];
+    const owners = ['Finanzas', 'CRO', 'Comercial', 'Operaciones', 'BI'];
+
+    return Array.from({ length: 100 }, (_unused, index) => {
+      const item = index + 1;
+      const metric = metrics[index % metrics.length];
+      const isPercentMetric = metric.includes('Conversion') || metric.includes('Retencion');
+      const value = isPercentMetric
+        ? `${(2 + ((item * 0.17) % 8)).toFixed(1)}%`
+        : `$${(120000 + item * 9300).toLocaleString('es-CO')}`;
+
+      return {
+        id: `r-${item}`,
+        metric: `${metric} ${Math.ceil(item / metrics.length)}`,
+        value,
+        comparison: `${item % 2 === 0 ? '+' : '-'}${(0.3 + ((item * 0.11) % 4)).toFixed(1)}% vs periodo anterior`,
+        status: statuses[index % statuses.length],
+        owner: owners[index % owners.length],
+      };
+    });
   }
 }

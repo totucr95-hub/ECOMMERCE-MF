@@ -7,6 +7,7 @@ import {
 import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
+  ReusableSortDirection,
   ReusableTableColumn,
   ReusableTableComponent,
 } from '../../../../shared/components/reusable-table/reusable-table.component';
@@ -26,6 +27,14 @@ export class ReportsPage {
   private readonly facade = inject(AdminReportsFacade);
   private readonly cdr = inject(ChangeDetectorRef);
 
+  allRows: ReadonlyArray<Record<string, unknown>> = [];
+  rows: ReadonlyArray<Record<string, unknown>> = [];
+  totalItems = 0;
+  pageIndex = 0;
+  pageSize = 5;
+  sortKey = 'metric';
+  sortDirection: ReusableSortDirection = 'asc';
+  readonly pageSizeOptions: ReadonlyArray<number> = [5, 10, 20, 50];
   isLoading = false;
   feedbackMessage = 'Define filtros y ejecuta el reporte.';
   result: ReportResult | null = null;
@@ -45,13 +54,15 @@ export class ReportsPage {
     country: 'Colombia',
   };
 
-  get rows(): ReadonlyArray<Record<string, unknown>> {
-    if (!this.result) {
-      return [];
-    }
-
-    return this.result.rows.map((row) => ({ ...row }));
-  }
+  readonly tablePageChangeHandler = (nextPage: number, nextSize: number): void => {
+    this.onTablePageChange(nextPage, nextSize);
+  };
+  readonly tableSortChangeHandler = (
+    columnKey: string,
+    direction: ReusableSortDirection,
+  ): void => {
+    this.onTableSortChange(columnKey, direction);
+  };
 
   async runReport(): Promise<void> {
     this.isLoading = true;
@@ -59,8 +70,62 @@ export class ReportsPage {
     this.cdr.markForCheck();
 
     this.result = await this.facade.generate({ ...this.filters });
+    this.allRows = this.result.rows.map((row) => ({ ...row }));
+    this.pageIndex = 0;
+    this.applyServerQueryState();
     this.isLoading = false;
     this.feedbackMessage = `Reporte generado: ${this.result.summary}`;
     this.cdr.markForCheck();
+  }
+
+  onTablePageChange(nextPage: number, nextSize: number): void {
+    this.pageIndex = Math.max(0, nextPage);
+    this.pageSize = Math.max(1, nextSize);
+    this.applyServerQueryState();
+    this.cdr.markForCheck();
+  }
+
+  onTableSortChange(columnKey: string, direction: ReusableSortDirection): void {
+    this.sortKey = columnKey;
+    this.sortDirection = direction;
+    this.pageIndex = 0;
+    this.applyServerQueryState();
+    this.cdr.markForCheck();
+  }
+
+  private applyServerQueryState(): void {
+    const sorted = [...this.allRows].sort((left, right) => {
+      const leftValue = this.toSortableValue(left, this.sortKey);
+      const rightValue = this.toSortableValue(right, this.sortKey);
+
+      if (leftValue === rightValue) {
+        return 0;
+      }
+
+      const directionFactor = this.sortDirection === 'asc' ? 1 : -1;
+      return leftValue > rightValue ? directionFactor : -directionFactor;
+    });
+
+    this.totalItems = sorted.length;
+    const totalPages = Math.max(1, Math.ceil(this.totalItems / this.pageSize));
+    if (this.pageIndex >= totalPages) {
+      this.pageIndex = totalPages - 1;
+    }
+
+    const start = this.pageIndex * this.pageSize;
+    const end = start + this.pageSize;
+    this.rows = sorted.slice(start, end);
+  }
+
+  private toSortableValue(
+    row: Record<string, unknown>,
+    key: string,
+  ): number | string {
+    const value = row[key];
+    if (typeof value === 'number') {
+      return value;
+    }
+
+    return String(value ?? '').toLocaleLowerCase('es');
   }
 }

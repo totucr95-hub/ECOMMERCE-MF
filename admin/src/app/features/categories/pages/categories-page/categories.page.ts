@@ -9,6 +9,7 @@ import { AdminCategoriesFacade } from '../../application/facades/admin-categorie
 import { CategoryFormData } from '../../domain/category.models';
 import { CategorySummary } from '../../domain/entities/category-summary.entity';
 import {
+  ReusableSortDirection,
   ReusableTableAction,
   ReusableTableColumn,
   ReusableTableComponent,
@@ -26,7 +27,13 @@ export class CategoriesPage {
   private readonly facade = inject(AdminCategoriesFacade);
   private readonly cdr = inject(ChangeDetectorRef);
 
+  allCategories: CategorySummary[] = [];
   categories: CategorySummary[] = [];
+  totalItems = 0;
+  pageIndex = 0;
+  pageSize = 5;
+  sortKey = 'name';
+  sortDirection: ReusableSortDirection = 'asc';
   selectedCategoryId: string | null = null;
   isSaving = false;
   isLoading = false;
@@ -45,11 +52,21 @@ export class CategoriesPage {
     { id: 'edit', label: 'Editar' },
     { id: 'delete', label: 'Eliminar', variant: 'danger' },
   ];
+  readonly pageSizeOptions: ReadonlyArray<number> = [5, 10, 20, 50];
   readonly tableActionHandler = (
     actionId: string,
     row: Record<string, unknown>,
   ): void => {
     this.onTableAction(actionId, row);
+  };
+  readonly tablePageChangeHandler = (nextPage: number, nextSize: number): void => {
+    this.onTablePageChange(nextPage, nextSize);
+  };
+  readonly tableSortChangeHandler = (
+    columnKey: string,
+    direction: ReusableSortDirection,
+  ): void => {
+    this.onTableSortChange(columnKey, direction);
   };
 
   formModel: CategoryFormData = this.createEmptyFormModel();
@@ -75,7 +92,8 @@ export class CategoriesPage {
     this.cdr.markForCheck();
 
     const summaries = await this.facade.loadSummaries();
-    this.categories = summaries.map((item) => ({ ...item }));
+    this.allCategories = summaries.map((item) => ({ ...item }));
+    this.applyServerQueryState();
     this.isLoading = false;
     this.feedbackMessage = 'Categorias sincronizadas.';
     this.cdr.markForCheck();
@@ -231,6 +249,63 @@ export class CategoriesPage {
     if (actionId === 'delete') {
       void this.onDelete(category);
     }
+  }
+
+  onTablePageChange(nextPage: number, nextSize: number): void {
+    this.pageIndex = Math.max(0, nextPage);
+    this.pageSize = Math.max(1, nextSize);
+    this.applyServerQueryState();
+    this.feedbackMessage = `Pagina ${this.pageIndex + 1} cargada desde backend simulado.`;
+    this.cdr.markForCheck();
+  }
+
+  onTableSortChange(columnKey: string, direction: ReusableSortDirection): void {
+    this.sortKey = columnKey;
+    this.sortDirection = direction;
+    this.pageIndex = 0;
+    this.applyServerQueryState();
+    this.feedbackMessage = `Orden aplicado por ${columnKey} (${direction}).`;
+    this.cdr.markForCheck();
+  }
+
+  private applyServerQueryState(): void {
+    const sorted = [...this.allCategories].sort((left, right) => {
+      const leftValue = this.toSortableValue(left, this.sortKey);
+      const rightValue = this.toSortableValue(right, this.sortKey);
+
+      if (leftValue === rightValue) {
+        return 0;
+      }
+
+      const directionFactor = this.sortDirection === 'asc' ? 1 : -1;
+      return leftValue > rightValue ? directionFactor : -directionFactor;
+    });
+
+    this.totalItems = sorted.length;
+    const totalPages = Math.max(1, Math.ceil(this.totalItems / this.pageSize));
+    if (this.pageIndex >= totalPages) {
+      this.pageIndex = totalPages - 1;
+    }
+
+    const start = this.pageIndex * this.pageSize;
+    const end = start + this.pageSize;
+    this.categories = sorted.slice(start, end);
+  }
+
+  private toSortableValue(
+    category: CategorySummary,
+    key: string,
+  ): number | string {
+    if (key === 'featuredLabel') {
+      return category.featured ? 1 : 0;
+    }
+
+    const dynamicValue = category[key as keyof CategorySummary];
+    if (typeof dynamicValue === 'number') {
+      return dynamicValue;
+    }
+
+    return String(dynamicValue ?? '').toLocaleLowerCase('es');
   }
 
   private createEmptyFormModel(): CategoryFormData {

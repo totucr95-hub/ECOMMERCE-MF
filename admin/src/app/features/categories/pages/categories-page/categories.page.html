@@ -26,6 +26,14 @@
       [rows]="categoryRows"
       [actions]="tableActions"
       [onAction]="tableActionHandler"
+      [pageIndex]="pageIndex"
+      [pageSize]="pageSize"
+      [totalItems]="totalItems"
+      [pageSizeOptions]="pageSizeOptions"
+      [onPageChange]="tablePageChangeHandler"
+      [sortKey]="sortKey"
+      [sortDirection]="sortDirection"
+      [onSortChange]="tableSortChangeHandler"
       [emptyMessage]="'No hay categorias disponibles.'"
     ></admin-reusable-table>
   </section>

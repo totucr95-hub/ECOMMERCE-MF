@@ -5,52 +5,7 @@ import { OrdersRepository } from '../../domain/repositories/orders.repository';
 
 @Injectable()
 export class OrdersInMemoryRepository implements OrdersRepository {
-  private ordersCache: OrderSummary[] = [
-    {
-      id: 'ord-1042',
-      orderNumber: 'ORD-1042',
-      customer: 'Maria Gomez',
-      total: 480000,
-      status: 'Pagado',
-      paymentMethod: 'Tarjeta',
-      shippingAddress: 'Calle 98 #15-42, Bogota',
-      notes: 'Entregar en porteria.',
-      createdAt: '2026-07-28',
-    },
-    {
-      id: 'ord-1043',
-      orderNumber: 'ORD-1043',
-      customer: 'Diego Ruiz',
-      total: 220000,
-      status: 'Pendiente',
-      paymentMethod: 'PSE',
-      shippingAddress: 'Carrera 40 #10-15, Medellin',
-      notes: 'Cliente solicita llamada previa.',
-      createdAt: '2026-07-29',
-    },
-    {
-      id: 'ord-1044',
-      orderNumber: 'ORD-1044',
-      customer: 'Juliana Mora',
-      total: 94000,
-      status: 'Despachado',
-      paymentMethod: 'Transferencia',
-      shippingAddress: 'Calle 5 #72-11, Cali',
-      notes: 'Paquete fragil.',
-      createdAt: '2026-07-30',
-    },
-    {
-      id: 'ord-1045',
-      orderNumber: 'ORD-1045',
-      customer: 'Camilo Rojas',
-      total: 1280000,
-      status: 'Pagado',
-      paymentMethod: 'Tarjeta',
-      shippingAddress: 'Avenida 68 #24-30, Bogota',
-      notes: 'Facturar a empresa.',
-      createdAt: '2026-07-31',
-    },
-  ];
+  private ordersCache: OrderSummary[] = this.buildInitialOrders();
 
   async findSummaries(): Promise<ReadonlyArray<OrderSummary>> {
     await this.simulateEndpointLatency();
@@ -129,5 +84,44 @@ export class OrdersInMemoryRepository implements OrdersRepository {
   private async simulateEndpointLatency(): Promise<void> {
     const delayMs = 240 + Math.floor(Math.random() * 380);
     await new Promise((resolve) => setTimeout(resolve, delayMs));
+  }
+
+  private buildInitialOrders(): OrderSummary[] {
+    const customers = [
+      'Maria Gomez',
+      'Diego Ruiz',
+      'Juliana Mora',
+      'Camilo Rojas',
+      'Ana Torres',
+      'Laura Perez',
+      'Pablo Cruz',
+      'Sofia Lemos',
+    ];
+    const statuses = ['Pendiente', 'Pagado', 'Despachado', 'Entregado', 'Cancelado'];
+    const methods = ['Tarjeta', 'PSE', 'Transferencia', 'Contraentrega'];
+    const cities = ['Bogota', 'Medellin', 'Cali', 'Barranquilla', 'Bucaramanga'];
+
+    return Array.from({ length: 100 }, (_unused, index) => {
+      const item = index + 1;
+      const city = cities[index % cities.length];
+
+      return {
+        id: `ord-${1000 + item}`,
+        orderNumber: `ORD-${1000 + item}`,
+        customer: customers[index % customers.length],
+        total: 70000 + item * 21000,
+        status: statuses[index % statuses.length],
+        paymentMethod: methods[index % methods.length],
+        shippingAddress: `Calle ${10 + (item % 80)} #${5 + (item % 70)}-${10 + (item % 40)}, ${city}`,
+        notes: `Pedido masivo de prueba #${item}.`,
+        createdAt: this.formatDate(index % 31),
+      };
+    });
+  }
+
+  private formatDate(daysAgo: number): string {
+    const date = new Date();
+    date.setDate(date.getDate() - daysAgo);
+    return date.toISOString().slice(0, 10);
   }
 }

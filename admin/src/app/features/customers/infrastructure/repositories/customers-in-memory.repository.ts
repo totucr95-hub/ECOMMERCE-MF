@@ -5,60 +5,7 @@ import { CustomersRepository } from '../../domain/repositories/customers.reposit
 
 @Injectable()
 export class CustomersInMemoryRepository implements CustomersRepository {
-  private customersCache: CustomerSummary[] = [
-    {
-      id: 'cus-1001',
-      fullName: 'Ana Torres',
-      email: 'ana.torres@correo.com',
-      phone: '+57 301 445 2299',
-      city: 'Bogota',
-      totalOrders: 18,
-      totalSpent: 4820000,
-      status: 'Activo',
-      segment: 'VIP',
-      notes: 'Prefiere entregas en la tarde.',
-      lastOrderAt: '2026-07-30',
-    },
-    {
-      id: 'cus-1002',
-      fullName: 'Pablo Cruz',
-      email: 'pablo.cruz@correo.com',
-      phone: '+57 315 901 1170',
-      city: 'Medellin',
-      totalOrders: 7,
-      totalSpent: 1210000,
-      status: 'Activo',
-      segment: 'Frecuente',
-      notes: 'Compra accesorios deportivos.',
-      lastOrderAt: '2026-07-29',
-    },
-    {
-      id: 'cus-1003',
-      fullName: 'Laura Perez',
-      email: 'laura.perez@correo.com',
-      phone: '+57 320 541 0991',
-      city: 'Cali',
-      totalOrders: 2,
-      totalSpent: 260000,
-      status: 'Inactivo',
-      segment: 'Nuevo',
-      notes: 'Solicita seguimiento por WhatsApp.',
-      lastOrderAt: '2026-07-20',
-    },
-    {
-      id: 'cus-1004',
-      fullName: 'Camilo Rojas',
-      email: 'camilo.rojas@correo.com',
-      phone: '+57 311 802 2234',
-      city: 'Barranquilla',
-      totalOrders: 11,
-      totalSpent: 2310000,
-      status: 'Activo',
-      segment: 'Frecuente',
-      notes: 'Facturacion a nombre de empresa.',
-      lastOrderAt: '2026-07-31',
-    },
-  ];
+  private customersCache: CustomerSummary[] = this.buildInitialCustomers();
 
   async findSummaries(): Promise<ReadonlyArray<CustomerSummary>> {
     await this.simulateEndpointLatency();
@@ -141,5 +88,65 @@ export class CustomersInMemoryRepository implements CustomersRepository {
   private async simulateEndpointLatency(): Promise<void> {
     const delayMs = 250 + Math.floor(Math.random() * 400);
     await new Promise((resolve) => setTimeout(resolve, delayMs));
+  }
+
+  private buildInitialCustomers(): CustomerSummary[] {
+    const firstNames = [
+      'Ana',
+      'Pablo',
+      'Laura',
+      'Camilo',
+      'Sofia',
+      'Diego',
+      'Maria',
+      'Julian',
+      'Valentina',
+      'Nicolas',
+    ];
+    const lastNames = [
+      'Torres',
+      'Cruz',
+      'Perez',
+      'Rojas',
+      'Mora',
+      'Ruiz',
+      'Gomez',
+      'Diaz',
+      'Lopez',
+      'Ramirez',
+    ];
+    const cities = ['Bogota', 'Medellin', 'Cali', 'Barranquilla', 'Pereira'];
+    const statuses = ['Activo', 'Activo', 'Activo', 'Inactivo'];
+    const segments = ['Nuevo', 'Frecuente', 'VIP'];
+
+    return Array.from({ length: 100 }, (_unused, index) => {
+      const item = index + 1;
+      const firstName = firstNames[index % firstNames.length];
+      const lastName = lastNames[(index * 3) % lastNames.length];
+      const fullName = `${firstName} ${lastName}`;
+      const email = `${firstName.toLowerCase()}.${lastName.toLowerCase()}${item}@correo.com`;
+
+      return {
+        id: `cus-${1000 + item}`,
+        fullName,
+        email,
+        phone: `+57 3${(10 + (item % 90)).toString().padStart(2, '0')} ${(
+          100 + ((item * 7) % 900)
+        )} ${(1000 + ((item * 31) % 9000)).toString().padStart(4, '0')}`,
+        city: cities[index % cities.length],
+        totalOrders: item % 26,
+        totalSpent: 120000 + item * 53000,
+        status: statuses[index % statuses.length],
+        segment: segments[index % segments.length],
+        notes: `Cliente cargado para simulacion #${item}.`,
+        lastOrderAt: this.formatDate(index % 45),
+      };
+    });
+  }
+
+  private formatDate(daysAgo: number): string {
+    const date = new Date();
+    date.setDate(date.getDate() - daysAgo);
+    return date.toISOString().slice(0, 10);
   }
 }

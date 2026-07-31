@@ -79,6 +79,14 @@
       [subtitle]="result.summary"
       [columns]="columns"
       [rows]="rows"
+      [pageIndex]="pageIndex"
+      [pageSize]="pageSize"
+      [totalItems]="totalItems"
+      [pageSizeOptions]="pageSizeOptions"
+      [onPageChange]="tablePageChangeHandler"
+      [sortKey]="sortKey"
+      [sortDirection]="sortDirection"
+      [onSortChange]="tableSortChangeHandler"
       [emptyMessage]="'No hay datos para mostrar.'"
     ></admin-reusable-table>
   </section>

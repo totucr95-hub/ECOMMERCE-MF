@@ -5,44 +5,7 @@ import { CartsRepository } from '../../domain/repositories/carts.repository';
 
 @Injectable()
 export class CartsInMemoryRepository implements CartsRepository {
-  private cartsCache: CartSummary[] = [
-    {
-      id: 'cart-3001',
-      cartCode: 'CRT-1001',
-      customer: 'Camilo Rojas',
-      itemsCount: 3,
-      subtotal: 1240000,
-      taxes: 235600,
-      total: 1475600,
-      status: 'Activo',
-      updatedAt: '2026-07-31',
-      notes: 'Carrito recuperado por campana de abandono.',
-    },
-    {
-      id: 'cart-3002',
-      cartCode: 'CRT-1002',
-      customer: 'Laura Perez',
-      itemsCount: 1,
-      subtotal: 189000,
-      taxes: 35910,
-      total: 224910,
-      status: 'Convertido',
-      updatedAt: '2026-07-30',
-      notes: 'Convertido a pedido ORD-1051.',
-    },
-    {
-      id: 'cart-3003',
-      cartCode: 'CRT-1003',
-      customer: 'Pablo Cruz',
-      itemsCount: 5,
-      subtotal: 540000,
-      taxes: 102600,
-      total: 642600,
-      status: 'Abandonado',
-      updatedAt: '2026-07-29',
-      notes: 'Sin actividad en las ultimas 72h.',
-    },
-  ];
+  private cartsCache: CartSummary[] = this.buildInitialCarts();
 
   async findSummaries(): Promise<ReadonlyArray<CartSummary>> {
     await this.simulateEndpointLatency();
@@ -120,5 +83,44 @@ export class CartsInMemoryRepository implements CartsRepository {
   private async simulateEndpointLatency(): Promise<void> {
     const delayMs = 250 + Math.floor(Math.random() * 420);
     await new Promise((resolve) => setTimeout(resolve, delayMs));
+  }
+
+  private buildInitialCarts(): CartSummary[] {
+    const customers = [
+      'Camilo Rojas',
+      'Laura Perez',
+      'Pablo Cruz',
+      'Ana Torres',
+      'Diego Ruiz',
+      'Maria Gomez',
+      'Juliana Mora',
+      'Sofia Lemos',
+    ];
+    const statuses = ['Activo', 'Abandonado', 'Convertido', 'Expirado'];
+
+    return Array.from({ length: 100 }, (_unused, index) => {
+      const item = index + 1;
+      const subtotal = 80000 + item * 17500;
+      const taxes = Math.round(subtotal * 0.19);
+
+      return {
+        id: `cart-${3000 + item}`,
+        cartCode: `CRT-${1000 + item}`,
+        customer: customers[index % customers.length],
+        itemsCount: 1 + (item % 8),
+        subtotal,
+        taxes,
+        total: subtotal + taxes,
+        status: statuses[index % statuses.length],
+        updatedAt: this.formatDate(index % 30),
+        notes: `Sesion de carrito #${item} con seguimiento automatico.`,
+      };
+    });
+  }
+
+  private formatDate(daysAgo: number): string {
+    const date = new Date();
+    date.setDate(date.getDate() - daysAgo);
+    return date.toISOString().slice(0, 10);
   }
 }

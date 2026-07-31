@@ -5,21 +5,39 @@ import { DashboardRepository } from '../../domain/repositories/dashboard.reposit
 @Injectable()
 export class DashboardInMemoryRepository implements DashboardRepository {
   async findKpis(): Promise<ReadonlyArray<DashboardKpi>> {
-    return [
-      {
-        module: 'Ventas',
-        kpi: 'Ingresos diarios',
-        value: '$12,450',
-        status: 'OK',
-      },
-      { module: 'Pedidos', kpi: 'Pendientes', value: '19', status: 'Atencion' },
-      { module: 'Usuarios', kpi: 'Activos', value: '2,381', status: 'OK' },
-      {
-        module: 'Catalogo',
-        kpi: 'Productos sin stock',
-        value: '14',
-        status: 'Revisar',
-      },
+    const modules = [
+      'Ventas',
+      'Pedidos',
+      'Usuarios',
+      'Catalogo',
+      'Pagos',
+      'Logistica',
     ];
+    const kpis = [
+      'Ingresos diarios',
+      'Pendientes',
+      'Activos',
+      'Productos sin stock',
+      'Aprobacion pagos',
+      'Despachos en SLA',
+    ];
+    const statuses = ['OK', 'OK', 'Atencion', 'Revisar'];
+
+    return Array.from({ length: 100 }, (_unused, index) => {
+      const item = index + 1;
+      const module = modules[index % modules.length];
+      const kpi = kpis[index % kpis.length];
+      const value =
+        index % 2 === 0
+          ? `$${(8000 + item * 320).toLocaleString('en-US')}`
+          : (5 + (item % 97)).toString();
+
+      return {
+        module,
+        kpi,
+        value,
+        status: statuses[index % statuses.length],
+      };
+    });
   }
 }

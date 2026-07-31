@@ -6,6 +6,7 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
+  ReusableSortDirection,
   ReusableTableAction,
   ReusableTableColumn,
   ReusableTableComponent,
@@ -26,7 +27,13 @@ export class CartsPage {
   private readonly facade = inject(AdminCartsFacade);
   private readonly cdr = inject(ChangeDetectorRef);
 
+  allCarts: CartSummary[] = [];
   carts: CartSummary[] = [];
+  totalItems = 0;
+  pageIndex = 0;
+  pageSize = 5;
+  sortKey = 'cartCode';
+  sortDirection: ReusableSortDirection = 'asc';
   selectedCartId: string | null = null;
   isSaving = false;
   isLoading = false;
@@ -47,11 +54,21 @@ export class CartsPage {
     { id: 'edit', label: 'Editar' },
     { id: 'delete', label: 'Eliminar', variant: 'danger' },
   ];
+  readonly pageSizeOptions: ReadonlyArray<number> = [5, 10, 20, 50];
   readonly tableActionHandler = (
     actionId: string,
     row: Record<string, unknown>,
   ): void => {
     this.onTableAction(actionId, row);
+  };
+  readonly tablePageChangeHandler = (nextPage: number, nextSize: number): void => {
+    this.onTablePageChange(nextPage, nextSize);
+  };
+  readonly tableSortChangeHandler = (
+    columnKey: string,
+    direction: ReusableSortDirection,
+  ): void => {
+    this.onTableSortChange(columnKey, direction);
   };
 
   formModel: CartFormData = this.createEmptyFormModel();
@@ -78,7 +95,8 @@ export class CartsPage {
     this.cdr.markForCheck();
 
     const summaries = await this.facade.loadSummaries();
-    this.carts = summaries.map((item) => ({ ...item }));
+    this.allCarts = summaries.map((item) => ({ ...item }));
+    this.applyServerQueryState();
     this.isLoading = false;
     this.feedbackMessage = 'Carritos sincronizados.';
     this.cdr.markForCheck();
@@ -231,6 +249,56 @@ export class CartsPage {
     if (actionId === 'delete') {
       void this.onDelete(cart);
     }
+  }
+
+  onTablePageChange(nextPage: number, nextSize: number): void {
+    this.pageIndex = Math.max(0, nextPage);
+    this.pageSize = Math.max(1, nextSize);
+    this.applyServerQueryState();
+    this.feedbackMessage = `Pagina ${this.pageIndex + 1} cargada desde backend simulado.`;
+    this.cdr.markForCheck();
+  }
+
+  onTableSortChange(columnKey: string, direction: ReusableSortDirection): void {
+    this.sortKey = columnKey;
+    this.sortDirection = direction;
+    this.pageIndex = 0;
+    this.applyServerQueryState();
+    this.feedbackMessage = `Orden aplicado por ${columnKey} (${direction}).`;
+    this.cdr.markForCheck();
+  }
+
+  private applyServerQueryState(): void {
+    const sorted = [...this.allCarts].sort((left, right) => {
+      const leftValue = this.toSortableValue(left, this.sortKey);
+      const rightValue = this.toSortableValue(right, this.sortKey);
+
+      if (leftValue === rightValue) {
+        return 0;
+      }
+
+      const directionFactor = this.sortDirection === 'asc' ? 1 : -1;
+      return leftValue > rightValue ? directionFactor : -directionFactor;
+    });
+
+    this.totalItems = sorted.length;
+    const totalPages = Math.max(1, Math.ceil(this.totalItems / this.pageSize));
+    if (this.pageIndex >= totalPages) {
+      this.pageIndex = totalPages - 1;
+    }
+
+    const start = this.pageIndex * this.pageSize;
+    const end = start + this.pageSize;
+    this.carts = sorted.slice(start, end);
+  }
+
+  private toSortableValue(cart: CartSummary, key: string): number | string {
+    const dynamicValue = cart[key as keyof CartSummary];
+    if (typeof dynamicValue === 'number') {
+      return dynamicValue;
+    }
+
+    return String(dynamicValue ?? '').toLocaleLowerCase('es');
   }
 
   private formatCurrency(amount: number): string {

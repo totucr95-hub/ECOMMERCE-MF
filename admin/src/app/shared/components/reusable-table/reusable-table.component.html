@@ -19,7 +19,22 @@
                 [class.admin-table__cell--center]="column.align === 'center'"
                 [class.admin-table__cell--right]="column.align === 'right'"
               >
-                {{ column.header }}
+                @if (isSortable(column)) {
+                  <button
+                    type="button"
+                    class="admin-table__sort-btn"
+                    [class.is-active]="getSortState(column) !== 'none'"
+                    (click)="toggleSort(column)"
+                    [attr.aria-label]="
+                      'Ordenar por ' + column.header + '. Estado: ' + getSortLabel(column)
+                    "
+                  >
+                    <span>{{ column.header }}</span>
+                    <small>{{ getSortState(column) === 'asc' ? '▲' : getSortState(column) === 'desc' ? '▼' : '↕' }}</small>
+                  </button>
+                } @else {
+                  {{ column.header }}
+                }
               </th>
             }
             @if (hasActions()) {
@@ -70,4 +85,51 @@
       <p class="admin-table-card__empty">{{ emptyMessage() }}</p>
     }
   </div>
+
+  @if (shouldShowPagination()) {
+    <footer class="admin-table-card__pagination">
+      <p class="admin-table-card__pagination-text">
+        Mostrando {{ pageRangeStart() }}-{{ pageRangeEnd() }} de {{ resolvedTotalItems() }}
+      </p>
+
+      <div class="admin-table-card__pagination-controls">
+        <label class="admin-table-card__page-size">
+          <span>Filas</span>
+          <select
+            class="admin-table-card__page-size-select"
+            [value]="resolvedPageSize()"
+            (change)="onPageSizeSelection(($any($event.target)).value)"
+          >
+            @for (size of pageSizeOptions(); track size) {
+              <option [value]="size">{{ size }}</option>
+            }
+          </select>
+        </label>
+
+        <button
+          type="button"
+          class="admin-table-card__pagination-btn"
+          (click)="goToPreviousPage()"
+          [disabled]="!canGoPreviousPage()"
+        >
+          <span aria-hidden="true">←</span>
+          <span>Anterior</span>
+        </button>
+
+        <span class="admin-table-card__pagination-page">
+          Pagina {{ currentPageNumber() }} / {{ totalPages() }}
+        </span>
+
+        <button
+          type="button"
+          class="admin-table-card__pagination-btn"
+          (click)="goToNextPage()"
+          [disabled]="!canGoNextPage()"
+        >
+          <span>Siguiente</span>
+          <span aria-hidden="true">→</span>
+        </button>
+      </div>
+    </footer>
+  }
 </article>

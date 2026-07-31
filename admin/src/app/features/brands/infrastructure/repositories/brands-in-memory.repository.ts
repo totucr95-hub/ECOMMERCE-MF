@@ -5,44 +5,7 @@ import { BrandsRepository } from '../../domain/repositories/brands.repository';
 
 @Injectable()
 export class BrandsInMemoryRepository implements BrandsRepository {
-  private brandsCache: BrandSummary[] = [
-    {
-      id: 'br-1001',
-      code: 'BRD-NV',
-      name: 'NovaTech',
-      categoryFocus: 'Electronica',
-      country: 'Colombia',
-      activeProducts: 42,
-      status: 'Activa',
-      manager: 'Laura Perez',
-      updatedAt: '2026-07-31',
-      notes: 'Marca de alto crecimiento en gadgets.',
-    },
-    {
-      id: 'br-1002',
-      code: 'BRD-EC',
-      name: 'EcoHome',
-      categoryFocus: 'Hogar',
-      country: 'Mexico',
-      activeProducts: 18,
-      status: 'Activa',
-      manager: 'David Ruiz',
-      updatedAt: '2026-07-30',
-      notes: 'Portafolio premium sostenible.',
-    },
-    {
-      id: 'br-1003',
-      code: 'BRD-RT',
-      name: 'RunTrail',
-      categoryFocus: 'Deportes',
-      country: 'Chile',
-      activeProducts: 25,
-      status: 'En revision',
-      manager: 'Camilo Rojas',
-      updatedAt: '2026-07-29',
-      notes: 'Esperando renovacion de contrato anual.',
-    },
-  ];
+  private brandsCache: BrandSummary[] = this.buildInitialBrands();
 
   async findSummaries(): Promise<ReadonlyArray<BrandSummary>> {
     await this.simulateEndpointLatency();
@@ -123,5 +86,59 @@ export class BrandsInMemoryRepository implements BrandsRepository {
   private async simulateEndpointLatency(): Promise<void> {
     const delayMs = 220 + Math.floor(Math.random() * 380);
     await new Promise((resolve) => setTimeout(resolve, delayMs));
+  }
+
+  private buildInitialBrands(): BrandSummary[] {
+    const catalogNames = [
+      'NovaTech',
+      'EcoHome',
+      'RunTrail',
+      'CasaLuz',
+      'UrbanPeak',
+      'GreenWave',
+      'HyperSound',
+      'PureSkin',
+      'AquaFit',
+      'PixelGear',
+    ];
+    const categories = [
+      'Electronica',
+      'Hogar',
+      'Deportes',
+      'Moda',
+      'Belleza',
+      'Accesorios',
+    ];
+    const countries = ['Colombia', 'Mexico', 'Chile', 'Peru', 'Ecuador'];
+    const managers = [
+      'Laura Perez',
+      'David Ruiz',
+      'Camilo Rojas',
+      'Ana Torres',
+      'Pablo Cruz',
+    ];
+    const statuses = ['Activa', 'Activa', 'Activa', 'En revision', 'Pausada'];
+
+    return Array.from({ length: 100 }, (_unused, index) => {
+      const item = index + 1;
+      return {
+        id: `br-${1000 + item}`,
+        code: `BRD-${String(item).padStart(3, '0')}`,
+        name: `${catalogNames[index % catalogNames.length]} ${Math.ceil(item / catalogNames.length)}`,
+        categoryFocus: categories[index % categories.length],
+        country: countries[index % countries.length],
+        activeProducts: 6 + ((item * 5) % 90),
+        status: statuses[index % statuses.length],
+        manager: managers[index % managers.length],
+        updatedAt: this.formatDate(index % 28),
+        notes: `Seguimiento comercial trimestral #${item}.`,
+      };
+    });
+  }
+
+  private formatDate(daysAgo: number): string {
+    const date = new Date();
+    date.setDate(date.getDate() - daysAgo);
+    return date.toISOString().slice(0, 10);
   }
 }

@@ -5,60 +5,7 @@ import { PaymentsRepository } from '../../domain/repositories/payments.repositor
 
 @Injectable()
 export class PaymentsInMemoryRepository implements PaymentsRepository {
-  private paymentsCache: PaymentSummary[] = [
-    {
-      id: 'pay-2001',
-      paymentRef: 'TXN-774901',
-      orderNumber: 'ORD-1045',
-      customer: 'Camilo Rojas',
-      method: 'Tarjeta',
-      status: 'Aprobado',
-      amount: 1280000,
-      currency: 'COP',
-      gateway: 'Wompi',
-      lastAttemptAt: '2026-07-31',
-      notes: 'Cobro exitoso al primer intento.',
-    },
-    {
-      id: 'pay-2002',
-      paymentRef: 'TXN-774902',
-      orderNumber: 'ORD-1046',
-      customer: 'Laura Perez',
-      method: 'PSE',
-      status: 'Pendiente',
-      amount: 360000,
-      currency: 'COP',
-      gateway: 'PayU',
-      lastAttemptAt: '2026-07-31',
-      notes: 'Validacion bancaria en progreso.',
-    },
-    {
-      id: 'pay-2003',
-      paymentRef: 'TXN-774903',
-      orderNumber: 'ORD-1047',
-      customer: 'Pablo Cruz',
-      method: 'Tarjeta',
-      status: 'Rechazado',
-      amount: 189000,
-      currency: 'COP',
-      gateway: 'MercadoPago',
-      lastAttemptAt: '2026-07-30',
-      notes: 'Fondos insuficientes.',
-    },
-    {
-      id: 'pay-2004',
-      paymentRef: 'TXN-774904',
-      orderNumber: 'ORD-1048',
-      customer: 'Ana Torres',
-      method: 'Transferencia',
-      status: 'Conciliado',
-      amount: 940000,
-      currency: 'COP',
-      gateway: 'Bancolombia',
-      lastAttemptAt: '2026-07-29',
-      notes: 'Comprobante verificado por finanzas.',
-    },
-  ];
+  private paymentsCache: PaymentSummary[] = this.buildInitialPayments();
 
   async findSummaries(): Promise<ReadonlyArray<PaymentSummary>> {
     await this.simulateEndpointLatency();
@@ -141,5 +88,47 @@ export class PaymentsInMemoryRepository implements PaymentsRepository {
   private async simulateEndpointLatency(): Promise<void> {
     const delayMs = 250 + Math.floor(Math.random() * 420);
     await new Promise((resolve) => setTimeout(resolve, delayMs));
+  }
+
+  private buildInitialPayments(): PaymentSummary[] {
+    const customers = [
+      'Camilo Rojas',
+      'Laura Perez',
+      'Pablo Cruz',
+      'Ana Torres',
+      'Maria Gomez',
+      'Diego Ruiz',
+      'Juliana Mora',
+      'Sofia Lemos',
+    ];
+    const methods = ['Tarjeta', 'PSE', 'Transferencia', 'Contraentrega'];
+    const statuses = ['Pendiente', 'Aprobado', 'Rechazado', 'Conciliado', 'Reembolsado'];
+    const gateways = ['Wompi', 'PayU', 'MercadoPago', 'Bancolombia'];
+    const currencies = ['COP', 'COP', 'COP', 'USD', 'EUR'];
+
+    return Array.from({ length: 100 }, (_unused, index) => {
+      const item = index + 1;
+      const amount = 95000 + item * 28750;
+
+      return {
+        id: `pay-${2000 + item}`,
+        paymentRef: `TXN-${770000 + item}`,
+        orderNumber: `ORD-${1000 + item}`,
+        customer: customers[index % customers.length],
+        method: methods[index % methods.length],
+        status: statuses[index % statuses.length],
+        amount,
+        currency: currencies[index % currencies.length],
+        gateway: gateways[index % gateways.length],
+        lastAttemptAt: this.formatDate(index % 31),
+        notes: `Intento de cobro simulado #${item}.`,
+      };
+    });
+  }
+
+  private formatDate(daysAgo: number): string {
+    const date = new Date();
+    date.setDate(date.getDate() - daysAgo);
+    return date.toISOString().slice(0, 10);
   }
 }

@@ -4,12 +4,198 @@
     <p class="admin-page__subtitle">
       Agrupa productos y prioriza vitrinas destacadas.
     </p>
+    <div class="admin-page__top-actions">
+      <button
+        type="button"
+        class="admin-page__button-primary"
+        (click)="openCreateModal()"
+      >
+        + Crear categoria
+      </button>
+    </div>
+    @if (feedbackMessage) {
+    <p class="admin-page__status">{{ feedbackMessage }}</p>
+    }
   </header>
 
-  <admin-reusable-table
-    [title]="'Listado de categorias'"
-    [subtitle]="'Base para gestion de taxonomia del catalogo'"
-    [columns]="columns"
-    [rows]="rows"
-  />
+  <section class="admin-page__surface">
+    <h2 class="admin-page__section-title">Listado de categorias</h2>
+    <p class="admin-page__surface-subtitle">
+      Base para gestion de taxonomia del catalogo.
+    </p>
+
+    <div class="admin-page__table-wrap">
+      <table class="admin-page__table">
+        <thead>
+          <tr>
+            <th>Categoria</th>
+            <th>Slug</th>
+            <th>Productos</th>
+            <th>Destacada</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (category of categories; track trackByCategoryId($index,
+          category)) {
+          <tr>
+            <td>
+              <strong>{{ category.name }}</strong>
+              <small>{{ category.description }}</small>
+            </td>
+            <td>{{ category.slug }}</td>
+            <td>{{ category.products }}</td>
+            <td>{{ formatFeatured(category) }}</td>
+            <td>
+              <div class="admin-page__table-actions">
+                <button type="button" (click)="onEdit(category)">Editar</button>
+                <button
+                  type="button"
+                  class="is-danger"
+                  (click)="onDelete(category)"
+                >
+                  Eliminar
+                </button>
+              </div>
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  @if (isEditorOpen) {
+  <div class="admin-page__modal-backdrop" (click)="closeEditor()"></div>
+
+  <section
+    class="admin-page__modal"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Editor de categoria"
+  >
+    <header class="admin-page__modal-header">
+      <div>
+        <p class="admin-page__modal-eyebrow">Catalogo admin</p>
+        <h2 class="admin-page__modal-title">
+          {{ selectedCategoryId ? 'Editar categoria' : 'Crear categoria' }}
+        </h2>
+      </div>
+      <button
+        type="button"
+        class="admin-page__modal-close"
+        (click)="closeEditor()"
+      >
+        ×
+      </button>
+    </header>
+
+    <ol class="admin-page__stepper" aria-label="Pasos del formulario">
+      @for (step of editorSteps; track $index) {
+      <li
+        class="admin-page__step"
+        [class.is-active]="$index === editorStep"
+        [class.is-done]="$index < editorStep"
+      >
+        <button type="button" (click)="goToStep($index)">
+          <span>{{ $index + 1 }}</span>
+          <small>{{ step }}</small>
+        </button>
+      </li>
+      }
+    </ol>
+
+    <div class="admin-page__modal-body">
+      @if (editorStep === 0) {
+      <div class="admin-page__form-grid">
+        <label class="admin-control-label">
+          Nombre
+          <input
+            class="admin-control-input"
+            [(ngModel)]="formModel.name"
+            name="name"
+            placeholder="Categoria"
+          />
+        </label>
+
+        <label class="admin-control-label">
+          Slug
+          <input
+            class="admin-control-input"
+            [(ngModel)]="formModel.slug"
+            name="slug"
+            placeholder="slug-categoria"
+          />
+        </label>
+
+        <label class="admin-control-label">
+          Productos vinculados
+          <input
+            class="admin-control-input"
+            [(ngModel)]="formModel.products"
+            name="products"
+            type="number"
+            min="0"
+          />
+        </label>
+      </div>
+      } @if (editorStep === 1) {
+      <div class="admin-page__form-grid admin-page__form-grid--single">
+        <label class="admin-control-label">
+          Descripcion
+          <textarea
+            class="admin-control-textarea"
+            [(ngModel)]="formModel.description"
+            name="description"
+            rows="4"
+            placeholder="Describe el enfoque de la categoria"
+          ></textarea>
+        </label>
+      </div>
+      } @if (editorStep === 2) {
+      <div class="admin-page__publish-grid">
+        <label class="admin-control-checkbox">
+          <input
+            [(ngModel)]="formModel.featured"
+            name="featured"
+            type="checkbox"
+          />
+          Marcar como destacada
+        </label>
+      </div>
+      }
+    </div>
+
+    <footer class="admin-page__modal-actions">
+      <button
+        type="button"
+        class="admin-page__button-ghost"
+        (click)="previousStep()"
+        [disabled]="editorStep === 0 || isSaving"
+      >
+        Anterior
+      </button>
+
+      @if (editorStep < editorSteps.length - 1) {
+      <button
+        type="button"
+        class="admin-page__button-primary"
+        (click)="nextStep()"
+        [disabled]="isSaving"
+      >
+        Siguiente
+      </button>
+      } @else {
+      <button
+        type="button"
+        class="admin-page__button-primary"
+        (click)="submitEditor()"
+        [disabled]="isSaving || isLoading"
+      >
+        {{ selectedCategoryId ? 'Actualizar categoria' : 'Crear categoria' }}
+      </button>
+      }
+    </footer>
+  </section>
+  }
 </section>

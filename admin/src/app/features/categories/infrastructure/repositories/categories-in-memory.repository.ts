@@ -1,15 +1,123 @@
 import { Injectable } from '@angular/core';
+import { CategoryFormData } from '../../domain/category.models';
 import { CategorySummary } from '../../domain/entities/category-summary.entity';
 import { CategoriesRepository } from '../../domain/repositories/categories.repository';
 
 @Injectable()
 export class CategoriesInMemoryRepository implements CategoriesRepository {
+  private categoriesCache: CategorySummary[] = [
+    {
+      id: 'cat-electronics',
+      name: 'Electronica',
+      slug: 'electronica',
+      description: 'Dispositivos, tecnologia y accesorios.',
+      products: 32,
+      featured: true,
+    },
+    {
+      id: 'cat-home',
+      name: 'Hogar',
+      slug: 'hogar',
+      description: 'Productos para cocina, sala y habitaciones.',
+      products: 21,
+      featured: false,
+    },
+    {
+      id: 'cat-sports',
+      name: 'Deportes',
+      slug: 'deportes',
+      description: 'Ropa y accesorios para entrenamiento.',
+      products: 14,
+      featured: true,
+    },
+    {
+      id: 'cat-fashion',
+      name: 'Moda',
+      slug: 'moda',
+      description: 'Catalogo de ropa urbana y casual.',
+      products: 28,
+      featured: false,
+    },
+  ];
+
   async findSummaries(): Promise<ReadonlyArray<CategorySummary>> {
-    return [
-      { name: 'Electronica', products: 32, featured: 'Si' },
-      { name: 'Hogar', products: 21, featured: 'No' },
-      { name: 'Deportes', products: 14, featured: 'Si' },
-      { name: 'Moda', products: 28, featured: 'No' },
+    await this.simulateEndpointLatency();
+    return [...this.categoriesCache];
+  }
+
+  async findById(id: string): Promise<CategorySummary | null> {
+    await this.simulateEndpointLatency();
+    const category = this.categoriesCache.find((item) => item.id === id);
+    return category ? { ...category } : null;
+  }
+
+  async create(payload: CategoryFormData): Promise<CategorySummary> {
+    await this.simulateEndpointLatency();
+
+    const category: CategorySummary = {
+      id: payload.id ?? this.createCategoryId(payload.name),
+      name: payload.name,
+      slug: payload.slug,
+      description: payload.description,
+      products: payload.products,
+      featured: payload.featured,
+    };
+
+    this.categoriesCache = [category, ...this.categoriesCache];
+    return { ...category };
+  }
+
+  async update(
+    id: string,
+    payload: CategoryFormData,
+  ): Promise<CategorySummary | null> {
+    await this.simulateEndpointLatency();
+
+    const index = this.categoriesCache.findIndex((item) => item.id === id);
+    if (index < 0) {
+      return null;
+    }
+
+    const updated: CategorySummary = {
+      id,
+      name: payload.name,
+      slug: payload.slug,
+      description: payload.description,
+      products: payload.products,
+      featured: payload.featured,
+    };
+
+    this.categoriesCache = [
+      ...this.categoriesCache.slice(0, index),
+      updated,
+      ...this.categoriesCache.slice(index + 1),
     ];
+
+    return { ...updated };
+  }
+
+  async delete(id: string): Promise<boolean> {
+    await this.simulateEndpointLatency();
+
+    const before = this.categoriesCache.length;
+    this.categoriesCache = this.categoriesCache.filter(
+      (item) => item.id !== id,
+    );
+    return this.categoriesCache.length < before;
+  }
+
+  private createCategoryId(name: string): string {
+    const slug = name
+      .toLowerCase()
+      .replace(/[^a-z0-9]/g, '-')
+      .replace(/-+/g, '-')
+      .replace(/^-|-$/g, '');
+
+    return slug ? `cat-${slug}` : `cat-${Date.now()}`;
+  }
+
+  private async simulateEndpointLatency(): Promise<void> {
+    const delayMs = 240 + Math.floor(Math.random() * 360);
+    await new Promise((resolve) => setTimeout(resolve, delayMs));
   }
 }

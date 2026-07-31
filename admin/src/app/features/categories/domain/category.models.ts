@@ -1,5 +1,5 @@
-export interface CategorySummary {
-  id: string;
+export interface CategoryFormData {
+  id?: string;
   name: string;
   slug: string;
   description: string;

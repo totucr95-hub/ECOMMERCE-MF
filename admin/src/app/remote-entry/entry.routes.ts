@@ -35,6 +35,13 @@ export const remoteRoutes: Route[] = [
           ),
       },
       {
+        path: 'customers',
+        loadComponent: () =>
+          import(
+            '../features/customers/pages/customers-page/customers.page'
+          ).then((m) => m.CustomersPage),
+      },
+      {
         path: 'users',
         loadComponent: () =>
           import('../features/users/pages/users-page/users.page').then(

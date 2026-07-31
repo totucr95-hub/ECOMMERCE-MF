@@ -1,0 +1,230 @@
+<section class="admin-page">
+  <header class="admin-page__header">
+    <h1 class="admin-page__title">Clientes</h1>
+    <p class="admin-page__subtitle">
+      Gestion comercial y seguimiento de la base de clientes.
+    </p>
+    <div class="admin-page__top-actions">
+      <button
+        type="button"
+        class="admin-page__button-primary"
+        (click)="openCreateModal()"
+      >
+        + Crear cliente
+      </button>
+    </div>
+    @if (feedbackMessage) {
+    <p class="admin-page__status">{{ feedbackMessage }}</p>
+    }
+  </header>
+
+  <section class="admin-page__surface">
+    <admin-reusable-table
+      [title]="'Relacion de clientes'"
+      [subtitle]="'Segmentacion, ordenes y estado comercial'"
+      [columns]="columns"
+      [rows]="rows"
+      [actions]="tableActions"
+      [onAction]="tableActionHandler"
+      [emptyMessage]="'No hay clientes disponibles.'"
+    ></admin-reusable-table>
+  </section>
+
+  @if (isEditorOpen) {
+  <button
+    type="button"
+    class="admin-page__modal-backdrop"
+    aria-label="Cerrar editor"
+    (click)="closeEditor()"
+  ></button>
+
+  <section
+    class="admin-page__modal"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Editor de cliente"
+  >
+    <header class="admin-page__modal-header">
+      <div>
+        <p class="admin-page__modal-eyebrow">Customers management</p>
+        <h2 class="admin-page__modal-title">
+          {{ selectedCustomerId ? 'Editar cliente' : 'Crear cliente' }}
+        </h2>
+      </div>
+      <button
+        type="button"
+        class="admin-page__modal-close"
+        (click)="closeEditor()"
+      >
+        ×
+      </button>
+    </header>
+
+    <ol class="admin-page__stepper" aria-label="Pasos del formulario">
+      @for (step of editorSteps; track $index) {
+      <li
+        class="admin-page__step"
+        [class.is-active]="$index === editorStep"
+        [class.is-done]="$index < editorStep"
+      >
+        <button type="button" (click)="goToStep($index)">
+          <span>{{ $index + 1 }}</span>
+          <small>{{ step }}</small>
+        </button>
+      </li>
+      }
+    </ol>
+
+    <div class="admin-page__modal-body">
+      @if (editorStep === 0) {
+      <div class="admin-page__form-grid">
+        <label class="admin-control-label">
+          Nombre completo
+          <input
+            class="admin-control-input"
+            [(ngModel)]="formModel.fullName"
+            name="fullName"
+            placeholder="Nombre y apellido"
+          />
+        </label>
+
+        <label class="admin-control-label">
+          Correo
+          <input
+            class="admin-control-input"
+            [(ngModel)]="formModel.email"
+            name="email"
+            type="email"
+            placeholder="cliente@correo.com"
+          />
+        </label>
+
+        <label class="admin-control-label">
+          Telefono
+          <input
+            class="admin-control-input"
+            [(ngModel)]="formModel.phone"
+            name="phone"
+            placeholder="+57 300 123 4567"
+          />
+        </label>
+
+        <label class="admin-control-label">
+          Ciudad
+          <input
+            class="admin-control-input"
+            [(ngModel)]="formModel.city"
+            name="city"
+            placeholder="Bogota"
+          />
+        </label>
+      </div>
+      } @if (editorStep === 1) {
+      <div class="admin-page__form-grid">
+        <label class="admin-control-label">
+          Total pedidos
+          <input
+            class="admin-control-input"
+            [(ngModel)]="formModel.totalOrders"
+            name="totalOrders"
+            type="number"
+            min="0"
+          />
+        </label>
+
+        <label class="admin-control-label">
+          Total comprado
+          <input
+            class="admin-control-input"
+            [(ngModel)]="formModel.totalSpent"
+            name="totalSpent"
+            type="number"
+            min="0"
+          />
+        </label>
+
+        <label class="admin-control-label">
+          Estado
+          <select
+            class="admin-control-select"
+            [(ngModel)]="formModel.status"
+            name="status"
+          >
+            <option value="Activo">Activo</option>
+            <option value="Inactivo">Inactivo</option>
+            <option value="Bloqueado">Bloqueado</option>
+          </select>
+        </label>
+
+        <label class="admin-control-label">
+          Segmento
+          <select
+            class="admin-control-select"
+            [(ngModel)]="formModel.segment"
+            name="segment"
+          >
+            <option value="Nuevo">Nuevo</option>
+            <option value="Frecuente">Frecuente</option>
+            <option value="VIP">VIP</option>
+          </select>
+        </label>
+      </div>
+      } @if (editorStep === 2) {
+      <div class="admin-page__form-grid admin-page__form-grid--single">
+        <label class="admin-control-label">
+          Ultimo pedido
+          <input
+            class="admin-control-input"
+            [(ngModel)]="formModel.lastOrderAt"
+            name="lastOrderAt"
+            type="date"
+          />
+        </label>
+
+        <label class="admin-control-label">
+          Notas
+          <textarea
+            class="admin-control-textarea"
+            [(ngModel)]="formModel.notes"
+            name="notes"
+            rows="3"
+            placeholder="Notas internas del cliente"
+          ></textarea>
+        </label>
+      </div>
+      }
+    </div>
+
+    <footer class="admin-page__modal-actions">
+      <button
+        type="button"
+        class="admin-page__button-ghost"
+        (click)="previousStep()"
+        [disabled]="editorStep === 0 || isSaving"
+      >
+        Anterior
+      </button>
+
+      @if (editorStep < editorSteps.length - 1) {
+      <button
+        type="button"
+        class="admin-page__button-primary"
+        (click)="nextStep()"
+        [disabled]="isSaving"
+      >
+        Siguiente
+      </button>
+      } @else {
+      <button
+        type="button"
+        class="admin-page__button-primary"
+        (click)="submitEditor()"
+        [disabled]="isSaving || isLoading"
+      >
+        {{ selectedCustomerId ? 'Actualizar cliente' : 'Crear cliente' }}
+      </button>
+      }
+    </footer>
+  </section>
+  }
+</section>

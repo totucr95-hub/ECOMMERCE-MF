@@ -8,11 +8,16 @@ import { FormsModule } from '@angular/forms';
 import { AdminCategoriesFacade } from '../../application/facades/admin-categories.facade';
 import { CategoryFormData } from '../../domain/category.models';
 import { CategorySummary } from '../../domain/entities/category-summary.entity';
+import {
+  ReusableTableAction,
+  ReusableTableColumn,
+  ReusableTableComponent,
+} from '../../../../shared/components/reusable-table/reusable-table.component';
 
 @Component({
   selector: 'admin-categories-page',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, ReusableTableComponent],
   templateUrl: './categories.page.html',
   styleUrl: './categories.page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -30,8 +35,34 @@ export class CategoriesPage {
   editorStep = 0;
 
   readonly editorSteps = ['General', 'Contenido', 'Configuracion'];
+  readonly columns: ReusableTableColumn[] = [
+    { key: 'name', header: 'Categoria' },
+    { key: 'slug', header: 'Slug' },
+    { key: 'products', header: 'Productos', align: 'right' },
+    { key: 'featuredLabel', header: 'Destacada', align: 'center' },
+  ];
+  readonly tableActions: ReusableTableAction[] = [
+    { id: 'edit', label: 'Editar' },
+    { id: 'delete', label: 'Eliminar', variant: 'danger' },
+  ];
+  readonly tableActionHandler = (
+    actionId: string,
+    row: Record<string, unknown>,
+  ): void => {
+    this.onTableAction(actionId, row);
+  };
 
   formModel: CategoryFormData = this.createEmptyFormModel();
+
+  get categoryRows(): ReadonlyArray<Record<string, unknown>> {
+    return this.categories.map((category) => ({
+      id: category.id,
+      name: category.name,
+      slug: category.slug,
+      products: category.products,
+      featuredLabel: this.formatFeatured(category),
+    }));
+  }
 
   constructor() {
     void this.refreshCategories();
@@ -183,6 +214,23 @@ export class CategoriesPage {
 
   formatFeatured(category: CategorySummary): string {
     return category.featured ? 'Si' : 'No';
+  }
+
+  onTableAction(actionId: string, row: Record<string, unknown>): void {
+    const categoryId = String(row['id'] ?? '');
+    const category = this.categories.find((item) => item.id === categoryId);
+    if (!category) {
+      return;
+    }
+
+    if (actionId === 'edit') {
+      void this.onEdit(category);
+      return;
+    }
+
+    if (actionId === 'delete') {
+      void this.onDelete(category);
+    }
   }
 
   private createEmptyFormModel(): CategoryFormData {

@@ -22,6 +22,13 @@
                 {{ column.header }}
               </th>
             }
+            @if (hasActions()) {
+              <th
+                class="admin-table__cell admin-table__cell--head admin-table__cell--center"
+              >
+                Acciones
+              </th>
+            }
           </tr>
         </thead>
 
@@ -35,6 +42,24 @@
                   [class.admin-table__cell--right]="column.align === 'right'"
                 >
                   {{ getCellValue(row, column.key) }}
+                </td>
+              }
+              @if (hasActions()) {
+                <td class="admin-table__cell admin-table__cell--center">
+                  <div class="admin-table__actions">
+                    @for (action of actions(); track action.id) {
+                      <button
+                        type="button"
+                        class="admin-table__action-btn"
+                        [class.admin-table__action-btn--danger]="
+                          action.variant === 'danger'
+                        "
+                        (click)="executeAction(action.id, row)"
+                      >
+                        {{ action.label }}
+                      </button>
+                    }
+                  </div>
                 </td>
               }
             </tr>

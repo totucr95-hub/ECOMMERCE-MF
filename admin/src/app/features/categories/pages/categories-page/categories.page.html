@@ -19,54 +19,24 @@
   </header>
 
   <section class="admin-page__surface">
-    <h2 class="admin-page__section-title">Listado de categorias</h2>
-    <p class="admin-page__surface-subtitle">
-      Base para gestion de taxonomia del catalogo.
-    </p>
-
-    <div class="admin-page__table-wrap">
-      <table class="admin-page__table">
-        <thead>
-          <tr>
-            <th>Categoria</th>
-            <th>Slug</th>
-            <th>Productos</th>
-            <th>Destacada</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (category of categories; track trackByCategoryId($index,
-          category)) {
-          <tr>
-            <td>
-              <strong>{{ category.name }}</strong>
-              <small>{{ category.description }}</small>
-            </td>
-            <td>{{ category.slug }}</td>
-            <td>{{ category.products }}</td>
-            <td>{{ formatFeatured(category) }}</td>
-            <td>
-              <div class="admin-page__table-actions">
-                <button type="button" (click)="onEdit(category)">Editar</button>
-                <button
-                  type="button"
-                  class="is-danger"
-                  (click)="onDelete(category)"
-                >
-                  Eliminar
-                </button>
-              </div>
-            </td>
-          </tr>
-          }
-        </tbody>
-      </table>
-    </div>
+    <admin-reusable-table
+      [title]="'Listado de categorias'"
+      [subtitle]="'Base para gestion de taxonomia del catalogo'"
+      [columns]="columns"
+      [rows]="categoryRows"
+      [actions]="tableActions"
+      [onAction]="tableActionHandler"
+      [emptyMessage]="'No hay categorias disponibles.'"
+    ></admin-reusable-table>
   </section>
 
   @if (isEditorOpen) {
-  <div class="admin-page__modal-backdrop" (click)="closeEditor()"></div>
+  <button
+    type="button"
+    class="admin-page__modal-backdrop"
+    aria-label="Cerrar editor"
+    (click)="closeEditor()"
+  ></button>
 
   <section
     class="admin-page__modal"

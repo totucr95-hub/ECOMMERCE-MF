@@ -6,6 +6,12 @@ export interface ReusableTableColumn {
   align?: 'left' | 'center' | 'right';
 }
 
+export interface ReusableTableAction {
+  id: string;
+  label: string;
+  variant?: 'default' | 'danger';
+}
+
 @Component({
   selector: 'admin-reusable-table',
   standalone: true,
@@ -19,6 +25,23 @@ export class ReusableTableComponent {
   readonly columns = input.required<ReadonlyArray<ReusableTableColumn>>();
   readonly rows = input<ReadonlyArray<Record<string, unknown>>>([]);
   readonly emptyMessage = input<string>('No hay datos para mostrar.');
+  readonly actions = input<ReadonlyArray<ReusableTableAction>>([]);
+  readonly onAction = input<
+    ((actionId: string, row: Record<string, unknown>) => void) | null
+  >(null);
+
+  hasActions(): boolean {
+    return this.actions().length > 0;
+  }
+
+  executeAction(actionId: string, row: Record<string, unknown>): void {
+    const callback = this.onAction();
+    if (!callback) {
+      return;
+    }
+
+    callback(actionId, row);
+  }
 
   getCellValue(row: Record<string, unknown>, key: string): string {
     const value = row[key];

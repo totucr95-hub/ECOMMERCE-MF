@@ -1,0 +1,26 @@
+export interface AdminNavigationItem {
+  label: string;
+  path: string;
+  icon: string;
+  exact?: boolean;
+}
+
+export interface AdminQuickStat {
+  label: string;
+  value: string;
+}
+
+export const ADMIN_NAVIGATION_ITEMS: AdminNavigationItem[] = [
+  { label: 'Dashboard', path: '/admin', exact: true, icon: '⌂' },
+  { label: 'Productos', path: '/admin/products', icon: '▦' },
+  { label: 'Categorias', path: '/admin/categories', icon: '◫' },
+  { label: 'Pedidos', path: '/admin/orders', icon: '◔' },
+  { label: 'Usuarios', path: '/admin/users', icon: '◉' },
+  { label: 'Configuracion', path: '/admin/settings', icon: '⚙' },
+];
+
+export const ADMIN_QUICK_STATS: AdminQuickStat[] = [
+  { label: 'Ventas', value: '$24.8k' },
+  { label: 'Pedidos', value: '1,248' },
+  { label: 'Activos', value: '98%' },
+];

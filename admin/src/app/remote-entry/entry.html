@@ -1,0 +1,141 @@
+<div class="admin-shell">
+  <header class="admin-shell__header">
+    <div class="admin-shell__brand">
+      <button
+        type="button"
+        class="admin-shell__menu-button"
+        (click)="toggleSidebar()"
+        [attr.aria-expanded]="isSidebarOpen"
+        aria-label="Abrir navegación principal"
+      >
+        <span class="admin-shell__menu-icon" aria-hidden="true"></span>
+      </button>
+
+      <div class="admin-shell__brand-mark" aria-hidden="true">L</div>
+
+      <div class="admin-shell__brand-copy">
+        <span class="admin-shell__eyebrow">Backoffice</span>
+        <strong class="admin-shell__title">LifeOS Admin</strong>
+      </div>
+    </div>
+
+    <label class="admin-shell__search">
+      <span class="admin-shell__search-icon" aria-hidden="true">⌕</span>
+      <input
+        type="search"
+        placeholder="Buscar pedidos, usuarios o productos"
+        aria-label="Buscar en admin"
+      />
+    </label>
+
+    <div class="admin-shell__header-actions">
+      <button type="button" class="admin-shell__icon-btn" aria-label="Mensajes">
+        ✉
+      </button>
+      <button
+        type="button"
+        class="admin-shell__icon-btn"
+        aria-label="Notificaciones"
+      >
+        ◔
+      </button>
+      <button
+        type="button"
+        class="admin-shell__profile"
+        aria-label="Abrir perfil"
+      >
+        <span class="admin-shell__avatar">RA</span>
+        <span class="admin-shell__profile-copy">
+          <strong>Raiser PC</strong>
+          <small>Administrador</small>
+        </span>
+        <span class="admin-shell__profile-caret" aria-hidden="true">⌄</span>
+      </button>
+    </div>
+  </header>
+
+  <div class="admin-shell__workspace">
+    <aside
+      class="admin-shell__sidebar"
+      [class.admin-shell__sidebar--open]="isSidebarOpen"
+    >
+      <div class="admin-shell__sidebar-header">
+        <div class="admin-shell__sidebar-brand">
+          <span class="admin-shell__sidebar-brand-mark" aria-hidden="true"
+            >L</span
+          >
+          <div>
+            <span class="admin-shell__eyebrow">Navigation</span>
+            <strong class="admin-shell__sidebar-title">Menu principal</strong>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          class="admin-shell__close-button"
+          (click)="closeSidebar()"
+          aria-label="Cerrar navegación"
+        >
+          ✕
+        </button>
+      </div>
+
+      <nav class="admin-shell__nav">
+        @for (item of navigationItems; track item.path) {
+        <a
+          [routerLink]="item.path"
+          routerLinkActive="is-active"
+          [routerLinkActiveOptions]="item.exact ? { exact: true } : { exact: false }"
+          (click)="closeSidebar()"
+          class="admin-shell__nav-item"
+        >
+          <span class="admin-shell__nav-icon" aria-hidden="true"
+            >{{ item.icon }}</span
+          >
+          <span class="admin-shell__nav-label">{{ item.label }}</span>
+        </a>
+        }
+      </nav>
+
+      <section class="admin-shell__sidebar-card">
+        <span class="admin-shell__sidebar-card-label">Acceso rapido</span>
+        <strong>Gestión centralizada</strong>
+        <p>Una estructura clara para operar módulos sin perder contexto.</p>
+      </section>
+    </aside>
+
+    <main class="admin-shell__content">
+      <section class="admin-shell__hero">
+        <div>
+          <span class="admin-shell__eyebrow">Overview</span>
+          <h1 class="admin-shell__hero-title">Panel administrativo</h1>
+          <p class="admin-shell__hero-text">
+            Navega entre módulos desde un layout consistente, rápido y
+            responsive.
+          </p>
+        </div>
+
+        <div class="admin-shell__stats">
+          @for (stat of quickStats; track stat.label) {
+          <article class="admin-shell__stat">
+            <span>{{ stat.label }}</span>
+            <strong>{{ stat.value }}</strong>
+          </article>
+          }
+        </div>
+      </section>
+
+      <section class="admin-shell__router-surface">
+        <router-outlet></router-outlet>
+      </section>
+    </main>
+  </div>
+
+  <button
+    type="button"
+    class="admin-shell__backdrop"
+    [class.admin-shell__backdrop--visible]="isSidebarOpen"
+    (click)="closeSidebar()"
+    aria-label="Cerrar menu"
+  ></button>
+</div>

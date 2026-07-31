@@ -1,20 +1,29 @@
 <table class="product-table">
-	<thead>
-		<tr>
-			<th>Nombre</th>
-			<th>Precio</th>
-			<th>Stock</th>
-			<th>Categoria</th>
-		</tr>
-	</thead>
-	<tbody>
-		@for (product of products; track product.id) {
-			<tr>
-				<td>{{ product.name }}</td>
-				<td>${{ product.price }}</td>
-				<td>{{ product.stock }}</td>
-				<td>{{ product.categoryId }}</td>
-			</tr>
-		}
-	</tbody>
+  <thead>
+    <tr>
+      <th>Nombre</th>
+      <th>Precio</th>
+      <th>Stock</th>
+      <th>Categoria</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    @for (product of products; track product.id) {
+    <tr>
+      <td>{{ product.name }}</td>
+      <td>${{ product.price }}</td>
+      <td>{{ product.stock }}</td>
+      <td>{{ product.categoryId }}</td>
+      <td>
+        <div class="product-table__actions">
+          <button type="button" (click)="onEdit(product)">Editar</button>
+          <button type="button" class="danger" (click)="onRemove(product)">
+            Eliminar
+          </button>
+        </div>
+      </td>
+    </tr>
+    }
+  </tbody>
 </table>

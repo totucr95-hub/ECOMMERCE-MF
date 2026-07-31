@@ -1,18 +1,41 @@
 .product-table {
-	width: 100%;
-	border-collapse: collapse;
-	border: 1px solid #e2e8f0;
-	border-radius: 12px;
-	overflow: hidden;
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  overflow: hidden;
 }
 
 th,
 td {
-	padding: 0.7rem;
-	text-align: left;
-	border-bottom: 1px solid #e2e8f0;
+  padding: 0.7rem;
+  text-align: left;
+  border-bottom: 1px solid #e2e8f0;
 }
 
 thead {
-	background: #f8fafc;
+  background: #f8fafc;
+}
+
+.product-table__actions {
+  display: flex;
+  gap: 0.45rem;
+}
+
+button {
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 0.35rem 0.55rem;
+  cursor: pointer;
+  font-size: 0.78rem;
+}
+
+button:hover {
+  background: #f8fafc;
+}
+
+button.danger {
+  border-color: #fecaca;
+  color: #b91c1c;
 }

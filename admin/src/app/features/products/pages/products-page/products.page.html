@@ -4,11 +4,27 @@
     <p class="admin-page__subtitle">
       Integracion del catalogo usando las librerias de producto del monorepo.
     </p>
+    <div class="admin-page__top-actions">
+      <button
+        type="button"
+        class="admin-page__button-primary"
+        (click)="openCreateModal()"
+      >
+        + Crear producto
+      </button>
+    </div>
+    @if (feedbackMessage) {
+    <p class="admin-page__status">{{ feedbackMessage }}</p>
+    }
   </header>
 
   <section class="admin-page__surface">
     <h2 class="admin-page__section-title">Inventario</h2>
-    <lib-products-ui-product-table [products]="products" />
+    <lib-products-ui-product-table
+      [products]="products"
+      (edit)="onEdit($event)"
+      (remove)="onDelete($event)"
+    />
   </section>
 
   <section class="admin-page__surface">
@@ -28,4 +44,282 @@
     <p class="admin-page__empty">No hay productos destacados disponibles.</p>
     }
   </section>
+
+  @if (isEditorOpen) {
+  <div class="admin-page__modal-backdrop" (click)="closeEditor()"></div>
+
+  <section
+    class="admin-page__modal"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Editor de producto"
+  >
+    <header class="admin-page__modal-header">
+      <div>
+        <p class="admin-page__modal-eyebrow">Catalogo admin</p>
+        <h2 class="admin-page__modal-title">
+          {{ selectedProductId ? 'Editar producto' : 'Crear producto' }}
+        </h2>
+      </div>
+      <button
+        type="button"
+        class="admin-page__modal-close"
+        (click)="closeEditor()"
+      >
+        ×
+      </button>
+    </header>
+
+    <ol class="admin-page__stepper" aria-label="Pasos del formulario">
+      @for (step of editorSteps; track $index) {
+      <li
+        class="admin-page__step"
+        [class.is-active]="$index === editorStep"
+        [class.is-done]="$index < editorStep"
+      >
+        <button type="button" (click)="goToStep($index)">
+          <span>{{ $index + 1 }}</span>
+          <small>{{ step }}</small>
+        </button>
+      </li>
+      }
+    </ol>
+
+    <div class="admin-page__modal-body">
+      @if (editorStep === 0) {
+      <div class="admin-page__form-grid">
+        <label class="admin-control-label">
+          Nombre
+          <input
+            class="admin-control-input"
+            [(ngModel)]="formModel.name"
+            name="name"
+            placeholder="Nombre"
+          />
+        </label>
+
+        <label class="admin-control-label">
+          Nombre corto
+          <input
+            class="admin-control-input"
+            [(ngModel)]="formModel.shortName"
+            name="shortName"
+            placeholder="Alias"
+          />
+        </label>
+
+        <label class="admin-control-label">
+          SKU
+          <input
+            class="admin-control-input"
+            [(ngModel)]="formModel.sku"
+            name="sku"
+            placeholder="SKU-001"
+          />
+        </label>
+
+        <label class="admin-control-label">
+          Slug
+          <input
+            class="admin-control-input"
+            [(ngModel)]="formModel.slug"
+            name="slug"
+            placeholder="slug-producto"
+          />
+        </label>
+
+        <label class="admin-control-label">
+          Marca
+          <input
+            class="admin-control-input"
+            [(ngModel)]="formModel.brand"
+            name="brand"
+            placeholder="Marca"
+          />
+        </label>
+
+        <label class="admin-control-label">
+          Categoria
+          <input
+            class="admin-control-input"
+            [(ngModel)]="formModel.categoryId"
+            name="categoryId"
+            placeholder="cat-electronics"
+          />
+        </label>
+      </div>
+      } @if (editorStep === 1) {
+      <div class="admin-page__form-grid">
+        <label class="admin-control-label">
+          Precio
+          <input
+            class="admin-control-input"
+            [(ngModel)]="formModel.price"
+            name="price"
+            type="number"
+            min="0"
+          />
+        </label>
+
+        <label class="admin-control-label">
+          Precio oferta
+          <input
+            class="admin-control-input"
+            [(ngModel)]="formModel.offerPrice"
+            name="offerPrice"
+            type="number"
+            min="0"
+          />
+        </label>
+
+        <label class="admin-control-label">
+          Costo
+          <input
+            class="admin-control-input"
+            [(ngModel)]="formModel.cost"
+            name="cost"
+            type="number"
+            min="0"
+          />
+        </label>
+
+        <label class="admin-control-label">
+          Stock
+          <input
+            class="admin-control-input"
+            [(ngModel)]="formModel.stock"
+            name="stock"
+            type="number"
+            min="0"
+          />
+        </label>
+
+        <label class="admin-control-label">
+          Stock minimo
+          <input
+            class="admin-control-input"
+            [(ngModel)]="formModel.minStock"
+            name="minStock"
+            type="number"
+            min="0"
+          />
+        </label>
+
+        <label class="admin-control-label">
+          Bodega
+          <input
+            class="admin-control-input"
+            [(ngModel)]="formModel.warehouse"
+            name="warehouse"
+            placeholder="Bogota Centro"
+          />
+        </label>
+      </div>
+      } @if (editorStep === 2) {
+      <div class="admin-page__form-grid admin-page__form-grid--single">
+        <label class="admin-control-label">
+          Descripcion corta
+          <textarea
+            class="admin-control-textarea"
+            [(ngModel)]="formModel.shortDescription"
+            name="shortDescription"
+            rows="2"
+            placeholder="Resumen comercial"
+          ></textarea>
+        </label>
+
+        <label class="admin-control-label">
+          Descripcion completa
+          <textarea
+            class="admin-control-textarea"
+            [(ngModel)]="formModel.fullDescription"
+            name="fullDescription"
+            rows="4"
+            placeholder="Detalle del producto"
+          ></textarea>
+        </label>
+
+        <label class="admin-control-label">
+          URL imagen principal
+          <input
+            class="admin-control-input"
+            [(ngModel)]="imageUrl"
+            name="imageUrl"
+            placeholder="https://cdn.example.com/producto.jpg"
+          />
+        </label>
+      </div>
+      } @if (editorStep === 3) {
+      <div class="admin-page__publish-grid">
+        <label class="admin-control-checkbox">
+          <input
+            [(ngModel)]="formModel.featured"
+            name="featured"
+            type="checkbox"
+          />
+          Destacar en cards
+        </label>
+
+        <label class="admin-control-checkbox">
+          <input
+            [(ngModel)]="formModel.showOnHome"
+            name="showOnHome"
+            type="checkbox"
+          />
+          Mostrar en home
+        </label>
+
+        <label class="admin-control-checkbox">
+          <input
+            [(ngModel)]="formModel.allowReviews"
+            name="allowReviews"
+            type="checkbox"
+          />
+          Permitir reviews
+        </label>
+
+        <label class="admin-control-checkbox">
+          <input
+            [(ngModel)]="formModel.allowReturns"
+            name="allowReturns"
+            type="checkbox"
+          />
+          Permitir devoluciones
+        </label>
+      </div>
+      }
+    </div>
+
+    <footer class="admin-page__modal-actions">
+      <button
+        type="button"
+        class="admin-page__button-ghost"
+        (click)="previousStep()"
+        [disabled]="editorStep === 0 || isSaving"
+      >
+        Anterior
+      </button>
+
+      @if (editorStep < editorSteps.length - 1) {
+      <button
+        type="button"
+        class="admin-page__button-primary"
+        (click)="nextStep()"
+        [disabled]="isSaving"
+      >
+        Siguiente
+      </button>
+      } @else {
+      <button
+        type="button"
+        class="admin-page__button-primary"
+        (click)="submitEditor()"
+        [disabled]="isSaving || isLoading"
+      >
+        {{ selectedProductId ? 'Actualizar producto' : 'Crear producto' }}
+      </button>
+      }
+    </footer>
+  </section>
+  }
 </section>

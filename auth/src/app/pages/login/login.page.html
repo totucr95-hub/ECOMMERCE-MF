@@ -1,0 +1,43 @@
+<article class="auth-card">
+  <h1 class="auth-card__title">Login</h1>
+  <p class="auth-card__subtitle">
+    Ingresa para acceder al panel administrativo.
+  </p>
+
+  <form class="auth-form" (ngSubmit)="submit()">
+    <label class="auth-form__field" for="email">
+      <span>Email</span>
+      <input
+        id="email"
+        [(ngModel)]="email"
+        name="email"
+        type="email"
+        required
+        autocomplete="username"
+      />
+    </label>
+
+    <label class="auth-form__field" for="password">
+      <span>Password</span>
+      <input
+        id="password"
+        [(ngModel)]="password"
+        name="password"
+        type="password"
+        required
+        autocomplete="current-password"
+      />
+    </label>
+
+    <button class="auth-form__submit" type="submit">Ingresar</button>
+  </form>
+
+  @if (errorMessage) {
+  <p class="auth-card__error">{{ errorMessage }}</p>
+  }
+
+  <div class="auth-card__links">
+    <a routerLink="/auth/register">Crear cuenta</a>
+    <a routerLink="/auth/forgot-password">Recuperar password</a>
+  </div>
+</article>

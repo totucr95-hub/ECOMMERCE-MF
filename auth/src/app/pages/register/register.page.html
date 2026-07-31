@@ -1,0 +1,30 @@
+<article class="auth-card">
+  <h1 class="auth-card__title">Crear cuenta</h1>
+  <p class="auth-card__subtitle">
+    Registra tu usuario para administrar tu tienda.
+  </p>
+
+  <form class="auth-form">
+    <label class="auth-form__field" for="name">
+      <span>Nombre</span>
+      <input id="name" name="name" type="text" />
+    </label>
+
+    <label class="auth-form__field" for="email">
+      <span>Email</span>
+      <input id="email" name="email" type="email" />
+    </label>
+
+    <label class="auth-form__field" for="password">
+      <span>Password</span>
+      <input id="password" type="password" name="password" />
+    </label>
+
+    <button class="auth-form__submit" type="button">Crear cuenta</button>
+  </form>
+
+  <div class="auth-card__links">
+    <a routerLink="/auth/login">Ya tengo cuenta</a>
+    <a routerLink="/auth/forgot-password">Olvidé mi password</a>
+  </div>
+</article>

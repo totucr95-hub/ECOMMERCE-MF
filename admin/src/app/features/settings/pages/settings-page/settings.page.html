@@ -1,0 +1,15 @@
+<section class="admin-page">
+  <header class="admin-page__header">
+    <h1 class="admin-page__title">Configuracion</h1>
+    <p class="admin-page__subtitle">
+      Parametros operativos del modulo administrativo.
+    </p>
+  </header>
+
+  <admin-reusable-table
+    [title]="'Configuraciones activas'"
+    [subtitle]="'Resumen de parametros y ultima actualizacion'"
+    [columns]="columns"
+    [rows]="rows"
+  />
+</section>

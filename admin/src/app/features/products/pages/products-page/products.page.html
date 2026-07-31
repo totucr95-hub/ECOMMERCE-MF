@@ -1,0 +1,31 @@
+<section class="admin-page">
+  <header class="admin-page__header">
+    <h1 class="admin-page__title">Productos</h1>
+    <p class="admin-page__subtitle">
+      Integracion del catalogo usando las librerias de producto del monorepo.
+    </p>
+  </header>
+
+  <section class="admin-page__surface">
+    <h2 class="admin-page__section-title">Inventario</h2>
+    <lib-products-ui-product-table [products]="products" />
+  </section>
+
+  <section class="admin-page__surface">
+    <h2 class="admin-page__section-title">Destacados</h2>
+
+    @if (featuredProducts.length > 0) {
+    <div class="admin-page__cards">
+      @for (product of featuredProducts; track product.id) {
+      <lib-products-ui-product-card
+        [product]="product"
+        (buy)="onBuy($event)"
+        (favorite)="onFavorite($event)"
+      />
+      }
+    </div>
+    } @else {
+    <p class="admin-page__empty">No hay productos destacados disponibles.</p>
+    }
+  </section>
+</section>

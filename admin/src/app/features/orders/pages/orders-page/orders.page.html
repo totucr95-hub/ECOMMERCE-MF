@@ -1,0 +1,15 @@
+<section class="admin-page">
+  <header class="admin-page__header">
+    <h1 class="admin-page__title">Pedidos</h1>
+    <p class="admin-page__subtitle">
+      Seguimiento operacional del ciclo completo de compra.
+    </p>
+  </header>
+
+  <admin-reusable-table
+    [title]="'Flujo de pedidos'"
+    [subtitle]="'Control de estado y montos por transaccion'"
+    [columns]="columns"
+    [rows]="rows"
+  />
+</section>

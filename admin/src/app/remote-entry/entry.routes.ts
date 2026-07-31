@@ -9,38 +9,44 @@ export const remoteRoutes: Route[] = [
       {
         path: '',
         loadComponent: () =>
-          import('../pages/dashboard/dashboard.page').then(
-            (m) => m.DashboardPage,
-          ),
+          import(
+            '../features/dashboard/pages/dashboard-page/dashboard.page'
+          ).then((m) => m.DashboardPage),
       },
       {
         path: 'products',
         loadComponent: () =>
-          import('../pages/products/products.page').then(
+          import('../features/products/pages/products-page/products.page').then(
             (m) => m.AdminProductsPage,
           ),
       },
       {
         path: 'categories',
         loadComponent: () =>
-          import('../pages/categories/categories.page').then(
-            (m) => m.CategoriesPage,
-          ),
+          import(
+            '../features/categories/pages/categories-page/categories.page'
+          ).then((m) => m.CategoriesPage),
       },
       {
         path: 'orders',
         loadComponent: () =>
-          import('../pages/orders/orders.page').then((m) => m.OrdersPage),
+          import('../features/orders/pages/orders-page/orders.page').then(
+            (m) => m.OrdersPage,
+          ),
       },
       {
         path: 'users',
         loadComponent: () =>
-          import('../pages/users/users.page').then((m) => m.UsersPage),
+          import('../features/users/pages/users-page/users.page').then(
+            (m) => m.UsersPage,
+          ),
       },
       {
         path: 'settings',
         loadComponent: () =>
-          import('../pages/settings/settings.page').then((m) => m.SettingsPage),
+          import('../features/settings/pages/settings-page/settings.page').then(
+            (m) => m.SettingsPage,
+          ),
       },
     ],
   },

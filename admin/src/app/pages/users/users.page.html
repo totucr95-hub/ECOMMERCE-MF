@@ -1,0 +1,15 @@
+<section class="admin-page">
+  <header class="admin-page__header">
+    <h1 class="admin-page__title">Usuarios</h1>
+    <p class="admin-page__subtitle">
+      Control de accesos y salud de cuentas del equipo.
+    </p>
+  </header>
+
+  <admin-reusable-table
+    [title]="'Usuarios del sistema'"
+    [subtitle]="'Roles y estados operativos de la plataforma'"
+    [columns]="columns"
+    [rows]="rows"
+  />
+</section>

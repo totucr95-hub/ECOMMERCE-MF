@@ -1,0 +1,78 @@
+.admin-table-card {
+  display: grid;
+  gap: 0.8rem;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &__title {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #0f172a;
+  }
+
+  &__subtitle {
+    margin: 0.35rem 0 0;
+    color: #64748b;
+    font-size: 0.88rem;
+  }
+
+  &__surface {
+    overflow-x: auto;
+    border: 1px solid #dbe7f1;
+    border-radius: 16px;
+    background: #ffffff;
+  }
+
+  &__empty {
+    margin: 0;
+    padding: 1rem;
+    color: #64748b;
+    font-size: 0.9rem;
+  }
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  &__head {
+    background: linear-gradient(90deg, #f8fbff 0%, #f2f9ff 100%);
+  }
+
+  &__row {
+    border-top: 1px solid #edf2f7;
+
+    &:hover {
+      background: #f8fcff;
+    }
+  }
+
+  &__cell {
+    padding: 0.78rem 0.9rem;
+    text-align: left;
+    font-size: 0.9rem;
+    color: #1e293b;
+    white-space: nowrap;
+
+    &--head {
+      font-size: 0.82rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #475569;
+      font-weight: 700;
+    }
+
+    &--center {
+      text-align: center;
+    }
+
+    &--right {
+      text-align: right;
+    }
+  }
+}

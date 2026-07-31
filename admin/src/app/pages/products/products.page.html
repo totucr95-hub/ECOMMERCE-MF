@@ -1,0 +1,16 @@
+<section class="admin-page">
+  <header class="admin-page__header">
+    <h1 class="admin-page__title">Productos</h1>
+    <p class="admin-page__subtitle">
+      Catálogo central con stock y precio por categoría.
+    </p>
+  </header>
+
+  <admin-reusable-table
+    [title]="'Inventario de productos'"
+    [subtitle]="'Datos cargados desde ProductStore'"
+    [columns]="columns"
+    [rows]="rows"
+    [emptyMessage]="'No hay productos disponibles en este momento.'"
+  />
+</section>

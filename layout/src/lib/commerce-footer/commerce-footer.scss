@@ -1,0 +1,73 @@
+:host {
+  display: block;
+}
+
+.commerce-footer {
+  margin-top: 4rem;
+  padding: 3rem 1rem;
+  background: #2d2f34;
+  color: #e2e8f0;
+
+  &__inner {
+    display: flex;
+    justify-content: space-between;
+    gap: 2rem;
+    max-width: 1160px;
+    margin: 0 auto;
+  }
+
+  &__brand {
+    display: flex;
+    gap: 1rem;
+    max-width: 560px;
+  }
+
+  &__description {
+    margin: 0.6rem 0 0;
+    color: #cbd5e1;
+    font-size: 0.92rem;
+    line-height: 1.5;
+  }
+
+  &__logo {
+    display: grid;
+    flex: 0 0 44px;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 999px;
+    background: #0d9d3e;
+    color: #fff;
+    font-weight: 700;
+  }
+
+  &__menu {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: start;
+    gap: 1rem;
+  }
+
+  &__menu-link {
+    color: #f1f5f9;
+    font-size: 0.76rem;
+    letter-spacing: 0.08em;
+    text-decoration: none;
+    text-transform: uppercase;
+
+    &:hover {
+      color: #fff;
+    }
+
+    &:focus-visible {
+      outline: 3px solid rgba(23, 189, 85, 0.4);
+      outline-offset: 4px;
+    }
+  }
+}
+
+@media (max-width: 920px) {
+  .commerce-footer__inner {
+    flex-direction: column;
+  }
+}

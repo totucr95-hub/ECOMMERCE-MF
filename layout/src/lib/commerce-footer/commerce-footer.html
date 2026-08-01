@@ -1,0 +1,42 @@
+<footer class="commerce-footer">
+  <div class="commerce-footer__inner">
+    <div class="commerce-footer__brand">
+      <div class="commerce-footer__logo" aria-hidden="true">pm</div>
+      <div>
+        <strong>polymadera</strong>
+        <p class="commerce-footer__description">
+          Polymadera - SR Chile, distribuidor de lineas de madera plastica, un
+          producto sostenible fabricado con plasticos reciclados y tecnologia
+          especializada.
+        </p>
+      </div>
+    </div>
+
+    <nav class="commerce-footer__menu" aria-label="Navegacion secundaria">
+      <a
+        class="commerce-footer__menu-link"
+        routerLink="/landing"
+        fragment="inicio"
+        >Inicio</a
+      >
+      <a
+        class="commerce-footer__menu-link"
+        routerLink="/landing"
+        fragment="madera"
+        >Madera plastica</a
+      >
+      <a
+        class="commerce-footer__menu-link"
+        [routerLink]="productsRoute()"
+        [fragment]="productsFragment()"
+        >Productos</a
+      >
+      <a
+        class="commerce-footer__menu-link"
+        routerLink="/landing"
+        fragment="contacto"
+        >Contacto</a
+      >
+    </nav>
+  </div>
+</footer>

@@ -1,57 +1,26 @@
 <div class="landing">
-  <header class="landing-header" [class.landing-header--scrolled]="isScrolled">
-    <div class="landing-header__inner">
-      <a class="landing-header__brand" href="#inicio" (click)="onMenuClick($event, 'inicio')">
-        <span class="landing-header__brand-mark">pm</span>
-        <span class="landing-header__brand-text">
-          <strong>polymadera</strong>
-          <small>sr chile</small>
-        </span>
-      </a>
-
-      <nav class="landing-header__menu">
-        <a class="landing-header__menu-link" href="#inicio" (click)="onMenuClick($event, 'inicio')">Inicio</a>
-        <a class="landing-header__menu-link" href="#madera" (click)="onMenuClick($event, 'madera')">Madera plastica</a>
-        <a class="landing-header__menu-link" href="#productos" (click)="onMenuClick($event, 'productos')">Productos</a>
-      </nav>
-
-      <a class="landing-header__cta" href="#contacto" (click)="onMenuClick($event, 'contacto')">Contacto</a>
-    </div>
-  </header>
+  <lib-commerce-header [transparentAtTop]="true" />
 
   <app-hero-section></app-hero-section>
   <app-benefits-section></app-benefits-section>
-  <app-featured-section [featuredProducts]="featuredProducts"></app-featured-section>
+  <app-featured-section
+    [featuredProducts]="featuredProducts"
+  ></app-featured-section>
   <app-contact-section></app-contact-section>
 
-  <footer class="landing-footer">
-    <div class="landing-footer__inner">
-      <div class="landing-footer__brand">
-        <div class="landing-footer__logo">pm</div>
-        <div>
-          <strong>polymadera</strong>
-          <p class="landing-footer__description">
-            Polymadera - SR Chile, distribuidor de lineas de madera plastica, un producto sostenible
-            fabricado con plasticos reciclados y tecnologia especializada.
-          </p>
-        </div>
-      </div>
-
-      <nav class="landing-footer__menu">
-        <a class="landing-footer__menu-link" href="#inicio" (click)="onMenuClick($event, 'inicio')">Inicio</a>
-        <a class="landing-footer__menu-link" href="#madera" (click)="onMenuClick($event, 'madera')">Madera plastica</a>
-        <a class="landing-footer__menu-link" href="#productos" (click)="onMenuClick($event, 'productos')">Productos</a>
-        <a class="landing-footer__menu-link" href="#contacto" (click)="onMenuClick($event, 'contacto')">Contacto</a>
-      </nav>
-    </div>
-  </footer>
+  <lib-commerce-footer />
 
   @if (showLocalLoader && loading.isLoading()) {
-    <div class="landing-loader" role="status" aria-live="polite" aria-label="Cargando contenido">
-      <div class="landing-loader__panel">
-        <span class="landing-loader__spinner" aria-hidden="true"></span>
-        <p>Cargando...</p>
-      </div>
+  <div
+    class="landing-loader"
+    role="status"
+    aria-live="polite"
+    aria-label="Cargando contenido"
+  >
+    <div class="landing-loader__panel">
+      <span class="landing-loader__spinner" aria-hidden="true"></span>
+      <p>Cargando...</p>
     </div>
+  </div>
   }
 </div>

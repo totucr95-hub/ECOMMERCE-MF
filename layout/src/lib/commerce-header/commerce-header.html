@@ -1,0 +1,57 @@
+<header
+  class="commerce-header"
+  [class.commerce-header--transparent]="transparentAtTop() && !isScrolled"
+>
+  <div class="commerce-header__inner">
+    <a
+      class="commerce-header__brand"
+      routerLink="/landing"
+      fragment="inicio"
+      aria-label="Polymadera, ir al inicio"
+    >
+      <span class="commerce-header__brand-mark" aria-hidden="true">pm</span>
+      <span class="commerce-header__brand-text">
+        <strong>polymadera</strong>
+        <small>sr chile</small>
+      </span>
+    </a>
+
+    <nav class="commerce-header__menu" aria-label="Navegacion principal">
+      <a
+        class="commerce-header__menu-link"
+        [class.is-active]="activeItem() === 'home'"
+        routerLink="/landing"
+        fragment="inicio"
+        >Inicio</a
+      >
+      <a
+        class="commerce-header__menu-link"
+        [class.is-active]="activeItem() === 'wood'"
+        routerLink="/landing"
+        fragment="madera"
+        >Madera plastica</a
+      >
+      <a
+        class="commerce-header__menu-link"
+        [class.is-active]="activeItem() === 'products'"
+        routerLink="/landing"
+        fragment="productos"
+        >Productos</a
+      >
+      <a
+        class="commerce-header__menu-link"
+        [class.is-active]="activeItem() === 'catalog'"
+        routerLink="/shop"
+        >Catalogo</a
+      >
+    </nav>
+
+    <a
+      class="commerce-header__cta"
+      [class.is-active]="activeItem() === 'contact'"
+      routerLink="/landing"
+      fragment="contacto"
+      >Contacto</a
+    >
+  </div>
+</header>

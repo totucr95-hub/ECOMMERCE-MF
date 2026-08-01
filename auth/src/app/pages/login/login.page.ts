@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthStore } from '@ecommerce-mf/shared-core';
-import { User } from '@ecommerce-mf/shared-models';
 
 @Component({
   selector: 'app-auth-login-page',
@@ -20,7 +19,7 @@ export class LoginPage {
   private readonly authStore = inject(AuthStore);
   private readonly router = inject(Router);
 
-  submit(): void {
+  async submit(): Promise<void> {
     this.errorMessage = '';
     const user = this.authStore.login(this.email.trim().toLowerCase());
 
@@ -30,16 +29,17 @@ export class LoginPage {
       return;
     }
 
-    if (this.isAdmin(user)) {
-      void this.router.navigate(['/admin']);
+    const isRunningInsideShell = this.router.config.some(
+      (route) => route.path === 'landing',
+    );
+
+    if (isRunningInsideShell) {
+      await this.router.navigateByUrl('/admin');
       return;
     }
 
-    this.errorMessage = 'Tu usuario no tiene acceso al modulo admin.';
-    void this.router.navigate(['/403']);
-  }
-
-  private isAdmin(user: User): boolean {
-    return user.role.name === 'admin';
+    window.location.assign(
+      `${window.location.protocol}//${window.location.hostname}:4200/admin`,
+    );
   }
 }

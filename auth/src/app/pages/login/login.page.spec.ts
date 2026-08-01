@@ -5,17 +5,23 @@ import { AuthStore } from '@ecommerce-mf/shared-core';
 import { LoginPage } from './login.page';
 
 describe('LoginPage', () => {
-  const navigate = jest.fn();
+  const navigateByUrl = jest.fn();
   const login = jest.fn();
 
   beforeEach(async () => {
-    navigate.mockReset();
+    navigateByUrl.mockReset();
     login.mockReset();
 
     await TestBed.configureTestingModule({
       imports: [LoginPage],
       providers: [
-        { provide: Router, useValue: { navigate } },
+        {
+          provide: Router,
+          useValue: {
+            config: [{ path: 'landing' }],
+            navigateByUrl,
+          },
+        },
         { provide: AuthStore, useValue: { login } },
       ],
     }).compileComponents();
@@ -26,14 +32,16 @@ describe('LoginPage', () => {
     expect(fixture.componentInstance).toBeTruthy();
   });
 
-  it('navigates to admin for admin user', () => {
+  it('navigates to admin for a valid user', async () => {
     const fixture = TestBed.createComponent(LoginPage);
     const component = fixture.componentInstance;
 
     login.mockReturnValue({ role: { name: 'admin' } } as User);
-    component.submit();
+    navigateByUrl.mockResolvedValue(true);
 
-    expect(navigate).toHaveBeenCalledWith(['/admin']);
+    await component.submit();
+
+    expect(navigateByUrl).toHaveBeenCalledWith('/admin');
   });
 
   it('shows error for invalid credentials', () => {
@@ -41,7 +49,7 @@ describe('LoginPage', () => {
     const component = fixture.componentInstance;
 
     login.mockReturnValue(null);
-    component.submit();
+    void component.submit();
 
     expect(component.errorMessage).toContain('Credenciales invalidas');
   });

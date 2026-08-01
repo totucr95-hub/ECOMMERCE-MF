@@ -1,5 +1,12 @@
-import { Injectable, computed, signal } from '@angular/core';
-import { Cart, Category, Order, Payment, Product, User } from '@ecommerce-mf/shared-models';
+import { Injectable, computed, inject, signal } from '@angular/core';
+import {
+  Cart,
+  Category,
+  Order,
+  Payment,
+  Product,
+  User,
+} from '@ecommerce-mf/shared-models';
 import productsMock from './mocks/products.json';
 import categoriesMock from './mocks/categories.json';
 import usersMock from './mocks/users.json';
@@ -62,7 +69,7 @@ export class LoadingService {
 export class ThemeService {
   private readonly storage = new StorageService();
   private readonly modeSignal = signal<'light' | 'dark'>(
-    this.storage.get<'light' | 'dark'>('theme.mode', 'light')
+    this.storage.get<'light' | 'dark'>('theme.mode', 'light'),
   );
 
   readonly mode = computed(() => this.modeSignal());
@@ -103,7 +110,9 @@ export class ProductService {
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly storage = new StorageService();
-  private readonly authUser = signal<User | null>(this.storage.get<User | null>('auth.user', null));
+  private readonly authUser = signal<User | null>(
+    this.storage.get<User | null>('auth.user', null),
+  );
 
   readonly currentUser = computed(() => this.authUser());
   readonly isAuthenticated = computed(() => this.authUser() !== null);
@@ -157,7 +166,9 @@ export class ProductStore {
       return this.products();
     }
 
-    return this.products().filter((product) => product.name.toLowerCase().includes(q));
+    return this.products().filter((product) =>
+      product.name.toLowerCase().includes(q),
+    );
   });
 
   async load(): Promise<void> {
@@ -172,25 +183,36 @@ export class CartStore {
   private readonly taxRate = 0.19;
 
   readonly items = signal<{ product: Product; quantity: number }[]>(
-    this.storage.get<{ product: Product; quantity: number }[]>('cart.items', [])
+    this.storage.get<{ product: Product; quantity: number }[]>(
+      'cart.items',
+      [],
+    ),
   );
 
   readonly subtotal = computed(() =>
-    this.items().reduce((sum, item) => sum + item.product.price * item.quantity, 0)
+    this.items().reduce(
+      (sum, item) => sum + item.product.price * item.quantity,
+      0,
+    ),
   );
 
   readonly taxes = computed(() => this.subtotal() * this.taxRate);
   readonly total = computed(() => this.subtotal() + this.taxes());
 
   readonly cart = computed<Cart>(() => ({
-    items: this.items().map((item) => ({ productId: item.product.id, quantity: item.quantity })),
+    items: this.items().map((item) => ({
+      productId: item.product.id,
+      quantity: item.quantity,
+    })),
     subtotal: this.subtotal(),
     taxes: this.taxes(),
     total: this.total(),
   }));
 
   add(product: Product): void {
-    const existing = this.items().find((item) => item.product.id === product.id);
+    const existing = this.items().find(
+      (item) => item.product.id === product.id,
+    );
     if (existing) {
       this.updateQuantity(product.id, existing.quantity + 1);
       return;
@@ -201,15 +223,21 @@ export class CartStore {
   }
 
   remove(productId: string): void {
-    this.items.update((items) => items.filter((item) => item.product.id !== productId));
+    this.items.update((items) =>
+      items.filter((item) => item.product.id !== productId),
+    );
     this.persist();
   }
 
   updateQuantity(productId: string, quantity: number): void {
     this.items.update((items) =>
       items
-        .map((item) => (item.product.id === productId ? { ...item, quantity: Math.max(1, quantity) } : item))
-        .filter((item) => item.quantity > 0)
+        .map((item) =>
+          item.product.id === productId
+            ? { ...item, quantity: Math.max(1, quantity) }
+            : item,
+        )
+        .filter((item) => item.quantity > 0),
     );
     this.persist();
   }
@@ -226,7 +254,7 @@ export class CartStore {
 
 @Injectable({ providedIn: 'root' })
 export class AuthStore {
-  private readonly service = new AuthService();
+  private readonly service = inject(AuthService);
   readonly currentUser = this.service.currentUser;
   readonly isAuthenticated = this.service.isAuthenticated;
   readonly isAdmin = this.service.isAdmin;

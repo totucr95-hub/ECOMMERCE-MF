@@ -8,9 +8,7 @@
   "targets": {
     "build": {
       "executor": "@nx/angular:webpack-browser",
-      "outputs": [
-        "{options.outputPath}"
-      ],
+      "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
         "outputPath": "dist/shell",
@@ -24,9 +22,7 @@
             "input": "shell/public"
           }
         ],
-        "styles": [
-          "shell/src/styles.scss"
-        ],
+        "styles": ["shell/src/styles.scss"],
         "customWebpackConfig": {
           "path": "shell/webpack.config.ts"
         }
@@ -63,7 +59,8 @@
       "defaultConfiguration": "development",
       "options": {
         "port": 4200,
-        "publicHost": "http://localhost:4200"
+        "publicHost": "http://localhost:4200",
+        "devRemotes": ["landing", "shop", "admin", "auth"]
       },
       "configurations": {
         "production": {
@@ -85,9 +82,7 @@
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": [
-        "{workspaceRoot}/coverage/{projectRoot}"
-      ],
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
         "jestConfig": "shell/jest.config.cts",
         "tsConfig": "shell/tsconfig.spec.json"

@@ -1,10 +1,12 @@
 import { Route } from '@angular/router';
+import { provideAdminFeatures } from '../features/admin-features.providers';
 import { AdminLayoutComponent } from './entry';
 
 export const remoteRoutes: Route[] = [
   {
     path: '',
     component: AdminLayoutComponent,
+    providers: [provideAdminFeatures()],
     children: [
       {
         path: '',

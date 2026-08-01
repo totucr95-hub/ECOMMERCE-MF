@@ -1,6 +1,10 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { LoadingService, NotificationService, ThemeStore } from '@ecommerce-mf/shared-core';
+import {
+  LoadingService,
+  NotificationService,
+  ThemeStore,
+} from '@ecommerce-mf/shared-core';
 
 @Component({
   imports: [RouterModule],
@@ -16,9 +20,5 @@ export class App {
 
   constructor() {
     this.themeStore.init();
-  }
-
-  toggleTheme(): void {
-    this.themeStore.toggle();
   }
 }

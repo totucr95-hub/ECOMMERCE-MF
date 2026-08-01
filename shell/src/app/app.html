@@ -1,31 +1,23 @@
 <div class="app-shell">
-	<header class="topbar">
-		<a routerLink="/landing" class="brand">LifeOS Commerce</a>
-		<nav class="menu">
-			<a routerLink="/landing" routerLinkActive="active">Landing</a>
-			<a routerLink="/shop" routerLinkActive="active">Shop</a>
-			<a routerLink="/admin" routerLinkActive="active">Admin</a>
-			<a routerLink="/auth/login" routerLinkActive="active">Auth</a>
-		</nav>
-		<button type="button" class="theme-btn" (click)="toggleTheme()">Tema</button>
-	</header>
+  <router-outlet></router-outlet>
 
-	<main class="content">
-		<router-outlet></router-outlet>
-	</main>
+  <aside class="notifications">
+    @for (message of notifications.messages(); track message) {
+    <article class="toast">{{ message }}</article>
+    }
+  </aside>
 
-	<aside class="notifications">
-		@for (message of notifications.messages(); track message) {
-			<article class="toast">{{ message }}</article>
-		}
-	</aside>
-
-	@if (loading.isLoading()) {
-		<div class="global-loader" role="status" aria-live="polite" aria-label="Cargando contenido">
-			<div class="global-loader__panel">
-				<span class="global-loader__spinner" aria-hidden="true"></span>
-				<p>Cargando...</p>
-			</div>
-		</div>
-	}
+  @if (loading.isLoading()) {
+  <div
+    class="global-loader"
+    role="status"
+    aria-live="polite"
+    aria-label="Cargando contenido"
+  >
+    <div class="global-loader__panel">
+      <span class="global-loader__spinner" aria-hidden="true"></span>
+      <p>Cargando...</p>
+    </div>
+  </div>
+  }
 </div>

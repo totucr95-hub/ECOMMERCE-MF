@@ -1,0 +1,151 @@
+<main class="completion-page">
+  @if (order(); as completedOrder) {
+  <header class="success-header">
+    <span class="success-icon" aria-hidden="true">✓</span>
+    <div>
+      <p class="eyebrow">Pedido {{ completedOrder.orderNumber }}</p>
+      <h1>¡Gracias por tu compra!</h1>
+      <p>
+        Tu pedido fue confirmado. Enviamos los detalles a
+        <strong>{{ completedOrder.contactEmail }}</strong>.
+      </p>
+    </div>
+  </header>
+
+  <div class="completion-layout">
+    <div class="order-information">
+      <section class="status-section">
+        <header>
+          <div>
+            <h2>Estado del pedido</h2>
+            <p>Te avisaremos cuando tu compra esté lista.</p>
+          </div>
+          <span>Confirmado</span>
+        </header>
+
+        <ol class="order-progress" aria-label="Progreso del pedido">
+          <li class="is-complete">
+            <i aria-hidden="true">✓</i>
+            <div>
+              <strong>Pedido confirmado</strong
+              ><small>Pago recibido correctamente</small>
+            </div>
+          </li>
+          <li>
+            <i aria-hidden="true">2</i>
+            <div>
+              <strong>En preparación</strong
+              ><small>Prepararemos tus productos</small>
+            </div>
+          </li>
+          <li>
+            <i aria-hidden="true">3</i>
+            <div>
+              <strong>Listo para entregar</strong
+              ><small>Recibirás una nueva notificación</small>
+            </div>
+          </li>
+        </ol>
+      </section>
+
+      <section class="details-section">
+        <h2>Información de la orden</h2>
+        <dl>
+          <div>
+            <dt>Fecha</dt>
+            <dd>{{ completedOrder.createdAt | date:'longDate' }}</dd>
+          </div>
+          <div>
+            <dt>Entrega</dt>
+            <dd>{{ deliveryLabel(completedOrder.deliveryMethod) }}</dd>
+          </div>
+          <div>
+            <dt>Método de pago</dt>
+            <dd>{{ paymentLabel(completedOrder.paymentMethod) }}</dd>
+          </div>
+          <div>
+            <dt>Referencia de pago</dt>
+            <dd>{{ completedOrder.transactionReference }}</dd>
+          </div>
+        </dl>
+      </section>
+
+      <div class="next-actions">
+        <a class="primary-action" routerLink="/shop">Seguir comprando</a>
+        <a class="secondary-action" routerLink="/shop/cart">Ver carrito</a>
+      </div>
+    </div>
+
+    <aside class="order-summary">
+      <header>
+        <div>
+          <h2>Resumen del pedido</h2>
+          <p>{{ itemCount(completedOrder) }} productos</p>
+        </div>
+        <span>{{ completedOrder.orderNumber }}</span>
+      </header>
+
+      <ul class="summary-items">
+        @for (item of completedOrder.items; track item.product.id) {
+        <li>
+          <div class="product-image">
+            <img [src]="item.product.image" [alt]="item.product.name" />
+            <span>{{ item.quantity }}</span>
+          </div>
+          <div class="product-copy">
+            <strong>{{ item.product.name }}</strong>
+            <small
+              >{{ item.product.price | currency:'USD':'symbol':'1.2-2' }}
+              c/u</small
+            >
+          </div>
+          <b
+            >{{ item.product.price * item.quantity |
+            currency:'USD':'symbol':'1.2-2' }}</b
+          >
+        </li>
+        }
+      </ul>
+
+      <dl class="summary-totals">
+        <div>
+          <dt>Subtotal</dt>
+          <dd>
+            {{ completedOrder.subtotal | currency:'USD':'symbol':'1.2-2' }}
+          </dd>
+        </div>
+        <div>
+          <dt>Impuestos</dt>
+          <dd>{{ completedOrder.taxes | currency:'USD':'symbol':'1.2-2' }}</dd>
+        </div>
+        <div>
+          <dt>Entrega</dt>
+          <dd>
+            {{ completedOrder.shipping === 0 ? 'Gratis' :
+            (completedOrder.shipping | currency:'USD':'symbol':'1.2-2') }}
+          </dd>
+        </div>
+        <div class="total">
+          <dt>Total</dt>
+          <dd>{{ completedOrder.total | currency:'USD':'symbol':'1.2-2' }}</dd>
+        </div>
+      </dl>
+
+      <p class="support-note">
+        ¿Necesitas ayuda? Conserva el número del pedido para contactar a
+        soporte.
+      </p>
+    </aside>
+  </div>
+  } @else {
+  <section class="missing-order">
+    <span aria-hidden="true">✓</span>
+    <h1>Tu compra fue procesada</h1>
+    <p>
+      No encontramos un resumen reciente, pero puedes continuar navegando por la
+      tienda.
+    </p>
+    <a routerLink="/shop">Volver a la tienda</a>
+  </section>
+  }
+</main>

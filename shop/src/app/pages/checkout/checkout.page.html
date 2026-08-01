@@ -33,7 +33,7 @@
             autocomplete="email"
             required
             email
-            ngModel
+            [(ngModel)]="contactEmail"
             #email="ngModel"
           />
           @if (email.invalid && email.touched) {

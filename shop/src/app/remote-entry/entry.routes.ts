@@ -34,7 +34,7 @@ export const remoteRoutes: Route[] = [
       {
         path: 'order-completed',
         loadComponent: () =>
-          import('../pages/order-completed.page').then(
+          import('../pages/order-completed/order-completed.page').then(
             (m) => m.OrderCompletedPage,
           ),
       },

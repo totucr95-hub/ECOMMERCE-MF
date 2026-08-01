@@ -1,0 +1,434 @@
+<main class="checkout-page">
+  <header class="checkout-header">
+    <div>
+      <a routerLink="/shop/cart">← Volver al carrito</a>
+      <h1>Finalizar compra</h1>
+      <p>Completa tus datos para procesar el pedido de forma segura.</p>
+    </div>
+    <span class="secure-label">Compra segura</span>
+  </header>
+
+  <div class="checkout-layout">
+    <form
+      class="checkout-form"
+      #checkoutForm="ngForm"
+      (ngSubmit)="confirmPurchase(checkoutForm)"
+      novalidate
+    >
+      <section class="form-section">
+        <header class="section-heading">
+          <span>1</span>
+          <div>
+            <h2>Información de contacto</h2>
+            <p>Usaremos este correo para enviarte la confirmación.</p>
+          </div>
+        </header>
+
+        <label class="field field--full">
+          <span>Correo electrónico</span>
+          <input
+            type="email"
+            name="email"
+            placeholder="nombre@correo.com"
+            autocomplete="email"
+            required
+            email
+            ngModel
+            #email="ngModel"
+          />
+          @if (email.invalid && email.touched) {
+          <small>Ingresa un correo electrónico válido.</small>
+          }
+        </label>
+      </section>
+
+      <section class="form-section">
+        <header class="section-heading">
+          <span>2</span>
+          <div>
+            <h2>Entrega</h2>
+            <p>Elige cómo quieres recibir tu pedido.</p>
+          </div>
+        </header>
+
+        <div
+          class="delivery-options"
+          role="radiogroup"
+          aria-label="Método de entrega"
+        >
+          <label [class.is-selected]="deliveryMethod === 'shipping'">
+            <input
+              type="radio"
+              name="deliveryMethod"
+              value="shipping"
+              [ngModel]="deliveryMethod"
+              (ngModelChange)="selectDeliveryMethod($event)"
+            />
+            <span class="option-icon" aria-hidden="true">↗</span>
+            <span
+              ><strong>Envío</strong
+              ><small>Recíbelo en tu dirección</small></span
+            >
+          </label>
+          <label [class.is-selected]="deliveryMethod === 'pickup'">
+            <input
+              type="radio"
+              name="deliveryMethod"
+              value="pickup"
+              [ngModel]="deliveryMethod"
+              (ngModelChange)="selectDeliveryMethod($event)"
+            />
+            <span class="option-icon" aria-hidden="true">⌂</span>
+            <span
+              ><strong>Recogida en tienda</strong
+              ><small>Sin costo de envío</small></span
+            >
+          </label>
+        </div>
+
+        @if (deliveryMethod === 'pickup') {
+        <label class="pickup-location">
+          <input type="radio" checked />
+          <span>
+            <strong>Distrito Canino</strong>
+            <small>Carrera 27 # 72-79, Bogotá · Disponible hoy</small>
+          </span>
+          <b>Gratis</b>
+        </label>
+        }
+      </section>
+
+      <section class="form-section">
+        <header class="section-heading">
+          <span>3</span>
+          <div>
+            <h2>Dirección de facturación</h2>
+            <p>Datos requeridos para emitir tu comprobante.</p>
+          </div>
+        </header>
+
+        <div class="fields-grid">
+          <label class="field field--full">
+            <span>País o región</span>
+            <select name="country" [(ngModel)]="billingCountry" required>
+              <option>Colombia</option>
+              <option>México</option>
+              <option>Perú</option>
+              <option>Chile</option>
+            </select>
+          </label>
+          <label class="field">
+            <span>Nombres</span>
+            <input
+              name="firstName"
+              autocomplete="given-name"
+              required
+              ngModel
+              #firstName="ngModel"
+            />
+            @if (firstName.invalid && firstName.touched) {
+            <small>Ingresa tus nombres.</small>
+            }
+          </label>
+          <label class="field">
+            <span>Apellidos</span>
+            <input
+              name="lastName"
+              autocomplete="family-name"
+              required
+              ngModel
+              #lastName="ngModel"
+            />
+            @if (lastName.invalid && lastName.touched) {
+            <small>Ingresa tus apellidos.</small>
+            }
+          </label>
+          <label class="field field--full">
+            <span>Dirección</span>
+            <input
+              name="address"
+              autocomplete="street-address"
+              required
+              ngModel
+              #address="ngModel"
+            />
+            @if (address.invalid && address.touched) {
+            <small>Ingresa una dirección válida.</small>
+            }
+          </label>
+          <label class="field">
+            <span>Ciudad</span>
+            <input
+              name="city"
+              autocomplete="address-level2"
+              required
+              ngModel
+              #city="ngModel"
+            />
+            @if (city.invalid && city.touched) {
+            <small>Ingresa la ciudad.</small>
+            }
+          </label>
+          <label class="field">
+            <span>Departamento</span>
+            <select name="state" autocomplete="address-level1" required ngModel>
+              <option value="" disabled>Selecciona</option>
+              <option value="bogota">Bogotá D.C.</option>
+              <option value="antioquia">Antioquia</option>
+              <option value="valle">Valle del Cauca</option>
+              <option value="cundinamarca">Cundinamarca</option>
+            </select>
+          </label>
+          <label class="field">
+            <span>Código postal <em>Opcional</em></span>
+            <input name="postalCode" autocomplete="postal-code" ngModel />
+          </label>
+          <label class="field">
+            <span>Teléfono <em>Opcional</em></span>
+            <input name="phone" type="tel" autocomplete="tel" ngModel />
+          </label>
+        </div>
+      </section>
+
+      <section class="form-section">
+        <header class="section-heading">
+          <span>4</span>
+          <div>
+            <h2>Opciones de pago</h2>
+            <p>Tus datos de pago están protegidos.</p>
+          </div>
+        </header>
+
+        <div
+          class="payment-options"
+          role="radiogroup"
+          aria-label="Método de pago"
+        >
+          <label [class.is-selected]="paymentMethod === 'card'">
+            <input
+              type="radio"
+              name="paymentMethod"
+              value="card"
+              [ngModel]="paymentMethod"
+              (ngModelChange)="selectPaymentMethod($event)"
+            />
+            <span
+              ><strong>Tarjeta de crédito o débito</strong
+              ><small>Visa, Mastercard y American Express</small></span
+            >
+            <b>••••</b>
+          </label>
+          <label [class.is-selected]="paymentMethod === 'pse'">
+            <input
+              type="radio"
+              name="paymentMethod"
+              value="pse"
+              [ngModel]="paymentMethod"
+              (ngModelChange)="selectPaymentMethod($event)"
+            />
+            <span
+              ><strong>PSE</strong
+              ><small>Débito desde tu cuenta bancaria</small></span
+            >
+            <b>PSE</b>
+          </label>
+          <label [class.is-selected]="paymentMethod === 'cash'">
+            <input
+              type="radio"
+              name="paymentMethod"
+              value="cash"
+              [ngModel]="paymentMethod"
+              (ngModelChange)="selectPaymentMethod($event)"
+            />
+            <span
+              ><strong>Pago contra entrega</strong
+              ><small>Paga al recibir tu pedido</small></span
+            >
+            <b>$</b>
+          </label>
+        </div>
+
+        <div class="payment-details">
+          @if (paymentMethod === 'pse') {
+          <h3>Selecciona desde dónde quieres pagar</h3>
+          <div class="fields-grid">
+            <label class="field field--full">
+              <span>Tipo de persona</span>
+              <select name="personType" required ngModel>
+                <option value="individual">Persona natural</option>
+                <option value="business">Persona jurídica</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>Tipo de documento</span>
+              <select name="documentType" [(ngModel)]="documentType" required>
+                <option value="CC">Cédula de ciudadanía</option>
+                <option value="CE">Cédula de extranjería</option>
+                <option value="NIT">NIT</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>Número de documento</span>
+              <input
+                name="documentNumber"
+                inputmode="numeric"
+                required
+                ngModel
+              />
+            </label>
+            <label class="field field--full">
+              <span>Institución financiera</span>
+              <select name="bank" [(ngModel)]="selectedBank" required>
+                <option value="" disabled>Selecciona tu banco</option>
+                <option value="bancolombia">Bancolombia</option>
+                <option value="davivienda">Davivienda</option>
+                <option value="bogota">Banco de Bogotá</option>
+                <option value="avvillas">Banco AV Villas</option>
+              </select>
+            </label>
+          </div>
+          } @else if (paymentMethod === 'card') {
+          <h3>Datos de la tarjeta</h3>
+          <div class="fields-grid">
+            <label class="field field--full"
+              ><span>Número de tarjeta</span
+              ><input
+                name="cardNumber"
+                inputmode="numeric"
+                autocomplete="cc-number"
+                required
+                ngModel
+            /></label>
+            <label class="field field--full"
+              ><span>Nombre en la tarjeta</span
+              ><input name="cardName" autocomplete="cc-name" required ngModel
+            /></label>
+            <label class="field"
+              ><span>Vencimiento</span
+              ><input
+                name="cardExpiry"
+                placeholder="MM/AA"
+                autocomplete="cc-exp"
+                required
+                ngModel
+            /></label>
+            <label class="field"
+              ><span>CVV</span
+              ><input
+                name="cardCvv"
+                type="password"
+                inputmode="numeric"
+                maxlength="4"
+                autocomplete="cc-csc"
+                required
+                ngModel
+            /></label>
+          </div>
+          } @else {
+          <p class="cash-message">
+            Ten disponible el valor exacto del pedido al momento de la entrega.
+          </p>
+          }
+        </div>
+      </section>
+
+      <label class="terms-check">
+        <input
+          type="checkbox"
+          name="acceptedTerms"
+          [(ngModel)]="acceptedTerms"
+          required
+        />
+        <span
+          >Acepto los términos y condiciones y la política de privacidad.</span
+        >
+      </label>
+
+      <label class="note-toggle">
+        <span>Nota para el pedido <em>Opcional</em></span>
+        <textarea
+          name="orderNote"
+          [(ngModel)]="orderNote"
+          rows="3"
+          placeholder="Instrucciones para la entrega"
+        ></textarea>
+      </label>
+
+      <button
+        class="place-order"
+        type="submit"
+        [disabled]="store.items().length === 0 || isSubmitting()"
+      >
+        {{ isSubmitting() ? 'Procesando...' : 'Finalizar el pedido' }}
+      </button>
+    </form>
+
+    <aside class="order-summary">
+      <h2>Resumen del pedido</h2>
+
+      @if (store.items().length === 0) {
+      <div class="empty-summary">
+        <p>Tu carrito está vacío.</p>
+        <a routerLink="/shop">Ir al catálogo</a>
+      </div>
+      } @else {
+      <ul class="summary-items">
+        @for (item of store.items(); track item.product.id) {
+        <li>
+          <div class="summary-image">
+            <img [src]="item.product.image" [alt]="item.product.name" />
+            <span>{{ item.quantity }}</span>
+          </div>
+          <div>
+            <strong>{{ item.product.name }}</strong>
+            <small
+              >{{ item.product.price | currency:'USD':'symbol':'1.2-2' }}
+              c/u</small
+            >
+          </div>
+          <b
+            >{{ item.product.price * item.quantity |
+            currency:'USD':'symbol':'1.2-2' }}</b
+          >
+        </li>
+        }
+      </ul>
+
+      <details class="coupon">
+        <summary>Añadir cupón</summary>
+        <div>
+          <input
+            type="text"
+            [(ngModel)]="couponCode"
+            [ngModelOptions]="{ standalone: true }"
+            placeholder="Código del cupón"
+          />
+          <button type="button">Aplicar</button>
+        </div>
+      </details>
+
+      <dl class="totals">
+        <div>
+          <dt>Subtotal</dt>
+          <dd>{{ store.subtotal() | currency:'USD':'symbol':'1.2-2' }}</dd>
+        </div>
+        <div>
+          <dt>Impuestos</dt>
+          <dd>{{ store.taxes() | currency:'USD':'symbol':'1.2-2' }}</dd>
+        </div>
+        <div>
+          <dt>Entrega</dt>
+          <dd>
+            {{ shippingCost() === 0 ? 'Gratis' : (shippingCost() |
+            currency:'USD':'symbol':'1.2-2') }}
+          </dd>
+        </div>
+        <div class="total">
+          <dt>Total</dt>
+          <dd>{{ orderTotal() | currency:'USD':'symbol':'1.2-2' }}</dd>
+        </div>
+      </dl>
+      }
+    </aside>
+  </div>
+</main>

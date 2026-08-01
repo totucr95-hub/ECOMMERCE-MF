@@ -29,7 +29,7 @@ export const remoteRoutes: Route[] = [
       {
         path: 'checkout',
         loadComponent: () =>
-          import('../pages/checkout.page').then((m) => m.CheckoutPage),
+          import('../pages/checkout/checkout.page').then((m) => m.CheckoutPage),
       },
       {
         path: 'order-completed',

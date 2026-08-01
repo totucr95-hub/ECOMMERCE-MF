@@ -1,10 +1,28 @@
 <article class="product-card">
-	<img [src]="product.image" [alt]="product.name" class="product-image" />
-	<h3>{{ product.name }}</h3>
-	<p class="price">${{ product.price }}</p>
-	<p class="stock">Stock: {{ product.stock }}</p>
-	<div class="actions">
-		<button type="button" (click)="onBuy()">Comprar</button>
-		<button type="button" class="favorite" (click)="onFavorite()">Favorito</button>
-	</div>
+  <div class="media-wrap">
+    <img [src]="product.image" [alt]="product.name" class="product-image" />
+    @if (badgeLabel) {
+    <span class="badge" [class.badge--discount]="hasDiscountBadge"
+      >{{ badgeLabel }}</span
+    >
+    }
+  </div>
+  <h3>{{ product.name }}</h3>
+  <p class="description">{{ product.description }}</p>
+  <p class="price">${{ product.price }}</p>
+  <p class="stock">Stock: {{ product.stock }}</p>
+  <div class="actions">
+    <button type="button" class="buy" (click)="onBuy()">
+      Agregar al carrito
+    </button>
+    <button
+      type="button"
+      class="favorite"
+      [class.favorite--active]="isFavorite"
+      (click)="onFavorite()"
+      [attr.aria-label]="isFavorite ? 'Quitar de favoritos' : 'Agregar a favoritos'"
+    >
+      <span aria-hidden="true">★</span>
+    </button>
+  </div>
 </article>

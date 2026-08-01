@@ -1,41 +1,135 @@
 .product-card {
-	border: 1px solid #e2e8f0;
-	border-radius: 16px;
-	padding: 1rem;
-	background: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  height: 100%;
+  border: 1px solid #dbe3ec;
+  border-radius: 18px;
+  padding: 1rem;
+  background: #fff;
+  box-shadow: 0 8px 26px rgba(15, 23, 42, 0.08);
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease,
+    border-color 180ms ease;
+
+  &:hover {
+    transform: translateY(-3px);
+    border-color: #c7f2d6;
+    box-shadow: 0 14px 30px rgba(13, 157, 62, 0.15);
+  }
+
+  h3 {
+    margin: 0;
+    font-size: 1.02rem;
+    color: #0f172a;
+  }
+}
+
+.media-wrap {
+  position: relative;
 }
 
 .product-image {
-	width: 100%;
-	height: 140px;
-	object-fit: cover;
-	border-radius: 10px;
+  width: 100%;
+  height: 168px;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+.badge {
+  position: absolute;
+  top: 0.6rem;
+  left: 0.6rem;
+  padding: 0.26rem 0.55rem;
+  border-radius: 999px;
+  background: #ecfdf3;
+  border: 1px solid #c7f2d6;
+  color: #0d9d3e;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.badge--discount {
+  background: #fff7d6;
+  border-color: #facc15;
+  color: #92400e;
+}
+
+.description {
+  margin: 0;
+  min-height: 2.6em;
+  color: #64748b;
+  font-size: 0.9rem;
+  line-height: 1.4;
 }
 
 .price {
-	font-weight: 700;
+  margin: 0;
+  font-size: 1.08rem;
+  font-weight: 700;
+  color: #0d9d3e;
 }
 
 .stock {
-	color: #64748b;
-	font-size: 0.9rem;
+  margin: 0;
+  color: #64748b;
+  font-size: 0.9rem;
 }
 
 .actions {
-	display: flex;
-	gap: 0.6rem;
+  margin-top: auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.6rem;
 }
 
 button {
-	border: 0;
-	border-radius: 10px;
-	padding: 0.45rem 0.7rem;
-	cursor: pointer;
-	background: #0f766e;
-	color: white;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  padding: 0.5rem 0.72rem;
+  cursor: pointer;
+  font-size: 0.86rem;
+  font-weight: 700;
+  transition:
+    background-color 160ms ease,
+    color 160ms ease,
+    border-color 160ms ease;
+}
+
+.buy {
+  width: 100%;
+  min-height: 42px;
+  background: #0d9d3e;
+  color: white;
+
+  &:hover {
+    background: #0e9f3f;
+  }
 }
 
 .favorite {
-	background: #f1f5f9;
-	color: #0f172a;
+  display: grid;
+  place-items: center;
+  width: 42px;
+  min-height: 42px;
+  padding: 0;
+  font-size: 1.05rem;
+  border-color: #dbe3ec;
+  background: #f8fafc;
+  color: #94a3b8;
+
+  &:hover {
+    background: #fff7d6;
+    border-color: #facc15;
+    color: #eab308;
+  }
+}
+
+.favorite--active {
+  background: #fff7d6;
+  border-color: #facc15;
+  color: #eab308;
 }

@@ -105,7 +105,7 @@ import { Product } from '@ecommerce-mf/shared-models';
       }
       .eyebrow {
         margin: 0 0 0.35rem;
-        color: #0f766e;
+        color: #0d9d3e;
         font-size: 0.75rem;
         font-weight: 800;
         text-transform: uppercase;
@@ -116,17 +116,24 @@ import { Product } from '@ecommerce-mf/shared-models';
       .cart-link,
       .detail-link {
         text-decoration: none;
-        color: #0f766e;
+        color: #0d9d3e;
         font-weight: 700;
+      }
+      .cart-link {
+        border: 1px solid #17bd55;
+        border-radius: 999px;
+        padding: 0.52rem 0.85rem;
+        background: #0d9d3e;
+        color: #fff;
       }
       .filters {
         display: grid;
         grid-template-columns: minmax(220px, 2fr) repeat(2, minmax(160px, 1fr));
         gap: 1rem;
         padding: 1rem;
-        background: #f8fafc;
+        background: #f7fafc;
         border: 1px solid #e2e8f0;
-        border-radius: 8px;
+        border-radius: 14px;
       }
       .filters label {
         display: grid;
@@ -146,8 +153,8 @@ import { Product } from '@ecommerce-mf/shared-models';
       }
       .filters input:focus,
       .filters select:focus {
-        outline: 3px solid rgba(15, 118, 110, 0.18);
-        border-color: #0f766e;
+        outline: 3px solid rgba(13, 157, 62, 0.18);
+        border-color: #0d9d3e;
       }
       .result-count {
         margin: 1.25rem 0 0.75rem;
@@ -163,16 +170,24 @@ import { Product } from '@ecommerce-mf/shared-models';
       }
       .grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-        gap: 1rem;
+        grid-template-columns: repeat(auto-fill, minmax(262px, 262px));
+        justify-content: center;
+        gap: 1.1rem;
       }
       .card-wrap {
         display: grid;
         gap: 0.5rem;
+        width: 262px;
       }
       .detail-link {
-        padding: 0.35rem;
+        border-radius: 10px;
+        padding: 0.48rem;
         text-align: center;
+        background: #ecfdf3;
+        border: 1px solid #c7f2d6;
+      }
+      .detail-link:hover {
+        background: #dff9ea;
       }
       @media (max-width: 720px) {
         .toolbar {

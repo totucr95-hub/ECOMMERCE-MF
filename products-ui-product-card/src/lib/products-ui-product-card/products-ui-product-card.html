@@ -27,11 +27,14 @@
       <input
         type="number"
         min="0"
+        max="99"
         inputmode="numeric"
         class="quantity-input"
-        [value]="quantityInCart"
+        [value]="quantityInputValue"
         aria-label="Cantidad"
         (input)="onQuantityInput($any($event.target).value)"
+        (blur)="commitQuantity()"
+        (keydown.enter)="commitQuantity()"
       />
       <button type="button" class="quantity-btn" (click)="onBuy()">+</button>
     </div>

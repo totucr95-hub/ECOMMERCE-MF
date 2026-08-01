@@ -181,6 +181,7 @@ export class ProductStore {
 export class CartStore {
   private readonly storage = inject(StorageService);
   private readonly taxRate = 0.19;
+  private readonly maxQuantityPerItem = 99;
 
   readonly items = signal<{ product: Product; quantity: number }[]>(
     this.storage.get<{ product: Product; quantity: number }[]>(
@@ -234,7 +235,13 @@ export class CartStore {
       items
         .map((item) =>
           item.product.id === productId
-            ? { ...item, quantity: Math.max(1, quantity) }
+            ? {
+                ...item,
+                quantity: Math.min(
+                  this.maxQuantityPerItem,
+                  Math.max(1, quantity),
+                ),
+              }
             : item,
         )
         .filter((item) => item.quantity > 0),

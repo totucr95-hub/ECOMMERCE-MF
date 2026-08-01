@@ -25,6 +25,7 @@ export class ProductsUiProductCard {
   @Output() quantityChange = new EventEmitter<number>();
   @Output() favorite = new EventEmitter<Product>();
   isFavorite = false;
+  quantityDraft: string | null = null;
 
   get badgeLabel(): string | null {
     if (
@@ -48,21 +49,44 @@ export class ProductsUiProductCard {
   }
 
   onBuy(): void {
+    this.quantityDraft = null;
     this.buy.emit(this.product);
   }
 
   onDecrease(): void {
+    this.quantityDraft = null;
     this.decrease.emit(this.product);
   }
 
-  onQuantityInput(rawValue: string): void {
-    const parsed = Number.parseInt(rawValue, 10);
+  get quantityInputValue(): string {
+    if (this.quantityDraft !== null) {
+      return this.quantityDraft;
+    }
 
-    if (Number.isNaN(parsed)) {
+    return String(this.quantityInCart);
+  }
+
+  onQuantityInput(rawValue: string): void {
+    this.quantityDraft = rawValue;
+  }
+
+  commitQuantity(): void {
+    const rawValue = (this.quantityDraft ?? String(this.quantityInCart)).trim();
+
+    if (rawValue === '') {
+      this.quantityDraft = String(this.quantityInCart);
       return;
     }
 
-    this.quantityChange.emit(Math.max(0, parsed));
+    const parsed = Number.parseInt(rawValue, 10);
+
+    if (Number.isNaN(parsed)) {
+      this.quantityDraft = String(this.quantityInCart);
+      return;
+    }
+
+    this.quantityDraft = null;
+    this.quantityChange.emit(Math.min(99, Math.max(0, parsed)));
   }
 
   onFavorite(): void {

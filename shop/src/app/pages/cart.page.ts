@@ -150,9 +150,12 @@ import { ProductsUiProductCard } from '@ecommerce-mf/products-ui-product-card';
               <div class="suggested__card">
                 <lib-products-ui-product-card
                   [product]="product"
+                  [quantityInCart]="cartQuantity(product.id)"
+                  [detailLink]="['/shop/product', product.id]"
                   (buy)="addSuggestedToCart(product)"
+                  (decrease)="decreaseFromCart(product)"
+                  (quantityChange)="setCartQuantity(product, $event)"
                 ></lib-products-ui-product-card>
-                <a [routerLink]="['/shop/product', product.id]">Ver detalle</a>
               </div>
             }
           </div>
@@ -177,10 +180,11 @@ import { ProductsUiProductCard } from '@ecommerce-mf/products-ui-product-card';
       }
       .cart-page__header h1 {
         margin: 0;
+        color: #181f1f;
       }
       .cart-page__header a {
         text-decoration: none;
-        color: #0d9d3e;
+        color: #159747;
         font-weight: 700;
       }
       .cart-layout {
@@ -201,6 +205,7 @@ import { ProductsUiProductCard } from '@ecommerce-mf/products-ui-product-card';
       }
       .empty-state h2 {
         margin: 0;
+        color: #181f1f;
       }
       .empty-state p {
         margin: 0.4rem 0 1rem;
@@ -212,7 +217,7 @@ import { ProductsUiProductCard } from '@ecommerce-mf/products-ui-product-card';
         align-items: center;
         padding: 1rem;
         border-bottom: 1px solid #e2e8f0;
-        color: #1e3a5f;
+        color: #181f1f;
         font-size: 0.85rem;
         letter-spacing: 0.04em;
         text-transform: uppercase;
@@ -289,7 +294,7 @@ import { ProductsUiProductCard } from '@ecommerce-mf/products-ui-product-card';
       }
       .summary h2 {
         margin: 0 0 0.9rem;
-        color: #1e3a5f;
+        color: #181f1f;
         font-size: 1rem;
         text-transform: uppercase;
         letter-spacing: 0.04em;
@@ -314,13 +319,13 @@ import { ProductsUiProductCard } from '@ecommerce-mf/products-ui-product-card';
         margin-top: 0.8rem;
         border-radius: 10px;
         padding: 0.75rem 1rem;
-        border: 1px solid #17bd55;
-        background: #0d9d3e;
+        border: 1px solid #159747;
+        background: #159747;
         color: #fff;
         font-weight: 800;
       }
       .btn-primary:hover {
-        background: #0b8a36;
+        background: #117a39;
       }
       .suggested {
         display: grid;
@@ -328,6 +333,7 @@ import { ProductsUiProductCard } from '@ecommerce-mf/products-ui-product-card';
       }
       .suggested__head h2 {
         margin: 0;
+        color: #181f1f;
       }
       .suggested__head p {
         margin: 0.25rem 0 0;
@@ -341,20 +347,8 @@ import { ProductsUiProductCard } from '@ecommerce-mf/products-ui-product-card';
       }
       .suggested__card {
         display: grid;
-        gap: 0.45rem;
-      }
-      .suggested__card a {
-        text-decoration: none;
-        color: #0d9d3e;
-        font-weight: 700;
-        border-radius: 10px;
-        padding: 0.48rem;
-        text-align: center;
-        background: #ecfdf3;
-        border: 1px solid #c7f2d6;
-      }
-      .suggested__card a:hover {
-        background: #dff9ea;
+        gap: 0.5rem;
+        width: 262px;
       }
       @media (max-width: 920px) {
         .cart-layout {
@@ -402,5 +396,35 @@ export class CartPage implements OnInit {
 
   addSuggestedToCart(product: Product): void {
     this.store.add(product);
+  }
+
+  decreaseFromCart(product: Product): void {
+    const quantity = this.cartQuantity(product.id);
+
+    if (quantity <= 1) {
+      this.store.remove(product.id);
+      return;
+    }
+
+    this.store.updateQuantity(product.id, quantity - 1);
+  }
+
+  setCartQuantity(product: Product, quantity: number): void {
+    const safeQuantity = Math.max(0, Math.floor(quantity));
+
+    if (safeQuantity === 0) {
+      this.store.remove(product.id);
+      return;
+    }
+
+    this.store.updateQuantity(product.id, safeQuantity);
+  }
+
+  cartQuantity(productId: string): number {
+    const item = this.store
+      .items()
+      .find((cartItem) => cartItem.product.id === productId);
+
+    return item?.quantity ?? 0;
   }
 }

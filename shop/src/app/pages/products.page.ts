@@ -4,7 +4,6 @@ import {
   OnInit,
   inject,
 } from '@angular/core';
-import { RouterLink } from '@angular/router';
 import { CartStore } from '@ecommerce-mf/shared-core';
 import { ProductCatalogFacade } from '@ecommerce-mf/products-feature-products';
 import { ProductSort } from '@ecommerce-mf/products-domain-products';
@@ -14,7 +13,7 @@ import { Product } from '@ecommerce-mf/shared-models';
 @Component({
   selector: 'shop-products-page',
   standalone: true,
-  imports: [RouterLink, ProductsUiProductCard],
+  imports: [ProductsUiProductCard],
   template: `
     <section class="catalog">
       <div class="toolbar">
@@ -103,17 +102,18 @@ import { Product } from '@ecommerce-mf/shared-models';
       }
       .eyebrow {
         margin: 0 0 0.35rem;
-        color: #0d9d3e;
+        color: #159747;
         font-size: 0.75rem;
         font-weight: 800;
         text-transform: uppercase;
       }
       .toolbar h1 {
         margin: 0;
+        color: #181f1f;
       }
       .detail-link {
         text-decoration: none;
-        color: #0d9d3e;
+        color: #159747;
         font-weight: 700;
       }
       .filters {
@@ -143,8 +143,8 @@ import { Product } from '@ecommerce-mf/shared-models';
       }
       .filters input:focus,
       .filters select:focus {
-        outline: 3px solid rgba(13, 157, 62, 0.18);
-        border-color: #0d9d3e;
+        outline: 3px solid rgba(21, 151, 71, 0.18);
+        border-color: #159747;
       }
       .result-count {
         margin: 1.25rem 0 0.75rem;

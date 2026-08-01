@@ -11,17 +11,21 @@
 .admin-control-input,
 .admin-control-textarea,
 .admin-control-select {
+  box-sizing: border-box;
   width: 100%;
   border: 1px solid rgba(148, 163, 184, 0.45);
-  border-radius: 12px;
+  border-radius: 8px;
   background: #ffffff;
   color: #0f172a;
+  caret-color: #0f766e;
   font: inherit;
   line-height: 1.35;
+  outline: none;
   transition:
     border-color 0.2s ease,
     box-shadow 0.2s ease,
-    background-color 0.2s ease;
+    background-color 0.2s ease,
+    opacity 0.2s ease;
 }
 
 .admin-control-input,
@@ -50,9 +54,53 @@
 .admin-control-input:focus,
 .admin-control-textarea:focus,
 .admin-control-select:focus {
-  outline: none;
-  border-color: #38bdf8;
-  box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.15);
+  border-color: #0284c7;
+  box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.16);
+}
+
+.admin-control-input.ng-invalid.ng-touched,
+.admin-control-textarea.ng-invalid.ng-touched,
+.admin-control-select.ng-invalid.ng-touched,
+.admin-control-input[aria-invalid='true'],
+.admin-control-textarea[aria-invalid='true'],
+.admin-control-select[aria-invalid='true'] {
+  border-color: #dc2626;
+  background: #fff7f7;
+}
+
+.admin-control-input.ng-invalid.ng-touched:focus,
+.admin-control-textarea.ng-invalid.ng-touched:focus,
+.admin-control-select.ng-invalid.ng-touched:focus,
+.admin-control-input[aria-invalid='true']:focus,
+.admin-control-textarea[aria-invalid='true']:focus,
+.admin-control-select[aria-invalid='true']:focus {
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.14);
+}
+
+.admin-control-input:disabled,
+.admin-control-textarea:disabled,
+.admin-control-select:disabled {
+  border-color: #e2e8f0;
+  background: #f1f5f9;
+  color: #64748b;
+  cursor: not-allowed;
+  opacity: 0.8;
+}
+
+.admin-control-hint,
+.admin-control-error {
+  margin: 0;
+  font-size: 0.76rem;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.admin-control-hint {
+  color: #64748b;
+}
+
+.admin-control-error {
+  color: #b91c1c;
 }
 
 .admin-control-checkbox {
@@ -70,5 +118,15 @@
     height: 1rem;
     accent-color: #0f766e;
     cursor: pointer;
+
+    &:focus-visible {
+      outline: 3px solid rgba(14, 165, 233, 0.28);
+      outline-offset: 2px;
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
   }
 }

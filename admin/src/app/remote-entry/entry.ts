@@ -1,4 +1,8 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ViewEncapsulation,
+} from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import {
   ADMIN_NAVIGATION_ITEMS,
@@ -10,7 +14,8 @@ import {
   imports: [RouterOutlet, RouterLink, RouterLinkActive],
   selector: 'app-admin-entry',
   templateUrl: './entry.html',
-  styleUrl: './entry.scss',
+  styleUrls: ['./entry.scss', '../shared/styles/admin-form-controls.scss'],
+  encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AdminLayoutComponent {

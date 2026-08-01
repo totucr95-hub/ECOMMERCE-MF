@@ -1,0 +1,191 @@
+@if (product(); as product) {
+<section class="detail-page">
+  @if (addedProductName(); as productName) {
+  <div class="cart-notification" role="status" aria-live="polite">
+    <span class="cart-notification__icon" aria-hidden="true">✓</span>
+    <p><strong>“{{ productName }}”</strong> se ha añadido a tu carrito.</p>
+    <a routerLink="/shop/cart">Ver carrito</a>
+    <button
+      type="button"
+      class="cart-notification__close"
+      aria-label="Cerrar confirmación"
+      (click)="dismissCartNotification()"
+    >
+      ×
+    </button>
+  </div>
+  }
+
+  <a class="back-link" routerLink="/shop">← Volver al catalogo</a>
+
+  <article class="hero">
+    <div class="gallery">
+      <img class="gallery__main" [src]="selectedImage" [alt]="product.name" />
+
+      <div class="gallery__thumbs" aria-label="Miniaturas de producto">
+        @for (image of galleryImages; track image) {
+        <button
+          type="button"
+          class="gallery__thumb"
+          [class.is-active]="image === selectedImage"
+          (click)="setMainImage(image)"
+        >
+          <img [src]="image" [alt]="product.name" />
+        </button>
+        }
+      </div>
+    </div>
+
+    <div class="hero__info">
+      <h1>{{ product.name }}</h1>
+      <p class="price">{{ product.price | currency:'USD':'symbol':'1.2-2' }}</p>
+      <p class="lead">{{ product.description }}</p>
+
+      <div class="variant-row">
+        <label for="product-color">Color</label>
+        <div class="select-control">
+          <select
+            id="product-color"
+            [value]="selectedColor"
+            (change)="setColor($any($event.target).value)"
+          >
+            @for (color of colorOptions; track color) {
+            <option [value]="color">{{ color }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div class="buy-row">
+        <div class="qty" aria-label="Seleccionar cantidad">
+          <button type="button" (click)="decreaseQuantity()">-</button>
+          <input
+            type="number"
+            min="1"
+            max="99"
+            [value]="quantity"
+            (input)="onQuantityInput($any($event.target).value)"
+          />
+          <button type="button" (click)="increaseQuantity()">+</button>
+        </div>
+        <button type="button" class="buy-btn" (click)="addToCart()">
+          Agregar al carrito
+        </button>
+      </div>
+
+      <dl class="meta">
+        <div>
+          <dt>SKU</dt>
+          <dd>{{ skuLabel }}</dd>
+        </div>
+        <div>
+          <dt>Categoria</dt>
+          <dd>{{ product.categoryId }}</dd>
+        </div>
+        <div>
+          <dt>Stock</dt>
+          <dd>{{ product.stock }} unidades</dd>
+        </div>
+      </dl>
+    </div>
+  </article>
+
+  <section class="tabs">
+    <div
+      class="tabs__head"
+      role="tablist"
+      aria-label="Informacion del producto"
+    >
+      <button
+        type="button"
+        role="tab"
+        [class.is-active]="activeTab === 'description'"
+        (click)="setActiveTab('description')"
+      >
+        Descripcion
+      </button>
+      <button
+        type="button"
+        role="tab"
+        [class.is-active]="activeTab === 'reviews'"
+        (click)="setActiveTab('reviews')"
+      >
+        Valorizaciones ({{ reviews.length }})
+      </button>
+    </div>
+
+    @if (activeTab === 'description') {
+    <div class="tabs__panel">
+      <p>
+        {{ product.description }} Producto pensado para uso diario con
+        materiales resistentes, agarre comodo y terminaciones premium.
+      </p>
+      <ul>
+        <li>Material durable para uso constante.</li>
+        <li>Diseno ergonomico para mayor control.</li>
+        <li>Acabado facil de limpiar.</li>
+        <li>Compatible con rutinas de paseo y entrenamiento.</li>
+      </ul>
+    </div>
+    } @else {
+    <div class="tabs__panel reviews">
+      <div class="reviews__summary">
+        <div class="reviews__score">
+          <strong>{{ averageRating.toFixed(1) }}</strong>
+          <span aria-label="{{ averageRating.toFixed(1) }} de 5 estrellas">
+            {{ starsFor(averageRating) }}
+          </span>
+          <small>Basado en {{ reviews.length }} valoraciones</small>
+        </div>
+
+        <div class="rating-bars" aria-label="Distribucion de valoraciones">
+          @for (rating of ratingValues; track rating) {
+          <div class="rating-bar">
+            <span>{{ rating }}</span>
+            <div>
+              <i [style.width.%]="reviewPercentageFor(rating)"></i>
+            </div>
+            <small>{{ reviewCountFor(rating) }}</small>
+          </div>
+          }
+        </div>
+      </div>
+
+      <div class="reviews__list">
+        @for (review of reviews; track review.author + review.date) {
+        <article class="review">
+          <header>
+            <strong>{{ review.author }}</strong>
+            <small>{{ review.date }}</small>
+          </header>
+          <p class="review__stars">{{ starsFor(review.rating) }}</p>
+          <p>{{ review.message }}</p>
+        </article>
+        }
+      </div>
+
+      <form class="review-form" (submit)="$event.preventDefault()">
+        <h3>Tu valoracion</h3>
+        <label>
+          Nombre *
+          <input type="text" />
+        </label>
+        <label>
+          Correo electronico *
+          <input type="email" />
+        </label>
+        <label>
+          Tu opinion
+          <textarea rows="4"></textarea>
+        </label>
+        <button type="submit">Enviar</button>
+      </form>
+    </div>
+    }
+  </section>
+</section>
+} @else {
+<p class="not-found">
+  {{ isLoadingProduct() ? 'Cargando producto...' : 'Producto no encontrado.' }}
+</p>
+}

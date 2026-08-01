@@ -1,0 +1,70 @@
+<section class="catalog">
+  <div class="toolbar">
+    <div>
+      <p class="eyebrow">Catalogo</p>
+      <h1>Encuentra tu proximo producto</h1>
+    </div>
+  </div>
+
+  <div class="filters" aria-label="Filtros del catalogo">
+    <label>
+      <span>Buscar</span>
+      <input
+        type="search"
+        [value]="catalog.filters().query"
+        (input)="setQuery($any($event.target).value)"
+        placeholder="Nombre o descripcion"
+      />
+    </label>
+
+    <label>
+      <span>Categoria</span>
+      <select
+        [value]="catalog.filters().categoryId ?? ''"
+        (change)="setCategory($any($event.target).value)"
+      >
+        <option value="">Todas</option>
+        @for (category of catalog.categories(); track category.id) {
+        <option [value]="category.id">{{ category.name }}</option>
+        }
+      </select>
+    </label>
+
+    <label>
+      <span>Ordenar</span>
+      <select
+        [value]="catalog.filters().sort"
+        (change)="setSort($any($event.target).value)"
+      >
+        <option value="featured">Destacados</option>
+        <option value="name-asc">Nombre A-Z</option>
+        <option value="price-asc">Menor precio</option>
+        <option value="price-desc">Mayor precio</option>
+      </select>
+    </label>
+  </div>
+
+  @if (catalog.isLoading()) {
+  <p class="status">Cargando catalogo...</p>
+  } @else if (catalog.errorMessage()) {
+  <p class="status status--error">{{ catalog.errorMessage() }}</p>
+  } @else if (catalog.products().length === 0) {
+  <p class="status">No encontramos productos con estos filtros.</p>
+  } @else {
+  <p class="result-count">{{ catalog.products().length }} productos</p>
+  <div class="grid">
+    @for (product of catalog.products(); track product.id) {
+    <div class="card-wrap">
+      <lib-products-ui-product-card
+        [product]="product"
+        [quantityInCart]="cartQuantity(product.id)"
+        [detailLink]="['/shop/product', product.id]"
+        (buy)="addToCart(product)"
+        (decrease)="decreaseFromCart(product)"
+        (quantityChange)="setCartQuantity(product, $event)"
+      ></lib-products-ui-product-card>
+    </div>
+    }
+  </div>
+  }
+</section>

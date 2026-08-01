@@ -12,19 +12,19 @@ export const remoteRoutes: Route[] = [
       {
         path: '',
         loadComponent: () =>
-          import('../pages/products.page').then((m) => m.ProductsPage),
+          import('../pages/products/products.page').then((m) => m.ProductsPage),
       },
       {
         path: 'product/:id',
         loadComponent: () =>
-          import('../pages/product-detail.page').then(
+          import('../pages/product-detail/product-detail.page').then(
             (m) => m.ProductDetailPage,
           ),
       },
       {
         path: 'cart',
         loadComponent: () =>
-          import('../pages/cart.page').then((m) => m.CartPage),
+          import('../pages/cart/cart.page').then((m) => m.CartPage),
       },
       {
         path: 'checkout',

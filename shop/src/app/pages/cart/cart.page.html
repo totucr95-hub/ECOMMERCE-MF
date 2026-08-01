@@ -1,0 +1,124 @@
+<section class="cart-page">
+  <header class="cart-page__header">
+    <h1>Carrito</h1>
+    <a routerLink="/shop">Seguir comprando</a>
+  </header>
+
+  @if (store.items().length === 0) {
+  <article class="empty-state">
+    <h2>Tu carrito esta vacio</h2>
+    <p>Agrega productos para ver el resumen de compra.</p>
+    <a class="btn-primary" routerLink="/shop">Ir al catalogo</a>
+  </article>
+  } @else {
+  <div class="cart-layout">
+    <div class="cart-main">
+      <div class="cart-table-head">
+        <span>Producto</span>
+        <span>Total</span>
+      </div>
+
+      <ul class="items">
+        @for (item of store.items(); track item.product.id) {
+        <li>
+          <div class="item-content">
+            <img
+              [src]="item.product.image"
+              [alt]="item.product.name"
+              class="item-image"
+            />
+            <div class="item-info">
+              <strong>{{ item.product.name }}</strong>
+              <small>
+                {{ item.product.price | currency: 'USD' : 'symbol' : '1.2-2' }}
+                c/u
+              </small>
+              <div class="controls">
+                <button
+                  type="button"
+                  aria-label="Disminuir cantidad"
+                  (click)="store.updateQuantity(item.product.id, item.quantity - 1)"
+                >
+                  -
+                </button>
+                <span>{{ item.quantity }}</span>
+                <button
+                  type="button"
+                  aria-label="Aumentar cantidad"
+                  (click)="store.updateQuantity(item.product.id, item.quantity + 1)"
+                >
+                  +
+                </button>
+                <button
+                  type="button"
+                  class="remove"
+                  (click)="store.remove(item.product.id)"
+                >
+                  Eliminar
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="item-total">
+            {{ item.product.price * item.quantity | currency: 'USD' : 'symbol' :
+            '1.2-2' }}
+          </div>
+        </li>
+        }
+      </ul>
+    </div>
+
+    <aside class="summary">
+      <h2>Totales del carrito</h2>
+      <div class="line">
+        <span>Subtotal</span>
+        <strong
+          >{{ store.subtotal() | currency: 'USD' : 'symbol' : '1.2-2' }}</strong
+        >
+      </div>
+      <div class="line">
+        <span>Impuestos</span>
+        <strong
+          >{{ store.taxes() | currency: 'USD' : 'symbol' : '1.2-2' }}</strong
+        >
+      </div>
+      <div class="line">
+        <span>Envio</span>
+        <strong
+          >{{ shippingCost() | currency: 'USD' : 'symbol' : '1.2-2' }}</strong
+        >
+      </div>
+      <div class="line line--total">
+        <span>Total estimado</span>
+        <strong>
+          {{ store.total() + shippingCost() | currency: 'USD' : 'symbol' :
+          '1.2-2' }}
+        </strong>
+      </div>
+      <a class="btn-primary" routerLink="/shop/checkout">Finalizar compra</a>
+    </aside>
+  </div>
+  } @if (suggestedProducts().length > 0) {
+  <section class="suggested">
+    <div class="suggested__head">
+      <h2>Productos sugeridos</h2>
+      <p>Complementa tu compra con estos destacados.</p>
+    </div>
+
+    <div class="suggested__grid">
+      @for (product of suggestedProducts(); track product.id) {
+      <div class="suggested__card">
+        <lib-products-ui-product-card
+          [product]="product"
+          [quantityInCart]="cartQuantity(product.id)"
+          [detailLink]="['/shop/product', product.id]"
+          (buy)="addSuggestedToCart(product)"
+          (decrease)="decreaseFromCart(product)"
+          (quantityChange)="setCartQuantity(product, $event)"
+        ></lib-products-ui-product-card>
+      </div>
+      }
+    </div>
+  </section>
+  }
+</section>

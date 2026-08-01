@@ -131,8 +131,7 @@
 
 .field input,
 .field select,
-.note-toggle textarea,
-.coupon input {
+.note-toggle textarea {
   width: 100%;
   min-height: 42px;
   box-sizing: border-box;
@@ -297,8 +296,7 @@
   resize: vertical;
 }
 
-.place-order,
-.coupon button {
+.place-order {
   border: 1px solid var(--brand);
   border-radius: 7px;
   background: var(--brand);
@@ -313,8 +311,7 @@
   font-size: 0.9rem;
 }
 
-.place-order:hover,
-.coupon button:hover {
+.place-order:hover {
   border-color: #0b6e33;
   background: var(--brand-dark);
 }
@@ -397,30 +394,6 @@
 .summary-items li > b {
   font-size: 0.78rem;
   white-space: nowrap;
-}
-
-.coupon {
-  border-top: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
-  padding: 0.8rem 1rem;
-}
-
-.coupon summary {
-  color: var(--brand-dark);
-  font-size: 0.8rem;
-  font-weight: 800;
-  cursor: pointer;
-}
-
-.coupon > div {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 0.45rem;
-  margin-top: 0.7rem;
-}
-
-.coupon button {
-  padding: 0.4rem 0.7rem;
 }
 
 .totals {

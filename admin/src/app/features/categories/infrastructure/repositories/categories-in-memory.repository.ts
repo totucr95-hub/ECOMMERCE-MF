@@ -90,16 +90,10 @@ export class CategoriesInMemoryRepository implements CategoriesRepository {
 
   private buildInitialCategories(): CategorySummary[] {
     const categoryNames = [
-      'Electronica',
-      'Hogar',
-      'Deportes',
-      'Moda',
-      'Belleza',
-      'Gaming',
-      'Mascotas',
-      'Infantil',
-      'Oficina',
-      'Salud',
+      'Decks y pisos',
+      'Mobiliario exterior',
+      'Fachadas y cerramientos',
+      'Perfiles estructurales',
     ];
 
     return Array.from({ length: 100 }, (_unused, index) => {

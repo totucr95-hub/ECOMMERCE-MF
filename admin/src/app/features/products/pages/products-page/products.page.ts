@@ -265,8 +265,8 @@ export class AdminProductsPage {
       shortName: '',
       sku: '',
       slug: '',
-      brand: 'LifeOS',
-      categoryId: 'cat-electronics',
+      brand: 'Ingecoplast',
+      categoryId: 'cat-1',
       secondaryCategoryIds: [],
       collection: 'Temporada 2026',
       tags: [],
@@ -309,8 +309,8 @@ export class AdminProductsPage {
       audit: {
         createdAt: now,
         updatedAt: now,
-        createdBy: 'admin@lifeos.co',
-        updatedBy: 'admin@lifeos.co',
+        createdBy: 'admin@ingecoplast.co',
+        updatedBy: 'admin@ingecoplast.co',
       },
     };
   }

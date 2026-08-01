@@ -13,7 +13,11 @@
     <div class="admin-page__form-grid">
       <label class="admin-control-label">
         Periodo
-        <select class="admin-control-select" [(ngModel)]="filters.period" name="period">
+        <select
+          class="admin-control-select"
+          [(ngModel)]="filters.period"
+          name="period"
+        >
           <option value="Hoy">Hoy</option>
           <option value="Ultimos 7 dias">Ultimos 7 dias</option>
           <option value="Ultimos 30 dias">Ultimos 30 dias</option>
@@ -23,7 +27,11 @@
 
       <label class="admin-control-label">
         Canal
-        <select class="admin-control-select" [(ngModel)]="filters.channel" name="channel">
+        <select
+          class="admin-control-select"
+          [(ngModel)]="filters.channel"
+          name="channel"
+        >
           <option value="Todos">Todos</option>
           <option value="Web">Web</option>
           <option value="Marketplace">Marketplace</option>
@@ -33,7 +41,11 @@
 
       <label class="admin-control-label">
         Estado
-        <select class="admin-control-select" [(ngModel)]="filters.status" name="status">
+        <select
+          class="admin-control-select"
+          [(ngModel)]="filters.status"
+          name="status"
+        >
           <option value="Todos">Todos</option>
           <option value="Saludable">Saludable</option>
           <option value="Mejorando">Mejorando</option>
@@ -43,16 +55,22 @@
 
       <label class="admin-control-label">
         Pais
-        <select class="admin-control-select" [(ngModel)]="filters.country" name="country">
+        <select
+          class="admin-control-select"
+          [(ngModel)]="filters.country"
+          name="country"
+        >
           <option value="Colombia">Colombia</option>
-          <option value="Mexico">Mexico</option>
-          <option value="Chile">Chile</option>
-          <option value="Peru">Peru</option>
         </select>
       </label>
     </div>
 
-    <button type="button" class="admin-page__button-primary" (click)="runReport()" [disabled]="isLoading">
+    <button
+      type="button"
+      class="admin-page__button-primary"
+      (click)="runReport()"
+      [disabled]="isLoading"
+    >
       {{ isLoading ? 'Generando...' : 'Generar reporte' }}
     </button>
   </section>

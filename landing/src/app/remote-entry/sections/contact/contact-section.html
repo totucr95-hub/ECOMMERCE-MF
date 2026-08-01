@@ -3,35 +3,89 @@
     <span class="landing-contact__chip">Contacto</span>
     <h2>Estamos listos para atenderte</h2>
     <p class="landing-contact__summary">
-      Contactanos para ayudarte con tu proyecto y resolver dudas sobre instalacion, tiempos y
-      recomendaciones de producto.
+      Contactanos para ayudarte con tu proyecto y resolver dudas sobre
+      instalacion, tiempos y recomendaciones de producto.
     </p>
 
     <div class="landing-contact__content-grid">
-      <form class="landing-contact__form" [formGroup]="contactForm" (ngSubmit)="onSubmit()" novalidate>
+      <form
+        class="landing-contact__form"
+        [formGroup]="contactForm"
+        (ngSubmit)="onSubmit()"
+        novalidate
+      >
         <h3 class="landing-contact__form-title">Envianos un mensaje</h3>
 
-        <label class="landing-contact__label" for="fullName">Nombre y apellido</label>
-        <input class="landing-contact__input" id="fullName" formControlName="fullName" type="text" placeholder="Juan Perez" [class.landing-contact__input--invalid]="hasError('fullName')" />
-        <small class="landing-contact__error" *ngIf="hasError('fullName')">Ingresa tu nombre completo.</small>
+        <label class="landing-contact__label" for="fullName"
+          >Nombre y apellido</label
+        >
+        <input
+          class="landing-contact__input"
+          id="fullName"
+          formControlName="fullName"
+          type="text"
+          placeholder="Juan Perez"
+          [class.landing-contact__input--invalid]="hasError('fullName')"
+        />
+        <small class="landing-contact__error" *ngIf="hasError('fullName')"
+          >Ingresa tu nombre completo.</small
+        >
 
         <label class="landing-contact__label" for="email">Email</label>
-        <input class="landing-contact__input" id="email" formControlName="email" type="email" placeholder="correo@empresa.cl" [class.landing-contact__input--invalid]="hasError('email')" />
-        <small class="landing-contact__error" *ngIf="hasError('email')">Ingresa un email valido.</small>
+        <input
+          class="landing-contact__input"
+          id="email"
+          formControlName="email"
+          type="email"
+          placeholder="correo@empresa.co"
+          [class.landing-contact__input--invalid]="hasError('email')"
+        />
+        <small class="landing-contact__error" *ngIf="hasError('email')"
+          >Ingresa un email valido.</small
+        >
 
         <label class="landing-contact__label" for="phone">Telefono</label>
-        <input class="landing-contact__input" id="phone" formControlName="phone" type="tel" placeholder="+56 9 1234 1234" [class.landing-contact__input--invalid]="hasError('phone')" />
-        <small class="landing-contact__error" *ngIf="hasError('phone')">Ingresa un telefono valido.</small>
+        <input
+          class="landing-contact__input"
+          id="phone"
+          formControlName="phone"
+          type="tel"
+          placeholder="+57 300 123 4567"
+          [class.landing-contact__input--invalid]="hasError('phone')"
+        />
+        <small class="landing-contact__error" *ngIf="hasError('phone')"
+          >Ingresa un telefono valido.</small
+        >
 
-        <label class="landing-contact__label" for="message">Cuentanos tu caso</label>
-        <textarea class="landing-contact__textarea" id="message" formControlName="message" rows="5" placeholder="Que proyecto quieres desarrollar?" [class.landing-contact__textarea--invalid]="hasError('message')"></textarea>
-        <small class="landing-contact__error" *ngIf="hasError('message')">Describe tu proyecto (minimo 20 caracteres).</small>
+        <label class="landing-contact__label" for="message"
+          >Cuentanos tu caso</label
+        >
+        <textarea
+          class="landing-contact__textarea"
+          id="message"
+          formControlName="message"
+          rows="5"
+          placeholder="Que proyecto quieres desarrollar?"
+          [class.landing-contact__textarea--invalid]="hasError('message')"
+        ></textarea>
+        <small class="landing-contact__error" *ngIf="hasError('message')"
+          >Describe tu proyecto (minimo 20 caracteres).</small
+        >
 
-        <input class="landing-contact__honeypot" type="text" formControlName="website" tabindex="-1" autocomplete="off" aria-hidden="true" />
+        <input
+          class="landing-contact__honeypot"
+          type="text"
+          formControlName="website"
+          tabindex="-1"
+          autocomplete="off"
+          aria-hidden="true"
+        />
         <input type="hidden" formControlName="captchaToken" />
 
         <div class="landing-contact__captcha">
-          <p class="landing-contact__captcha-title">Verificacion de seguridad</p>
+          <p class="landing-contact__captcha-title">
+            Verificacion de seguridad
+          </p>
           <ngx-recaptcha2
             #captchaRef
             class="landing-contact__captcha-widget"
@@ -42,42 +96,74 @@
             (expire)="onCaptchaExpired()"
             (error)="onCaptchaError()"
           ></ngx-recaptcha2>
-          <p class="landing-contact__captcha-hint" *ngIf="!captchaReady()">Resuelve el captcha para habilitar el envio.</p>
-          <small class="landing-contact__error" *ngIf="hasError('captchaToken')">Debes completar el captcha.</small>
+          <p class="landing-contact__captcha-hint" *ngIf="!captchaReady()">
+            Resuelve el captcha para habilitar el envio.
+          </p>
+          <small class="landing-contact__error" *ngIf="hasError('captchaToken')"
+            >Debes completar el captcha.</small
+          >
         </div>
 
-        <button class="landing-contact__submit" type="submit" [disabled]="isSubmitting()">
+        <button
+          class="landing-contact__submit"
+          type="submit"
+          [disabled]="isSubmitting()"
+        >
           {{ isSubmitting() ? 'Enviando...' : 'Enviar consulta' }}
         </button>
 
-        <p class="landing-contact__feedback landing-contact__feedback--success" *ngIf="submitSuccess()">{{ submitSuccess() }}</p>
-        <p class="landing-contact__feedback landing-contact__feedback--error" *ngIf="submitError()">{{ submitError() }}</p>
+        <p
+          class="landing-contact__feedback landing-contact__feedback--success"
+          *ngIf="submitSuccess()"
+        >
+          {{ submitSuccess() }}
+        </p>
+        <p
+          class="landing-contact__feedback landing-contact__feedback--error"
+          *ngIf="submitError()"
+        >
+          {{ submitError() }}
+        </p>
       </form>
 
       <aside class="landing-contact__info">
-        <h3 class="landing-contact__info-title">Prefieres hablar directamente?</h3>
-        <p class="landing-contact__info-text">Recibe atencion inmediata por telefono o correo.</p>
+        <h3 class="landing-contact__info-title">
+          Prefieres hablar directamente?
+        </h3>
+        <p class="landing-contact__info-text">
+          Recibe atencion inmediata por telefono o correo.
+        </p>
 
         <ul class="landing-contact__info-list">
           <li class="landing-contact__info-item">
             <span class="landing-contact__info-dot"></span>
             <div class="landing-contact__info-meta">
-              <small class="landing-contact__info-label">Celular / Whatsapp</small>
-              <strong class="landing-contact__info-value">+56 9 7480 1126</strong>
+              <small class="landing-contact__info-label"
+                >Celular / Whatsapp</small
+              >
+              <strong class="landing-contact__info-value"
+                >+57 300 123 4567</strong
+              >
             </div>
           </li>
           <li class="landing-contact__info-item">
             <span class="landing-contact__info-dot"></span>
             <div class="landing-contact__info-meta">
-              <small class="landing-contact__info-label">Email de contacto</small>
-              <strong class="landing-contact__info-value">contacto@polymadera.cl</strong>
+              <small class="landing-contact__info-label"
+                >Email de contacto</small
+              >
+              <strong class="landing-contact__info-value"
+                >ventas@ingecoplast.co</strong
+              >
             </div>
           </li>
           <li class="landing-contact__info-item">
             <span class="landing-contact__info-dot"></span>
             <div class="landing-contact__info-meta">
               <small class="landing-contact__info-label">Direccion</small>
-              <strong class="landing-contact__info-value">Av. Pedro Aguirre Cerda 7788</strong>
+              <strong class="landing-contact__info-value"
+                >Bogota D.C., Colombia</strong
+              >
             </div>
           </li>
         </ul>

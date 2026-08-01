@@ -38,7 +38,7 @@
 
     <div class="hero__info">
       <h1>{{ product.name }}</h1>
-      <p class="price">{{ product.price | currency:'USD':'symbol':'1.2-2' }}</p>
+      <p class="price">{{ product.price | currency:'COP':'COP $':'1.0-0' }}</p>
       <p class="lead">{{ product.description }}</p>
 
       <div class="variant-row">
@@ -117,14 +117,14 @@
     @if (activeTab === 'description') {
     <div class="tabs__panel">
       <p>
-        {{ product.description }} Producto pensado para uso diario con
-        materiales resistentes, agarre comodo y terminaciones premium.
+        {{ product.description }} Producto pensado para uso diario con material
+        reciclado resistente y terminaciones para exteriores.
       </p>
       <ul>
-        <li>Material durable para uso constante.</li>
-        <li>Diseno ergonomico para mayor control.</li>
+        <li>Resistente a humedad, plagas y exposicion solar.</li>
+        <li>No se astilla y requiere poco mantenimiento.</li>
         <li>Acabado facil de limpiar.</li>
-        <li>Compatible con rutinas de paseo y entrenamiento.</li>
+        <li>Fabricado en Colombia con plastico reciclado.</li>
       </ul>
     </div>
     } @else {

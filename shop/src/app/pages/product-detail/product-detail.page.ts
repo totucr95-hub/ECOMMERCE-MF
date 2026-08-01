@@ -42,8 +42,8 @@ export class ProductDetailPage implements OnInit {
   selectedImage = '';
   galleryImages: string[] = [];
   activeTab: 'description' | 'reviews' = 'description';
-  selectedColor = 'Azul Navy';
-  readonly colorOptions = ['Azul Navy', 'Verde Oliva', 'Negro Carbon'];
+  selectedColor = 'Madera natural';
+  readonly colorOptions = ['Madera natural', 'Wengue', 'Gris grafito'];
   readonly ratingValues = [5, 4, 3, 2, 1];
   readonly reviews: ProductReview[] = [
     {
@@ -51,14 +51,14 @@ export class ProductDetailPage implements OnInit {
       rating: 5,
       date: '31 Jul 2026',
       message:
-        'Excelente calidad y muy comoda para paseos largos. El acabado se ve premium.',
+        'Excelente acabado y muy buena resistencia a la lluvia. La terraza quedo impecable.',
     },
     {
       author: 'Daniel P.',
       rating: 4,
       date: '27 Jul 2026',
       message:
-        'Buena relacion precio calidad. La volveria a comprar en otra talla.',
+        'Buena relacion precio calidad. El material se siente firme y facil de mantener.',
     },
   ];
 
@@ -77,7 +77,7 @@ export class ProductDetailPage implements OnInit {
       return '';
     }
 
-    return `TRA-${product.id.toUpperCase()}`;
+    return `ING-${product.id.toUpperCase()}`;
   }
 
   ngOnInit(): void {
@@ -135,17 +135,18 @@ export class ProductDetailPage implements OnInit {
   private buildFallbackProduct(): Product {
     return {
       id: 'fallback-detail-product',
-      name: 'Trailla Montserrat',
-      slug: 'trailla-montserrat',
+      name: 'Tabla Deck Premium 2,90 m',
+      slug: 'tabla-deck-premium-290',
       description:
-        'Trailla clasica y elegante de 100cm para uso diario con excelente resistencia y agarre.',
-      image: 'https://placehold.co/900x900/f8fafc/475569?text=Producto',
-      price: 59900,
+        'Tabla de madera plastica texturizada y antideslizante para terrazas de alto trafico.',
+      image:
+        'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=900&q=80',
+      price: 189900,
       discountPercentage: 0,
-      stock: 25,
+      stock: 64,
       featured: true,
-      categoryId: 'Collares y traillas',
-      rating: 4.6,
+      categoryId: 'cat-1',
+      rating: 4.8,
     };
   }
 

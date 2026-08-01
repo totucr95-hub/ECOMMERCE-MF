@@ -53,7 +53,7 @@ describe('ProductDetailPage', () => {
 
   it('should use fallback product when route id is missing', () => {
     expect(component.product).toBeTruthy();
-    expect(component.product?.name).toBe('Trailla Montserrat');
+    expect(component.product?.name).toBe('Tabla Deck Premium 2,90 m');
   });
 
   it('should add selected quantity to cart', () => {

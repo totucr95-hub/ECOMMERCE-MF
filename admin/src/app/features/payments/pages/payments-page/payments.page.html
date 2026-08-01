@@ -5,7 +5,11 @@
       Estado de cobros, conciliacion y seguimiento de transacciones.
     </p>
     <div class="admin-page__top-actions">
-      <button type="button" class="admin-page__button-primary" (click)="openCreateModal()">
+      <button
+        type="button"
+        class="admin-page__button-primary"
+        (click)="openCreateModal()"
+      >
         + Crear pago
       </button>
     </div>
@@ -42,7 +46,12 @@
     (click)="closeEditor()"
   ></button>
 
-  <section class="admin-page__modal" role="dialog" aria-modal="true" aria-label="Editor de pago">
+  <section
+    class="admin-page__modal"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Editor de pago"
+  >
     <header class="admin-page__modal-header">
       <div>
         <p class="admin-page__modal-eyebrow">Payments management</p>
@@ -50,7 +59,13 @@
           {{ selectedPaymentId ? 'Editar pago' : 'Crear pago' }}
         </h2>
       </div>
-      <button type="button" class="admin-page__modal-close" (click)="closeEditor()">×</button>
+      <button
+        type="button"
+        class="admin-page__modal-close"
+        (click)="closeEditor()"
+      >
+        ×
+      </button>
     </header>
 
     <ol class="admin-page__stepper" aria-label="Pasos del formulario">
@@ -73,26 +88,43 @@
       <div class="admin-page__form-grid">
         <label class="admin-control-label">
           Referencia
-          <input class="admin-control-input" [(ngModel)]="formModel.paymentRef" name="paymentRef" placeholder="TXN-123456" />
+          <input
+            class="admin-control-input"
+            [(ngModel)]="formModel.paymentRef"
+            name="paymentRef"
+            placeholder="TXN-123456"
+          />
         </label>
 
         <label class="admin-control-label">
           Pedido
-          <input class="admin-control-input" [(ngModel)]="formModel.orderNumber" name="orderNumber" placeholder="ORD-1001" />
+          <input
+            class="admin-control-input"
+            [(ngModel)]="formModel.orderNumber"
+            name="orderNumber"
+            placeholder="ORD-1001"
+          />
         </label>
 
         <label class="admin-control-label">
           Cliente
-          <input class="admin-control-input" [(ngModel)]="formModel.customer" name="customer" placeholder="Nombre cliente" />
+          <input
+            class="admin-control-input"
+            [(ngModel)]="formModel.customer"
+            name="customer"
+            placeholder="Nombre cliente"
+          />
         </label>
       </div>
-      }
-
-      @if (editorStep === 1) {
+      } @if (editorStep === 1) {
       <div class="admin-page__form-grid">
         <label class="admin-control-label">
           Metodo
-          <select class="admin-control-select" [(ngModel)]="formModel.method" name="method">
+          <select
+            class="admin-control-select"
+            [(ngModel)]="formModel.method"
+            name="method"
+          >
             <option value="Tarjeta">Tarjeta</option>
             <option value="PSE">PSE</option>
             <option value="Transferencia">Transferencia</option>
@@ -102,7 +134,11 @@
 
         <label class="admin-control-label">
           Estado
-          <select class="admin-control-select" [(ngModel)]="formModel.status" name="status">
+          <select
+            class="admin-control-select"
+            [(ngModel)]="formModel.status"
+            name="status"
+          >
             <option value="Pendiente">Pendiente</option>
             <option value="Aprobado">Aprobado</option>
             <option value="Rechazado">Rechazado</option>
@@ -113,25 +149,35 @@
 
         <label class="admin-control-label">
           Monto
-          <input class="admin-control-input" [(ngModel)]="formModel.amount" name="amount" type="number" min="0" />
+          <input
+            class="admin-control-input"
+            [(ngModel)]="formModel.amount"
+            name="amount"
+            type="number"
+            min="0"
+          />
         </label>
 
         <label class="admin-control-label">
           Moneda
-          <select class="admin-control-select" [(ngModel)]="formModel.currency" name="currency">
+          <select
+            class="admin-control-select"
+            [(ngModel)]="formModel.currency"
+            name="currency"
+          >
             <option value="COP">COP</option>
-            <option value="USD">USD</option>
-            <option value="EUR">EUR</option>
           </select>
         </label>
       </div>
-      }
-
-      @if (editorStep === 2) {
+      } @if (editorStep === 2) {
       <div class="admin-page__form-grid admin-page__form-grid--single">
         <label class="admin-control-label">
           Pasarela
-          <select class="admin-control-select" [(ngModel)]="formModel.gateway" name="gateway">
+          <select
+            class="admin-control-select"
+            [(ngModel)]="formModel.gateway"
+            name="gateway"
+          >
             <option value="Wompi">Wompi</option>
             <option value="PayU">PayU</option>
             <option value="MercadoPago">MercadoPago</option>
@@ -141,12 +187,23 @@
 
         <label class="admin-control-label">
           Ultimo intento
-          <input class="admin-control-input" [(ngModel)]="formModel.lastAttemptAt" name="lastAttemptAt" type="date" />
+          <input
+            class="admin-control-input"
+            [(ngModel)]="formModel.lastAttemptAt"
+            name="lastAttemptAt"
+            type="date"
+          />
         </label>
 
         <label class="admin-control-label">
           Notas
-          <textarea class="admin-control-textarea" [(ngModel)]="formModel.notes" name="notes" rows="3" placeholder="Observaciones internas"></textarea>
+          <textarea
+            class="admin-control-textarea"
+            [(ngModel)]="formModel.notes"
+            name="notes"
+            rows="3"
+            placeholder="Observaciones internas"
+          ></textarea>
         </label>
       </div>
       }
@@ -163,7 +220,12 @@
       </button>
 
       @if (editorStep < editorSteps.length - 1) {
-      <button type="button" class="admin-page__button-primary" (click)="nextStep()" [disabled]="isSaving">
+      <button
+        type="button"
+        class="admin-page__button-primary"
+        (click)="nextStep()"
+        [disabled]="isSaving"
+      >
         Siguiente
       </button>
       } @else {

@@ -1,7 +1,26 @@
 [
-  { "id": "cat-1", "name": "Laptops", "slug": "laptops", "description": "Portatiles para trabajo y gaming" },
-  { "id": "cat-2", "name": "Smartphones", "slug": "smartphones", "description": "Telefonos de ultima generacion" },
-  { "id": "cat-3", "name": "Audio", "slug": "audio", "description": "Audifonos y parlantes" },
-  { "id": "cat-4", "name": "Hogar", "slug": "hogar", "description": "Dispositivos para casa inteligente" },
-  { "id": "cat-5", "name": "Accesorios", "slug": "accesorios", "description": "Cables, cargadores y perifericos" }
+  {
+    "id": "cat-1",
+    "name": "Decks y pisos",
+    "slug": "decks-y-pisos",
+    "description": "Tablas resistentes para terrazas, senderos y zonas humedas."
+  },
+  {
+    "id": "cat-2",
+    "name": "Mobiliario exterior",
+    "slug": "mobiliario-exterior",
+    "description": "Muebles durables para parques, jardines y espacios urbanos."
+  },
+  {
+    "id": "cat-3",
+    "name": "Fachadas y cerramientos",
+    "slug": "fachadas-y-cerramientos",
+    "description": "Soluciones de revestimiento y privacidad para exteriores."
+  },
+  {
+    "id": "cat-4",
+    "name": "Perfiles estructurales",
+    "slug": "perfiles-estructurales",
+    "description": "Postes y vigas de madera plastica para proyectos constructivos."
+  }
 ]

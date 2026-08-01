@@ -5,13 +5,14 @@ import {
   Input,
   Output,
 } from '@angular/core';
+import { CurrencyPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { Product } from '@ecommerce-mf/shared-models';
 
 @Component({
   selector: 'lib-products-ui-product-card',
   standalone: true,
-  imports: [RouterLink],
+  imports: [CurrencyPipe, RouterLink],
   templateUrl: './products-ui-product-card.html',
   styleUrl: './products-ui-product-card.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

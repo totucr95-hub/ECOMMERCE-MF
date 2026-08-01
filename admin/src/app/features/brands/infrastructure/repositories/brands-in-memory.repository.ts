@@ -102,14 +102,12 @@ export class BrandsInMemoryRepository implements BrandsRepository {
       'PixelGear',
     ];
     const categories = [
-      'Electronica',
-      'Hogar',
-      'Deportes',
-      'Moda',
-      'Belleza',
-      'Accesorios',
+      'Decks y pisos',
+      'Mobiliario exterior',
+      'Fachadas y cerramientos',
+      'Perfiles estructurales',
     ];
-    const countries = ['Colombia', 'Mexico', 'Chile', 'Peru', 'Ecuador'];
+    const countries = ['Colombia'];
     const managers = [
       'Laura Perez',
       'David Ruiz',

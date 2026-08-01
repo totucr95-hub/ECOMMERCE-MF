@@ -39,7 +39,7 @@ export class UsersInMemoryRepository implements UsersRepository {
 
       return {
         name: `${firstName} ${lastName}`,
-        email: `${firstName.toLowerCase()}.${lastName.toLowerCase()}${item}@lifeos.co`,
+        email: `${firstName.toLowerCase()}.${lastName.toLowerCase()}${item}@ingecoplast.co`,
         role: roles[index % roles.length],
         status: statuses[index % statuses.length],
       };

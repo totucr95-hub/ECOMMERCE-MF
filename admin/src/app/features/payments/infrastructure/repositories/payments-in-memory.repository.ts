@@ -102,9 +102,15 @@ export class PaymentsInMemoryRepository implements PaymentsRepository {
       'Sofia Lemos',
     ];
     const methods = ['Tarjeta', 'PSE', 'Transferencia', 'Contraentrega'];
-    const statuses = ['Pendiente', 'Aprobado', 'Rechazado', 'Conciliado', 'Reembolsado'];
+    const statuses = [
+      'Pendiente',
+      'Aprobado',
+      'Rechazado',
+      'Conciliado',
+      'Reembolsado',
+    ];
     const gateways = ['Wompi', 'PayU', 'MercadoPago', 'Bancolombia'];
-    const currencies = ['COP', 'COP', 'COP', 'USD', 'EUR'];
+    const currencies = ['COP'];
 
     return Array.from({ length: 100 }, (_unused, index) => {
       const item = index + 1;

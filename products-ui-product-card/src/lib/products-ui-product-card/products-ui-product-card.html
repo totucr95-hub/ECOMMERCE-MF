@@ -9,7 +9,7 @@
   </div>
   <h3>{{ product.name }}</h3>
   <p class="description">{{ product.description }}</p>
-  <p class="price">${{ product.price }}</p>
+  <p class="price">{{ product.price | currency:'COP':'COP $':'1.0-0' }}</p>
   <div class="meta-row">
     <p class="stock">Stock: {{ product.stock }}</p>
     @if (detailLink) {

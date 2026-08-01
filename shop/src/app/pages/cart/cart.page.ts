@@ -25,7 +25,9 @@ export class CartPage implements OnInit {
   private readonly productService = inject(ProductService);
   private readonly products = signal<ReadonlyArray<Product>>([]);
 
-  readonly shippingCost = computed(() => (this.store.subtotal() > 0 ? 8 : 0));
+  readonly shippingCost = computed(() =>
+    this.store.subtotal() > 0 ? 35000 : 0,
+  );
   readonly suggestedProducts = computed(() => {
     const cartProductIds = new Set(
       this.store.items().map((item) => item.product.id),

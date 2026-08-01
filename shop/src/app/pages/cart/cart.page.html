@@ -30,7 +30,7 @@
             <div class="item-info">
               <strong>{{ item.product.name }}</strong>
               <small>
-                {{ item.product.price | currency: 'USD' : 'symbol' : '1.2-2' }}
+                {{ item.product.price | currency: 'COP' : 'COP $' : '1.0-0' }}
                 c/u
               </small>
               <div class="controls">
@@ -60,8 +60,8 @@
             </div>
           </div>
           <div class="item-total">
-            {{ item.product.price * item.quantity | currency: 'USD' : 'symbol' :
-            '1.2-2' }}
+            {{ item.product.price * item.quantity | currency: 'COP' : 'COP $' :
+            '1.0-0' }}
           </div>
         </li>
         }
@@ -73,26 +73,26 @@
       <div class="line">
         <span>Subtotal</span>
         <strong
-          >{{ store.subtotal() | currency: 'USD' : 'symbol' : '1.2-2' }}</strong
+          >{{ store.subtotal() | currency: 'COP' : 'COP $' : '1.0-0' }}</strong
         >
       </div>
       <div class="line">
         <span>Impuestos</span>
         <strong
-          >{{ store.taxes() | currency: 'USD' : 'symbol' : '1.2-2' }}</strong
+          >{{ store.taxes() | currency: 'COP' : 'COP $' : '1.0-0' }}</strong
         >
       </div>
       <div class="line">
         <span>Envio</span>
         <strong
-          >{{ shippingCost() | currency: 'USD' : 'symbol' : '1.2-2' }}</strong
+          >{{ shippingCost() | currency: 'COP' : 'COP $' : '1.0-0' }}</strong
         >
       </div>
       <div class="line line--total">
         <span>Total estimado</span>
         <strong>
-          {{ store.total() + shippingCost() | currency: 'USD' : 'symbol' :
-          '1.2-2' }}
+          {{ store.total() + shippingCost() | currency: 'COP' : 'COP $' :
+          '1.0-0' }}
         </strong>
       </div>
       <a class="btn-primary" routerLink="/shop/checkout">Finalizar compra</a>

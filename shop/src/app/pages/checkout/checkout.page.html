@@ -90,8 +90,8 @@
         <label class="pickup-location">
           <input type="radio" checked />
           <span>
-            <strong>Distrito Canino</strong>
-            <small>Carrera 27 # 72-79, Bogotá · Disponible hoy</small>
+            <strong>Ingecoplast Bogotá</strong>
+            <small>Bogotá D.C., Colombia · Disponible hoy</small>
           </span>
           <b>Gratis</b>
         </label>
@@ -112,9 +112,6 @@
             <span>País o región</span>
             <select name="country" [(ngModel)]="billingCountry" required>
               <option>Colombia</option>
-              <option>México</option>
-              <option>Perú</option>
-              <option>Chile</option>
             </select>
           </label>
           <label class="field">
@@ -382,50 +379,37 @@
           <div>
             <strong>{{ item.product.name }}</strong>
             <small
-              >{{ item.product.price | currency:'USD':'symbol':'1.2-2' }}
+              >{{ item.product.price | currency:'COP':'COP $':'1.0-0' }}
               c/u</small
             >
           </div>
           <b
-            >{{ item.product.price * item.quantity |
-            currency:'USD':'symbol':'1.2-2' }}</b
+            >{{ item.product.price * item.quantity | currency:'COP':'COP
+            $':'1.0-0' }}</b
           >
         </li>
         }
       </ul>
 
-      <details class="coupon">
-        <summary>Añadir cupón</summary>
-        <div>
-          <input
-            type="text"
-            [(ngModel)]="couponCode"
-            [ngModelOptions]="{ standalone: true }"
-            placeholder="Código del cupón"
-          />
-          <button type="button">Aplicar</button>
-        </div>
-      </details>
-
       <dl class="totals">
         <div>
           <dt>Subtotal</dt>
-          <dd>{{ store.subtotal() | currency:'USD':'symbol':'1.2-2' }}</dd>
+          <dd>{{ store.subtotal() | currency:'COP':'COP $':'1.0-0' }}</dd>
         </div>
         <div>
           <dt>Impuestos</dt>
-          <dd>{{ store.taxes() | currency:'USD':'symbol':'1.2-2' }}</dd>
+          <dd>{{ store.taxes() | currency:'COP':'COP $':'1.0-0' }}</dd>
         </div>
         <div>
           <dt>Entrega</dt>
           <dd>
             {{ shippingCost() === 0 ? 'Gratis' : (shippingCost() |
-            currency:'USD':'symbol':'1.2-2') }}
+            currency:'COP':'COP $':'1.0-0') }}
           </dd>
         </div>
         <div class="total">
           <dt>Total</dt>
-          <dd>{{ orderTotal() | currency:'USD':'symbol':'1.2-2' }}</dd>
+          <dd>{{ orderTotal() | currency:'COP':'COP $':'1.0-0' }}</dd>
         </div>
       </dl>
       }

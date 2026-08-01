@@ -46,7 +46,6 @@ export class CheckoutPage {
   billingCountry = 'Colombia';
   acceptedTerms = false;
   orderNote = '';
-  couponCode = '';
 
   selectDeliveryMethod(method: DeliveryMethod): void {
     this.deliveryMethod = method;
@@ -58,7 +57,7 @@ export class CheckoutPage {
 
   shippingCost(): number {
     return this.deliveryMethod === 'shipping' && this.store.items().length > 0
-      ? 8
+      ? 35000
       : 0;
   }
 

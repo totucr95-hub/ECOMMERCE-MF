@@ -22,7 +22,6 @@ import { Product } from '@ecommerce-mf/shared-models';
           <p class="eyebrow">Catalogo</p>
           <h1>Encuentra tu proximo producto</h1>
         </div>
-        <a class="cart-link" routerLink="/shop/cart">Ver carrito</a>
       </div>
 
       <div class="filters" aria-label="Filtros del catalogo">
@@ -76,13 +75,12 @@ import { Product } from '@ecommerce-mf/shared-models';
             <div class="card-wrap">
               <lib-products-ui-product-card
                 [product]="product"
+                [quantityInCart]="cartQuantity(product.id)"
+                [detailLink]="['/shop/product', product.id]"
                 (buy)="addToCart(product)"
+                (decrease)="decreaseFromCart(product)"
+                (quantityChange)="setCartQuantity(product, $event)"
               ></lib-products-ui-product-card>
-              <a
-                class="detail-link"
-                [routerLink]="['/shop/product', product.id]"
-                >Detalle</a
-              >
             </div>
           }
         </div>
@@ -113,18 +111,10 @@ import { Product } from '@ecommerce-mf/shared-models';
       .toolbar h1 {
         margin: 0;
       }
-      .cart-link,
       .detail-link {
         text-decoration: none;
         color: #0d9d3e;
         font-weight: 700;
-      }
-      .cart-link {
-        border: 1px solid #17bd55;
-        border-radius: 999px;
-        padding: 0.52rem 0.85rem;
-        background: #0d9d3e;
-        color: #fff;
       }
       .filters {
         display: grid;
@@ -179,16 +169,6 @@ import { Product } from '@ecommerce-mf/shared-models';
         gap: 0.5rem;
         width: 262px;
       }
-      .detail-link {
-        border-radius: 10px;
-        padding: 0.48rem;
-        text-align: center;
-        background: #ecfdf3;
-        border: 1px solid #c7f2d6;
-      }
-      .detail-link:hover {
-        background: #dff9ea;
-      }
       @media (max-width: 720px) {
         .toolbar {
           align-items: start;
@@ -223,5 +203,35 @@ export class ProductsPage implements OnInit {
 
   addToCart(product: Product): void {
     this.cartStore.add(product);
+  }
+
+  decreaseFromCart(product: Product): void {
+    const quantity = this.cartQuantity(product.id);
+
+    if (quantity <= 1) {
+      this.cartStore.remove(product.id);
+      return;
+    }
+
+    this.cartStore.updateQuantity(product.id, quantity - 1);
+  }
+
+  setCartQuantity(product: Product, quantity: number): void {
+    const safeQuantity = Math.max(0, Math.floor(quantity));
+
+    if (safeQuantity === 0) {
+      this.cartStore.remove(product.id);
+      return;
+    }
+
+    this.cartStore.updateQuantity(product.id, safeQuantity);
+  }
+
+  cartQuantity(productId: string): number {
+    const item = this.cartStore
+      .items()
+      .find((cartItem) => cartItem.product.id === productId);
+
+    return item?.quantity ?? 0;
   }
 }

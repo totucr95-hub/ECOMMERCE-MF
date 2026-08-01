@@ -1,5 +1,8 @@
 <div class="landing">
-  <lib-commerce-header [transparentAtTop]="true" />
+  <lib-commerce-header
+    [transparentAtTop]="true"
+    [cartItemCount]="cartItemCount()"
+  />
 
   <app-hero-section></app-hero-section>
   <app-benefits-section></app-benefits-section>

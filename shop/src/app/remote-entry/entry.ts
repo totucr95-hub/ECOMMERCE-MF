@@ -1,9 +1,16 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+} from '@angular/core';
 import {
   CommerceFooterComponent,
   CommerceHeaderComponent,
+  CommerceNavigationItem,
 } from '@ecommerce-mf/layout';
-import { RouterOutlet } from '@angular/router';
+import { Router, RouterOutlet } from '@angular/router';
+import { CartStore } from '@ecommerce-mf/shared-core';
 
 @Component({
   standalone: true,
@@ -11,7 +18,10 @@ import { RouterOutlet } from '@angular/router';
   selector: 'app-shop-entry',
   template: `
     <div class="shop-layout">
-      <lib-commerce-header activeItem="catalog" />
+      <lib-commerce-header
+        [activeItem]="activeItem()"
+        [cartItemCount]="cartItemCount()"
+      />
       <main class="shop-layout__content">
         <router-outlet />
       </main>
@@ -35,4 +45,19 @@ import { RouterOutlet } from '@angular/router';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class RemoteEntry {}
+export class RemoteEntry {
+  private readonly cartStore = inject(CartStore);
+  private readonly router = inject(Router);
+  readonly cartItemCount = computed(() =>
+    this.cartStore.items().reduce((total, item) => total + item.quantity, 0),
+  );
+  readonly activeItem = computed<CommerceNavigationItem>(() => {
+    const url = this.router.url;
+
+    if (url.startsWith('/shop/cart') || url.startsWith('/shop/checkout')) {
+      return 'cart';
+    }
+
+    return 'catalog';
+  });
+}

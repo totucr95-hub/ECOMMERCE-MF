@@ -5,19 +5,24 @@ import {
   Input,
   Output,
 } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { Product } from '@ecommerce-mf/shared-models';
 
 @Component({
   selector: 'lib-products-ui-product-card',
   standalone: true,
-  imports: [],
+  imports: [RouterLink],
   templateUrl: './products-ui-product-card.html',
   styleUrl: './products-ui-product-card.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProductsUiProductCard {
   @Input({ required: true }) product!: Product;
+  @Input() quantityInCart = 0;
+  @Input() detailLink: string | ReadonlyArray<string> | null = null;
   @Output() buy = new EventEmitter<Product>();
+  @Output() decrease = new EventEmitter<Product>();
+  @Output() quantityChange = new EventEmitter<number>();
   @Output() favorite = new EventEmitter<Product>();
   isFavorite = false;
 
@@ -44,6 +49,20 @@ export class ProductsUiProductCard {
 
   onBuy(): void {
     this.buy.emit(this.product);
+  }
+
+  onDecrease(): void {
+    this.decrease.emit(this.product);
+  }
+
+  onQuantityInput(rawValue: string): void {
+    const parsed = Number.parseInt(rawValue, 10);
+
+    if (Number.isNaN(parsed)) {
+      return;
+    }
+
+    this.quantityChange.emit(Math.max(0, parsed));
   }
 
   onFavorite(): void {

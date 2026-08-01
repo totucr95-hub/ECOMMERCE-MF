@@ -10,11 +10,36 @@
   <h3>{{ product.name }}</h3>
   <p class="description">{{ product.description }}</p>
   <p class="price">${{ product.price }}</p>
-  <p class="stock">Stock: {{ product.stock }}</p>
+  <div class="meta-row">
+    <p class="stock">Stock: {{ product.stock }}</p>
+    @if (detailLink) {
+    <a class="detail-link" [routerLink]="detailLink"
+      >Ver detalle <span aria-hidden="true">→</span></a
+    >
+    }
+  </div>
   <div class="actions">
+    @if (quantityInCart > 0) {
+    <div class="quantity-control" aria-label="Cantidad en carrito">
+      <button type="button" class="quantity-btn" (click)="onDecrease()">
+        -
+      </button>
+      <input
+        type="number"
+        min="0"
+        inputmode="numeric"
+        class="quantity-input"
+        [value]="quantityInCart"
+        aria-label="Cantidad"
+        (input)="onQuantityInput($any($event.target).value)"
+      />
+      <button type="button" class="quantity-btn" (click)="onBuy()">+</button>
+    </div>
+    } @else {
     <button type="button" class="buy" (click)="onBuy()">
       Agregar al carrito
     </button>
+    }
     <button
       type="button"
       class="favorite"

@@ -46,12 +46,26 @@
       >
     </nav>
 
-    <a
-      class="commerce-header__cta"
-      [class.is-active]="activeItem() === 'contact'"
-      routerLink="/landing"
-      fragment="contacto"
-      >Contacto</a
-    >
+    <div class="commerce-header__actions">
+      <a
+        class="commerce-header__cart"
+        [class.is-active]="activeItem() === 'cart'"
+        [routerLink]="cartLink()"
+        aria-label="Ir al carrito"
+      >
+        <span class="commerce-header__cart-icon" aria-hidden="true">🛒</span>
+        @if (cartItemCount() > 0) {
+        <span class="commerce-header__cart-badge">{{ badgeText() }}</span>
+        }
+      </a>
+
+      <a
+        class="commerce-header__cta"
+        [class.is-active]="activeItem() === 'contact'"
+        routerLink="/landing"
+        fragment="contacto"
+        >Contacto</a
+      >
+    </div>
   </div>
 </header>

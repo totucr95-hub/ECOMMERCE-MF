@@ -2,13 +2,18 @@ import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
+  computed,
   inject,
 } from '@angular/core';
 import {
   CommerceFooterComponent,
   CommerceHeaderComponent,
 } from '@ecommerce-mf/layout';
-import { LoadingService, ProductService } from '@ecommerce-mf/shared-core';
+import {
+  CartStore,
+  LoadingService,
+  ProductService,
+} from '@ecommerce-mf/shared-core';
 import { Product } from '@ecommerce-mf/shared-models';
 import { HeroSectionComponent } from './sections/hero/hero-section';
 import { FeaturedSectionComponent } from './sections/featured/featured-section';
@@ -33,7 +38,11 @@ import { ContactSectionComponent } from './sections/contact/contact-section';
 export class RemoteEntry {
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly productService = inject(ProductService);
+  private readonly cartStore = inject(CartStore);
   readonly loading = inject(LoadingService);
+  readonly cartItemCount = computed(() =>
+    this.cartStore.items().reduce((total, item) => total + item.quantity, 0),
+  );
   readonly showLocalLoader =
     this.host.nativeElement.parentElement === document.body;
   featuredProducts: Product[] = [];

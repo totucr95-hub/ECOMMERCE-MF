@@ -3,7 +3,7 @@
   "$schema": "../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "auth-util-auth/src",
   "projectType": "library",
-  "tags": [],
+  "tags": ["scope:auth", "type:util"],
   "targets": {
     "test": {
       "executor": "@nx/jest:jest",

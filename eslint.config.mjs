@@ -27,9 +27,19 @@ export default [
                     ],
                     depConstraints: [
                         {
-                            sourceTag: "*",
+                            sourceTag: "type:model",
+                            onlyDependOnLibsWithTags: ["type:model"]
+                        },
+                        {
+                            sourceTag: "type:util",
+                            onlyDependOnLibsWithTags: ["type:model", "type:util"]
+                        },
+                        {
+                            sourceTag: "type:domain",
                             onlyDependOnLibsWithTags: [
-                                "*"
+                                "type:domain",
+                                "type:model",
+                                "type:util"
                             ]
                         }
                     ]

@@ -67,7 +67,7 @@ export class LoadingService {
 
 @Injectable({ providedIn: 'root' })
 export class ThemeService {
-  private readonly storage = new StorageService();
+  private readonly storage = inject(StorageService);
   private readonly modeSignal = signal<'light' | 'dark'>(
     this.storage.get<'light' | 'dark'>('theme.mode', 'light'),
   );
@@ -88,7 +88,7 @@ export class ThemeService {
 
 @Injectable({ providedIn: 'root' })
 export class ProductService {
-  private readonly api = new ApiService();
+  private readonly api = inject(ApiService);
 
   async getProducts(): Promise<Product[]> {
     return this.api.get(productsMock as Product[]);
@@ -109,7 +109,7 @@ export class ProductService {
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private readonly storage = new StorageService();
+  private readonly storage = inject(StorageService);
   private readonly authUser = signal<User | null>(
     this.storage.get<User | null>('auth.user', null),
   );
@@ -133,7 +133,7 @@ export class AuthService {
 
 @Injectable({ providedIn: 'root' })
 export class OrderService {
-  private readonly api = new ApiService();
+  private readonly api = inject(ApiService);
 
   async getOrders(): Promise<Order[]> {
     return this.api.get(ordersMock as Order[]);
@@ -155,7 +155,7 @@ export class PaymentService {
 
 @Injectable({ providedIn: 'root' })
 export class ProductStore {
-  private readonly service = new ProductService();
+  private readonly service = inject(ProductService);
 
   readonly products = signal<Product[]>([]);
   readonly categories = signal<Category[]>([]);
@@ -179,7 +179,7 @@ export class ProductStore {
 
 @Injectable({ providedIn: 'root' })
 export class CartStore {
-  private readonly storage = new StorageService();
+  private readonly storage = inject(StorageService);
   private readonly taxRate = 0.19;
 
   readonly items = signal<{ product: Product; quantity: number }[]>(
@@ -270,7 +270,7 @@ export class AuthStore {
 
 @Injectable({ providedIn: 'root' })
 export class ThemeStore {
-  private readonly service = new ThemeService();
+  private readonly service = inject(ThemeService);
   readonly mode = this.service.mode;
 
   toggle(): void {

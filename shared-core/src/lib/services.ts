@@ -1,4 +1,5 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
+import Keycloak, { type KeycloakTokenParsed } from 'keycloak-js';
 import {
   Cart,
   Category,
@@ -11,6 +12,7 @@ import productsMock from './mocks/products.json';
 import categoriesMock from './mocks/categories.json';
 import usersMock from './mocks/users.json';
 import ordersMock from './mocks/orders.json';
+import { keycloakConfig } from './keycloak.config';
 
 @Injectable({ providedIn: 'root' })
 export class StorageService {
@@ -110,13 +112,60 @@ export class ProductService {
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly storage = inject(StorageService);
+  private keycloak: Keycloak | null = null;
+  private initPromise: Promise<void> | null = null;
   private readonly authUser = signal<User | null>(
     this.storage.get<User | null>('auth.user', null),
   );
+  private readonly keycloakReady = signal(false);
 
   readonly currentUser = computed(() => this.authUser());
   readonly isAuthenticated = computed(() => this.authUser() !== null);
   readonly isAdmin = computed(() => this.authUser()?.role.name === 'admin');
+  readonly isReady = this.keycloakReady.asReadonly();
+
+  init(): Promise<void> {
+    if (this.initPromise) {
+      return this.initPromise;
+    }
+
+    this.initPromise = this.initializeKeycloak();
+    return this.initPromise;
+  }
+
+  async loginWithKeycloak(redirectUri?: string): Promise<void> {
+    await this.init();
+
+    if (!this.keycloak) {
+      throw new Error('Keycloak no esta disponible.');
+    }
+
+    await this.keycloak.login({
+      redirectUri: redirectUri ?? `${window.location.origin}/admin`,
+    });
+  }
+
+  getAccessToken(): string | null {
+    return (
+      this.keycloak?.token ??
+      this.storage.get<string | null>('auth.token', null)
+    );
+  }
+
+  async refreshToken(minValiditySeconds = 30): Promise<string | null> {
+    if (!this.keycloak || !this.keycloak.authenticated) {
+      return this.getAccessToken();
+    }
+
+    try {
+      await this.keycloak.updateToken(minValiditySeconds);
+      this.syncUserFromToken(this.keycloak.tokenParsed);
+      return this.getAccessToken();
+    } catch {
+      this.clearSession();
+      return null;
+    }
+  }
 
   login(email: string): User | null {
     const user = (usersMock as User[]).find((u) => u.email === email) ?? null;
@@ -125,9 +174,88 @@ export class AuthService {
     return user;
   }
 
-  logout(): void {
+  async logout(): Promise<void> {
+    if (this.keycloak?.authenticated) {
+      await this.keycloak.logout({
+        redirectUri: `${window.location.origin}/landing`,
+      });
+    }
+
+    this.clearSession();
+  }
+
+  private async initializeKeycloak(): Promise<void> {
+    try {
+      this.keycloak = new Keycloak({
+        url: keycloakConfig.url,
+        realm: keycloakConfig.realm,
+        clientId: keycloakConfig.spaClientId,
+      });
+
+      const authenticated = await this.keycloak.init({
+        onLoad: 'check-sso',
+        checkLoginIframe: false,
+        pkceMethod: 'S256',
+        silentCheckSsoRedirectUri: `${window.location.origin}/silent-check-sso.html`,
+      });
+
+      if (authenticated) {
+        this.syncUserFromToken(this.keycloak.tokenParsed);
+      } else {
+        this.clearSession();
+      }
+    } catch {
+      this.keycloak = null;
+      this.clearSession();
+    } finally {
+      this.keycloakReady.set(true);
+    }
+  }
+
+  private syncUserFromToken(token: KeycloakTokenParsed | undefined): void {
+    if (!this.keycloak?.token || !token) {
+      this.clearSession();
+      return;
+    }
+
+    const realmRoles = (token.realm_access?.roles ?? []) as string[];
+    const roleName: 'admin' | 'manager' | 'customer' = realmRoles.includes(
+      'admin',
+    )
+      ? 'admin'
+      : realmRoles.includes('manager')
+        ? 'manager'
+        : 'customer';
+
+    const userId = token['sub'] ?? token['sid'] ?? 'keycloak-user';
+    const tokenName =
+      token['name'] ??
+      token['preferred_username'] ??
+      token['email'] ??
+      'Usuario';
+    const tokenEmail = token['email'] ?? token['preferred_username'] ?? '';
+
+    const user: User = {
+      id: String(userId),
+      name: String(tokenName) || 'Usuario',
+      email: String(tokenEmail),
+      role: {
+        id: roleName,
+        name: roleName,
+      },
+      permissions: [],
+      addresses: [],
+    };
+
+    this.authUser.set(user);
+    this.storage.set('auth.user', user);
+    this.storage.set('auth.token', this.keycloak.token);
+  }
+
+  private clearSession(): void {
     this.authUser.set(null);
     this.storage.remove('auth.user');
+    this.storage.remove('auth.token');
   }
 }
 
@@ -265,13 +393,30 @@ export class AuthStore {
   readonly currentUser = this.service.currentUser;
   readonly isAuthenticated = this.service.isAuthenticated;
   readonly isAdmin = this.service.isAdmin;
+  readonly isReady = this.service.isReady;
+
+  init(): Promise<void> {
+    return this.service.init();
+  }
+
+  loginWithKeycloak(redirectUri?: string): Promise<void> {
+    return this.service.loginWithKeycloak(redirectUri);
+  }
+
+  getAccessToken(): string | null {
+    return this.service.getAccessToken();
+  }
+
+  refreshToken(minValiditySeconds?: number): Promise<string | null> {
+    return this.service.refreshToken(minValiditySeconds);
+  }
 
   login(email: string): User | null {
     return this.service.login(email);
   }
 
   logout(): void {
-    this.service.logout();
+    void this.service.logout();
   }
 }
 

@@ -1,29 +1,16 @@
 import { TestBed } from '@angular/core/testing';
-import { Router } from '@angular/router';
-import { User } from '@ecommerce-mf/shared-models';
 import { AuthStore } from '@ecommerce-mf/shared-core';
 import { LoginPage } from './login.page';
 
 describe('LoginPage', () => {
-  const navigateByUrl = jest.fn();
-  const login = jest.fn();
+  const loginWithKeycloak = jest.fn();
 
   beforeEach(async () => {
-    navigateByUrl.mockReset();
-    login.mockReset();
+    loginWithKeycloak.mockReset();
 
     await TestBed.configureTestingModule({
       imports: [LoginPage],
-      providers: [
-        {
-          provide: Router,
-          useValue: {
-            config: [{ path: 'landing' }],
-            navigateByUrl,
-          },
-        },
-        { provide: AuthStore, useValue: { login } },
-      ],
+      providers: [{ provide: AuthStore, useValue: { loginWithKeycloak } }],
     }).compileComponents();
   });
 
@@ -32,25 +19,24 @@ describe('LoginPage', () => {
     expect(fixture.componentInstance).toBeTruthy();
   });
 
-  it('navigates to admin for a valid user', async () => {
+  it('starts Keycloak login flow', async () => {
     const fixture = TestBed.createComponent(LoginPage);
     const component = fixture.componentInstance;
 
-    login.mockReturnValue({ role: { name: 'admin' } } as User);
-    navigateByUrl.mockResolvedValue(true);
+    loginWithKeycloak.mockResolvedValue(undefined);
 
     await component.submit();
 
-    expect(navigateByUrl).toHaveBeenCalledWith('/admin');
+    expect(loginWithKeycloak).toHaveBeenCalled();
   });
 
-  it('shows error for invalid credentials', () => {
+  it('shows error when keycloak is unavailable', async () => {
     const fixture = TestBed.createComponent(LoginPage);
     const component = fixture.componentInstance;
 
-    login.mockReturnValue(null);
-    void component.submit();
+    loginWithKeycloak.mockRejectedValue(new Error('offline'));
+    await component.submit();
 
-    expect(component.errorMessage).toContain('Credenciales invalidas');
+    expect(component.errorMessage).toContain('Keycloak');
   });
 });

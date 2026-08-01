@@ -45,3 +45,8 @@ Thumbs.db
 .claude/settings.local.json
 
 .angular
+
+# Local Keycloak runtime (do not commit binaries or local DB)
+infra/keycloak/keycloak-*/
+infra/keycloak/*.zip
+infra/keycloak/.tmp/

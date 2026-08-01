@@ -1,0 +1,144 @@
+{
+  "realm": "ecommerce-mf",
+  "enabled": true,
+  "displayName": "Ecommerce MF",
+  "registrationAllowed": false,
+  "loginWithEmailAllowed": true,
+  "duplicateEmailsAllowed": false,
+  "resetPasswordAllowed": true,
+  "roles": {
+    "realm": [
+      {
+        "name": "admin",
+        "description": "Administrador del sistema"
+      },
+      {
+        "name": "manager",
+        "description": "Gestor operativo"
+      },
+      {
+        "name": "customer",
+        "description": "Cliente"
+      }
+    ]
+  },
+  "clients": [
+    {
+      "clientId": "shell-web",
+      "name": "Shell SPA",
+      "description": "Frontend SPA host (shell)",
+      "protocol": "openid-connect",
+      "publicClient": true,
+      "bearerOnly": false,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "frontchannelLogout": true,
+      "attributes": {
+        "pkce.code.challenge.method": "S256",
+        "post.logout.redirect.uris": "http://localhost:4200/*##http://localhost:4201/*##http://localhost:4202/*##http://localhost:4203/*##http://localhost:4204/*"
+      },
+      "redirectUris": [
+        "http://localhost:4200/*",
+        "http://localhost:4201/*",
+        "http://localhost:4202/*",
+        "http://localhost:4203/*",
+        "http://localhost:4204/*"
+      ],
+      "webOrigins": [
+        "http://localhost:4200",
+        "http://localhost:4201",
+        "http://localhost:4202",
+        "http://localhost:4203",
+        "http://localhost:4204"
+      ],
+      "defaultClientScopes": [
+        "web-origins",
+        "acr",
+        "profile",
+        "roles",
+        "email"
+      ],
+      "optionalClientScopes": [
+        "address",
+        "phone",
+        "offline_access",
+        "microprofile-jwt"
+      ]
+    },
+    {
+      "clientId": "ecommerce-api",
+      "name": "Ecommerce API",
+      "description": "Backend API .NET",
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "bearerOnly": false,
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true,
+      "secret": "CHANGE_ME_ECOMMERCE_API_SECRET",
+      "attributes": {
+        "client.secret.creation.time": "0"
+      },
+      "defaultClientScopes": ["acr", "profile", "roles", "email"],
+      "optionalClientScopes": [
+        "address",
+        "phone",
+        "offline_access",
+        "microprofile-jwt"
+      ]
+    }
+  ],
+  "users": [
+    {
+      "username": "admin@ingecoplast.co",
+      "enabled": true,
+      "email": "admin@ingecoplast.co",
+      "emailVerified": true,
+      "firstName": "Admin",
+      "lastName": "Ingecoplast",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "Admin123*",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["admin"]
+    },
+    {
+      "username": "manager@ingecoplast.co",
+      "enabled": true,
+      "email": "manager@ingecoplast.co",
+      "emailVerified": true,
+      "firstName": "Manager",
+      "lastName": "Ingecoplast",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "Manager123*",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["manager"]
+    },
+    {
+      "username": "customer@ingecoplast.co",
+      "enabled": true,
+      "email": "customer@ingecoplast.co",
+      "emailVerified": true,
+      "firstName": "Customer",
+      "lastName": "Demo",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "Customer123*",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["customer"]
+    }
+  ]
+}

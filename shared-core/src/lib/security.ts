@@ -9,12 +9,13 @@ import {
 } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
-import { catchError, finalize, throwError } from 'rxjs';
+import { catchError, finalize, from, switchMap, throwError } from 'rxjs';
 import { AuthService, LoadingService, NotificationService } from './services';
 
-export const authGuard: CanActivateFn = () => {
+export const authGuard: CanActivateFn = async () => {
   const auth = inject(AuthService);
   const router = inject(Router);
+  await auth.init();
 
   if (auth.isAuthenticated()) {
     return true;
@@ -24,9 +25,10 @@ export const authGuard: CanActivateFn = () => {
   return false;
 };
 
-export const adminGuard: CanActivateFn = () => {
+export const adminGuard: CanActivateFn = async () => {
   const auth = inject(AuthService);
   const router = inject(Router);
+  await auth.init();
 
   if (auth.isAdmin()) {
     return true;
@@ -36,9 +38,10 @@ export const adminGuard: CanActivateFn = () => {
   return false;
 };
 
-export const guestGuard: CanActivateFn = () => {
+export const guestGuard: CanActivateFn = async () => {
   const auth = inject(AuthService);
   const router = inject(Router);
+  await auth.init();
 
   if (!auth.isAuthenticated()) {
     return true;
@@ -52,16 +55,44 @@ export const AuthGuard = authGuard;
 export const AdminGuard = adminGuard;
 export const GuestGuard = guestGuard;
 
-export const jwtInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, next: HttpHandlerFn) => {
-  const token = localStorage.getItem('auth.token') ?? 'mock-token';
-  return next(req.clone({ setHeaders: { Authorization: `Bearer ${token}` } }));
+export const jwtInterceptor: HttpInterceptorFn = (
+  req: HttpRequest<unknown>,
+  next: HttpHandlerFn,
+) => {
+  const auth = inject(AuthService);
+
+  const isApiRequest =
+    req.url.includes('/api/') || req.url.startsWith('http://localhost:3000');
+  if (!isApiRequest) {
+    return next(req);
+  }
+
+  return from(auth.refreshToken()).pipe(
+    switchMap((token) => {
+      if (!token) {
+        return next(req);
+      }
+
+      return next(
+        req.clone({
+          setHeaders: {
+            Authorization: `Bearer ${token}`,
+          },
+        }),
+      );
+    }),
+  );
 };
 
 export const SKIP_GLOBAL_LOADER = new HttpContextToken<boolean>(() => false);
 
-export const skipGlobalLoaderContext = (): HttpContext => new HttpContext().set(SKIP_GLOBAL_LOADER, true);
+export const skipGlobalLoaderContext = (): HttpContext =>
+  new HttpContext().set(SKIP_GLOBAL_LOADER, true);
 
-export const loadingInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, next: HttpHandlerFn) => {
+export const loadingInterceptor: HttpInterceptorFn = (
+  req: HttpRequest<unknown>,
+  next: HttpHandlerFn,
+) => {
   if (req.context.get(SKIP_GLOBAL_LOADER)) {
     return next(req);
   }
@@ -72,14 +103,17 @@ export const loadingInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>,
   return next(req).pipe(finalize(() => loading.stop()));
 };
 
-export const errorInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, next: HttpHandlerFn) => {
+export const errorInterceptor: HttpInterceptorFn = (
+  req: HttpRequest<unknown>,
+  next: HttpHandlerFn,
+) => {
   const notifier = inject(NotificationService);
 
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
       notifier.push(error.message || 'Unexpected error');
       return throwError(() => error);
-    })
+    }),
   );
 };
 

@@ -4,7 +4,7 @@
   "projectType": "application",
   "prefix": "app",
   "sourceRoot": "shop/src",
-  "tags": [],
+  "tags": ["scope:shop", "type:app"],
   "targets": {
     "build": {
       "executor": "@nx/angular:webpack-browser",

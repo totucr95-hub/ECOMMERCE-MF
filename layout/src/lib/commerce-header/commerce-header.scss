@@ -138,6 +138,30 @@
     line-height: 1;
   }
 
+  &__admin {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    border: 1px solid #d6d3f0;
+    background: #f5f3ff;
+    color: #4c1d95;
+    text-decoration: none;
+    width: 38px;
+    height: 38px;
+  }
+
+  &__admin:hover {
+    border-color: #8b5cf6;
+    background: #ede9fe;
+  }
+
+  &__admin-icon {
+    font-size: 0.95rem;
+    line-height: 1;
+  }
+
   &__cart-badge {
     position: absolute;
     top: -6px;
@@ -195,6 +219,11 @@
 
   .commerce-header__cta {
     display: none;
+  }
+
+  .commerce-header__admin {
+    width: 38px;
+    height: 38px;
   }
 
   .commerce-header__actions {

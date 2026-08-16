@@ -65,7 +65,7 @@ export class AdminProductsPage {
 
   async onCreate(): Promise<void> {
     this.isSaving = true;
-    this.feedbackMessage = 'Creando producto en endpoint simulado...';
+    this.feedbackMessage = 'Creando producto en la API...';
     this.cdr.markForCheck();
 
     const payload = this.buildPayloadFromForm();
@@ -84,7 +84,7 @@ export class AdminProductsPage {
 
   async onEdit(product: AdminProduct): Promise<void> {
     this.isLoading = true;
-    this.feedbackMessage = 'Leyendo producto desde endpoint simulado...';
+    this.feedbackMessage = 'Leyendo producto desde la API...';
     this.cdr.markForCheck();
 
     const storedProduct = await this.adminProductsFacade.readProduct(
@@ -136,7 +136,7 @@ export class AdminProductsPage {
     }
 
     this.isSaving = true;
-    this.feedbackMessage = 'Actualizando producto en endpoint simulado...';
+    this.feedbackMessage = 'Actualizando producto en la API...';
     this.cdr.markForCheck();
 
     const updatedProduct = await this.adminProductsFacade.updateProduct(
@@ -163,7 +163,7 @@ export class AdminProductsPage {
 
   async onDelete(product: AdminProduct): Promise<void> {
     this.isSaving = true;
-    this.feedbackMessage = 'Eliminando producto en endpoint simulado...';
+    this.feedbackMessage = 'Eliminando producto en la API...';
     this.cdr.markForCheck();
 
     const deleted = await this.adminProductsFacade.deleteProduct(product.id);

@@ -1,12 +1,28 @@
 import { Route } from '@angular/router';
 import { loadRemote } from '@module-federation/enhanced/runtime';
-import { adminGuard, authGuard } from '@ecommerce-mf/shared-core';
+import { adminGuard, authGuard, guestGuard } from '@ecommerce-mf/shared-core';
 
 export const appRoutes: Route[] = [
   {
     path: 'auth',
     loadChildren: () =>
       loadRemote<typeof import('auth/Routes')>('auth/Routes').then(
+        (m) => m!.remoteRoutes,
+      ),
+  },
+  {
+    canActivate: [authGuard],
+    path: 'shop',
+    loadChildren: () =>
+      loadRemote<typeof import('shop/Routes')>('shop/Routes').then(
+        (m) => m!.remoteRoutes,
+      ),
+  },
+  {
+    canActivate: [authGuard],
+    path: 'landing',
+    loadChildren: () =>
+      loadRemote<typeof import('landing/Routes')>('landing/Routes').then(
         (m) => m!.remoteRoutes,
       ),
   },
@@ -19,23 +35,9 @@ export const appRoutes: Route[] = [
       ),
   },
   {
-    path: 'shop',
-    loadChildren: () =>
-      loadRemote<typeof import('shop/Routes')>('shop/Routes').then(
-        (m) => m!.remoteRoutes,
-      ),
-  },
-  {
-    path: 'landing',
-    loadChildren: () =>
-      loadRemote<typeof import('landing/Routes')>('landing/Routes').then(
-        (m) => m!.remoteRoutes,
-      ),
-  },
-  {
     path: '',
     pathMatch: 'full',
-    redirectTo: 'landing',
+    redirectTo: 'auth/login',
   },
   {
     path: '403',

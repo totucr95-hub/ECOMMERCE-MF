@@ -96,6 +96,7 @@ export class ProductService {
   private readonly http = inject(HttpClient);
   private readonly apiBaseUrl = appConfig.apiBaseUrl.replace(/\/$/, '');
 
+  // Lee el catalogo desde la API y cae a mocks si el backend no responde.
   async getProducts(): Promise<Product[]> {
     return this.fetchProducts(`${this.apiBaseUrl}/products`);
   }
@@ -202,6 +203,8 @@ export class AuthService {
   }
 
   async refreshToken(minValiditySeconds = 30): Promise<string | null> {
+    await this.init();
+
     if (!this.keycloak || !this.keycloak.authenticated) {
       return this.getAccessToken();
     }
@@ -238,6 +241,7 @@ export class AuthService {
     redirectUri?: string,
     loginHint?: string,
   ): Promise<void> {
+    // Reutiliza el flujo de login de Keycloak para registro y recuperacion guiada.
     await this.init();
 
     if (!this.keycloak) {
@@ -313,6 +317,14 @@ export class AuthService {
       permissions: [],
       addresses: [],
     };
+
+    console.log('Logged user session', {
+      user,
+      isAdmin: roleName === 'admin',
+      realmRoles,
+      tokenName,
+      tokenEmail,
+    });
 
     this.authUser.set(user);
     this.storage.set('auth.user', user);

@@ -1,4 +1,5 @@
 import { Route } from '@angular/router';
+import { adminGuard, authGuard } from '@ecommerce-mf/shared-core';
 import { provideAdminFeatures } from '../features/admin-features.providers';
 import { AdminLayoutComponent } from './entry';
 
@@ -6,6 +7,7 @@ export const remoteRoutes: Route[] = [
   {
     path: '',
     component: AdminLayoutComponent,
+    canActivate: [authGuard, adminGuard],
     providers: [provideAdminFeatures()],
     children: [
       {

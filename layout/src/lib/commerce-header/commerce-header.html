@@ -47,6 +47,17 @@
     </nav>
 
     <div class="commerce-header__actions">
+      @if (isAdmin()) {
+      <a
+        class="commerce-header__admin"
+        routerLink="/admin"
+        aria-label="Ir al panel de administracion"
+        title="Panel de administracion"
+      >
+        <span class="commerce-header__admin-icon" aria-hidden="true">⚙</span>
+      </a>
+      }
+
       <a
         class="commerce-header__cart"
         [class.is-active]="activeItem() === 'cart'"

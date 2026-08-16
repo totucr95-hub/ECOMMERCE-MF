@@ -3,9 +3,11 @@ import {
   Component,
   HostListener,
   computed,
+  inject,
   input,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { AuthStore } from '@ecommerce-mf/shared-core';
 
 export type CommerceNavigationItem =
   | 'home'
@@ -24,10 +26,13 @@ export type CommerceNavigationItem =
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CommerceHeaderComponent {
+  private readonly authStore = inject(AuthStore);
+
   readonly activeItem = input<CommerceNavigationItem | null>(null);
   readonly transparentAtTop = input(false);
   readonly cartItemCount = input(0);
   readonly cartLink = input('/shop/cart');
+  readonly isAdmin = computed(() => this.authStore.isAdmin());
 
   readonly badgeText = computed(() => {
     const count = this.cartItemCount();

@@ -39,18 +39,37 @@
       >
         ◔
       </button>
-      <button
-        type="button"
-        class="admin-shell__profile"
-        aria-label="Abrir perfil"
-      >
-        <span class="admin-shell__avatar">RA</span>
-        <span class="admin-shell__profile-copy">
-          <strong>Raiser PC</strong>
-          <small>Administrador</small>
-        </span>
-        <span class="admin-shell__profile-caret" aria-hidden="true">⌄</span>
-      </button>
+      <div class="admin-shell__profile-menu-wrap">
+        <button
+          type="button"
+          class="admin-shell__profile"
+          [attr.aria-expanded]="isProfileMenuOpen"
+          aria-haspopup="menu"
+          aria-label="Abrir perfil"
+          (click)="toggleProfileMenu()"
+        >
+          <span class="admin-shell__avatar">{{ userInitials() }}</span>
+          <span class="admin-shell__profile-copy">
+            <strong>{{ currentUser()?.name || 'Administrador' }}</strong>
+            <small>{{ userRoleLabel() }}</small>
+          </span>
+          <span class="admin-shell__profile-caret" aria-hidden="true">⌄</span>
+        </button>
+
+        @if (isProfileMenuOpen) {
+        <div class="admin-shell__profile-menu" role="menu">
+          <button
+            type="button"
+            class="admin-shell__profile-menu-item admin-shell__profile-menu-item--danger"
+            role="menuitem"
+            [disabled]="isLoggingOut"
+            (click)="logout()"
+          >
+            {{ isLoggingOut ? 'Cerrando sesion...' : 'Cerrar sesion' }}
+          </button>
+        </div>
+        }
+      </div>
     </div>
   </header>
 

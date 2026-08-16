@@ -1,0 +1,157 @@
+parameters:
+  - name: environment
+    type: string
+  - name: keycloakUrl
+    type: string
+
+steps:
+  - task: AzureCLI@2
+    displayName: Provision ${{ parameters.environment }} infrastructure
+    inputs:
+      azureSubscription: $(AZURE_SERVICE_CONNECTION)
+      scriptType: bash
+      scriptLocation: inlineScript
+      inlineScript: |
+        set -euo pipefail
+
+        outputs=$(az deployment sub create \
+          --name "ecommerce-mf-${{ parameters.environment }}-$(Build.BuildId)" \
+          --location "$(AZURE_LOCATION)" \
+          --template-file infra/azure/main.bicep \
+          --parameters \
+            environment="${{ parameters.environment }}" \
+            location="$(AZURE_LOCATION)" \
+            namePrefix="$(AZURE_NAME_PREFIX)" \
+            appServiceSku="$(APP_SERVICE_SKU)" \
+          --query properties.outputs \
+          --output json)
+
+        set_variable() {
+          local name="$1"
+          local query="$2"
+          local value
+          value=$(echo "$outputs" | jq -r "$query")
+          echo "##vso[task.setvariable variable=$name]$value"
+        }
+
+        set_variable RESOURCE_GROUP '.resourceGroupName.value'
+        set_variable API_APP_NAME '.apiAppName.value'
+        set_variable API_URL '.apiUrl.value'
+        set_variable SHELL_ACCOUNT '.storageAccountNames.value.shell'
+        set_variable LANDING_ACCOUNT '.storageAccountNames.value.landing'
+        set_variable SHOP_ACCOUNT '.storageAccountNames.value.shop'
+        set_variable ADMIN_ACCOUNT '.storageAccountNames.value.admin'
+        set_variable AUTH_ACCOUNT '.storageAccountNames.value.auth'
+        set_variable SHELL_URL '.frontendUrls.value.shell'
+        set_variable LANDING_URL '.frontendUrls.value.landing'
+        set_variable SHOP_URL '.frontendUrls.value.shop'
+        set_variable ADMIN_URL '.frontendUrls.value.admin'
+        set_variable AUTH_URL '.frontendUrls.value.auth'
+
+  - task: NodeTool@0
+    displayName: Use Node.js $(NODE_VERSION)
+    inputs:
+      versionSpec: $(NODE_VERSION)
+
+  - task: UseDotNet@2
+    displayName: Use .NET $(DOTNET_VERSION)
+    inputs:
+      packageType: sdk
+      version: $(DOTNET_VERSION)
+
+  - script: npm ci
+    displayName: Install frontend dependencies
+
+  - bash: |
+      node tools/configure-deployment.mjs \
+        --api-url "$(API_URL)" \
+        --keycloak-url "${{ parameters.keycloakUrl }}" \
+        --shell-url "$(SHELL_URL)" \
+        --landing-url "$(LANDING_URL)" \
+        --shop-url "$(SHOP_URL)" \
+        --admin-url "$(ADMIN_URL)" \
+        --auth-url "$(AUTH_URL)"
+    displayName: Configure ${{ parameters.environment }} URLs
+
+  - script: npx nx run-many -t build -p shell,landing,shop,admin,auth --configuration=production --parallel=3 --skip-nx-cache
+    displayName: Build ${{ parameters.environment }} frontends
+
+  - script: dotnet publish backend/src/Ecommerce.Api/Ecommerce.Api.csproj --configuration Release --output $(Build.ArtifactStagingDirectory)/api
+    displayName: Publish ASP.NET API
+
+  - task: ArchiveFiles@2
+    displayName: Package ASP.NET API
+    inputs:
+      rootFolderOrFile: $(Build.ArtifactStagingDirectory)/api
+      includeRootFolder: false
+      archiveType: zip
+      archiveFile: $(Build.ArtifactStagingDirectory)/api.zip
+      replaceExistingArchive: true
+
+  - task: AzureCLI@2
+    displayName: Deploy ${{ parameters.environment }} applications
+    inputs:
+      azureSubscription: $(AZURE_SERVICE_CONNECTION)
+      scriptType: bash
+      scriptLocation: inlineScript
+      inlineScript: |
+        set -euo pipefail
+
+        upload_frontend() {
+          local account="$1"
+          local source="$2"
+          local account_key
+          account_key=$(az storage account keys list \
+            --resource-group "$(RESOURCE_GROUP)" \
+            --account-name "$account" \
+            --query '[0].value' \
+            --output tsv)
+
+          az storage blob delete-batch \
+            --account-name "$account" \
+            --account-key "$account_key" \
+            --source '$web'
+          az storage blob upload-batch \
+            --account-name "$account" \
+            --account-key "$account_key" \
+            --destination '$web' \
+            --source "$source" \
+            --overwrite
+        }
+
+        upload_frontend "$(LANDING_ACCOUNT)" dist/landing
+        upload_frontend "$(SHOP_ACCOUNT)" dist/shop
+        upload_frontend "$(ADMIN_ACCOUNT)" dist/admin
+        upload_frontend "$(AUTH_ACCOUNT)" dist/auth
+        upload_frontend "$(SHELL_ACCOUNT)" dist/shell
+
+        shell_url="${SHELL_URL%/}"
+        landing_url="${LANDING_URL%/}"
+        shop_url="${SHOP_URL%/}"
+        admin_url="${ADMIN_URL%/}"
+        auth_url="${AUTH_URL%/}"
+
+        az webapp config appsettings set \
+          --resource-group "$(RESOURCE_GROUP)" \
+          --name "$(API_APP_NAME)" \
+          --settings \
+            "Cors__AllowedOrigins__0=$shell_url" \
+            "Cors__AllowedOrigins__1=$landing_url" \
+            "Cors__AllowedOrigins__2=$shop_url" \
+            "Cors__AllowedOrigins__3=$admin_url" \
+            "Cors__AllowedOrigins__4=$auth_url" \
+            "Keycloak__Authority=${{ parameters.keycloakUrl }}/realms/ecommerce-mf" \
+            "Keycloak__Audience=ecommerce-api" \
+          --output none
+
+        az webapp deploy \
+          --resource-group "$(RESOURCE_GROUP)" \
+          --name "$(API_APP_NAME)" \
+          --src-path "$(Build.ArtifactStagingDirectory)/api.zip" \
+          --type zip \
+          --clean true \
+          --restart true \
+          --output none
+
+        echo "Shell URL: $(SHELL_URL)"
+        echo "API URL: $(API_URL)/api/health"

@@ -28,6 +28,13 @@ export const remoteRoutes: Route[] = [
             (m) => m.ForgotPasswordPage,
           ),
       },
+      {
+        path: 'change-password',
+        loadComponent: () =>
+          import('../pages/change-password/change-password.page').then(
+            (m) => m.ChangePasswordPage,
+          ),
+      },
     ],
   },
 ];

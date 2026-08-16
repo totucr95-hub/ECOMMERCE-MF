@@ -10,6 +10,7 @@ import {
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { catchError, finalize, from, switchMap, throwError } from 'rxjs';
+import { appConfig } from '@ecommerce-mf/config';
 import { AuthService, LoadingService, NotificationService } from './services';
 
 export const authGuard: CanActivateFn = async () => {
@@ -62,7 +63,7 @@ export const jwtInterceptor: HttpInterceptorFn = (
   const auth = inject(AuthService);
 
   const isApiRequest =
-    req.url.includes('/api/') || req.url.startsWith('http://localhost:3000');
+    req.url.startsWith(appConfig.apiBaseUrl) || req.url.startsWith('/api/');
   if (!isApiRequest) {
     return next(req);
   }

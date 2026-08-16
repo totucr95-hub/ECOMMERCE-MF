@@ -2,7 +2,7 @@
   "realm": "ecommerce-mf",
   "enabled": true,
   "displayName": "Ecommerce MF",
-  "registrationAllowed": false,
+  "registrationAllowed": true,
   "loginWithEmailAllowed": true,
   "duplicateEmailsAllowed": false,
   "resetPasswordAllowed": true,

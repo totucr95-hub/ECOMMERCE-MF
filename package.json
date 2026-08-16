@@ -5,6 +5,7 @@
   "scripts": {
     "prepare": "husky",
     "serve:shell": "nx serve shell",
+    "serve:api": "dotnet run --project backend/src/Ecommerce.Api/Ecommerce.Api.csproj",
     "lint": "nx run-many -t lint",
     "test": "nx run-many -t test",
     "format": "prettier --write \"**/*.{ts,tsx,js,json,scss,md,html}\"",

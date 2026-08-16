@@ -1,4 +1,5 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import Keycloak, { type KeycloakTokenParsed } from 'keycloak-js';
 import {
   Cart,
@@ -8,6 +9,8 @@ import {
   Product,
   User,
 } from '@ecommerce-mf/shared-models';
+import { appConfig } from '@ecommerce-mf/config';
+import { firstValueFrom } from 'rxjs';
 import productsMock from './mocks/products.json';
 import categoriesMock from './mocks/categories.json';
 import usersMock from './mocks/users.json';
@@ -90,22 +93,45 @@ export class ThemeService {
 
 @Injectable({ providedIn: 'root' })
 export class ProductService {
-  private readonly api = inject(ApiService);
+  private readonly http = inject(HttpClient);
+  private readonly apiBaseUrl = appConfig.apiBaseUrl.replace(/\/$/, '');
 
   async getProducts(): Promise<Product[]> {
-    return this.api.get(productsMock as Product[]);
+    return this.fetchProducts(`${this.apiBaseUrl}/products`);
   }
 
   async getFeaturedProducts(): Promise<Product[]> {
-    return this.api.get((productsMock as Product[]).filter((p) => p.featured));
+    return this.fetchProducts(`${this.apiBaseUrl}/products/featured`);
   }
 
   async getProductById(id: string): Promise<Product | undefined> {
-    return this.api.get((productsMock as Product[]).find((p) => p.id === id));
+    try {
+      return await firstValueFrom(
+        this.http.get<Product>(
+          `${this.apiBaseUrl}/products/${encodeURIComponent(id)}`,
+        ),
+      );
+    } catch {
+      return (productsMock as Product[]).find((p) => p.id === id);
+    }
   }
 
   async getCategories(): Promise<Category[]> {
-    return this.api.get(categoriesMock as Category[]);
+    try {
+      return await firstValueFrom(
+        this.http.get<Category[]>(`${this.apiBaseUrl}/categories`),
+      );
+    } catch {
+      return categoriesMock as Category[];
+    }
+  }
+
+  private async fetchProducts(url: string): Promise<Product[]> {
+    try {
+      return await firstValueFrom(this.http.get<Product[]>(url));
+    } catch {
+      return productsMock as Product[];
+    }
   }
 }
 
@@ -145,6 +171,29 @@ export class AuthService {
     });
   }
 
+  async registerWithKeycloak(redirectUri?: string): Promise<void> {
+    await this.init();
+
+    if (!this.keycloak) {
+      throw new Error('Keycloak no esta disponible.');
+    }
+
+    await this.keycloak.register({
+      redirectUri: redirectUri ?? `${window.location.origin}/auth/login`,
+    });
+  }
+
+  async recoverPasswordWithKeycloak(
+    email?: string,
+    redirectUri?: string,
+  ): Promise<void> {
+    await this.runKeycloakAction('UPDATE_PASSWORD', redirectUri, email);
+  }
+
+  async changePasswordWithKeycloak(redirectUri?: string): Promise<void> {
+    await this.runKeycloakAction('UPDATE_PASSWORD', redirectUri);
+  }
+
   getAccessToken(): string | null {
     return (
       this.keycloak?.token ??
@@ -182,6 +231,24 @@ export class AuthService {
     }
 
     this.clearSession();
+  }
+
+  private async runKeycloakAction(
+    action: string,
+    redirectUri?: string,
+    loginHint?: string,
+  ): Promise<void> {
+    await this.init();
+
+    if (!this.keycloak) {
+      throw new Error('Keycloak no esta disponible.');
+    }
+
+    await this.keycloak.login({
+      action,
+      redirectUri: redirectUri ?? `${window.location.origin}/auth/login`,
+      ...(loginHint?.trim() ? { loginHint: loginHint.trim() } : {}),
+    });
   }
 
   private async initializeKeycloak(): Promise<void> {
@@ -401,6 +468,21 @@ export class AuthStore {
 
   loginWithKeycloak(redirectUri?: string): Promise<void> {
     return this.service.loginWithKeycloak(redirectUri);
+  }
+
+  registerWithKeycloak(redirectUri?: string): Promise<void> {
+    return this.service.registerWithKeycloak(redirectUri);
+  }
+
+  recoverPasswordWithKeycloak(
+    email?: string,
+    redirectUri?: string,
+  ): Promise<void> {
+    return this.service.recoverPasswordWithKeycloak(email, redirectUri);
+  }
+
+  changePasswordWithKeycloak(redirectUri?: string): Promise<void> {
+    return this.service.changePasswordWithKeycloak(redirectUri);
   }
 
   getAccessToken(): string | null {

@@ -1,0 +1,21 @@
+@Ecommerce.Api_HostAddress = http://localhost:5015
+
+GET {{Ecommerce.Api_HostAddress}}/api/health
+Accept: application/json
+
+###
+
+GET {{Ecommerce.Api_HostAddress}}/api/products
+Accept: application/json
+
+###
+
+GET {{Ecommerce.Api_HostAddress}}/api/products/featured
+Accept: application/json
+
+###
+
+GET {{Ecommerce.Api_HostAddress}}/api/categories
+Accept: application/json
+
+###

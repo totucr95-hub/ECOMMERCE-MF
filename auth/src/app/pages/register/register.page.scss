@@ -17,6 +17,12 @@
     font-size: 0.95rem;
   }
 
+  &__error {
+    margin: 0.9rem 0 0;
+    color: #b91c1c;
+    font-size: 0.85rem;
+  }
+
   &__links {
     margin-top: 0.85rem;
     display: flex;
@@ -34,19 +40,6 @@
 .auth-form {
   display: grid;
   gap: 0.75rem;
-
-  &__field {
-    display: grid;
-    gap: 0.35rem;
-    color: #0f172a;
-    font-size: 0.9rem;
-  }
-
-  input {
-    padding: 0.58rem 0.7rem;
-    border: 1px solid #cbd5e1;
-    border-radius: 8px;
-  }
 
   &__submit {
     border: 0;

@@ -1,0 +1,243 @@
+trigger:
+  branches:
+    include:
+      - main
+
+pr:
+  branches:
+    include:
+      - main
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  NODE_VERSION: '22.x'
+  DEPLOYABLE_APPS_REGEX: '^(shell|landing|shop|admin|auth)$'
+
+stages:
+  - stage: ci
+    displayName: CI (Nx affected)
+    jobs:
+      - job: validate
+        displayName: Lint, Test, Build
+        steps:
+          - checkout: self
+            fetchDepth: 0
+
+          - task: NodeTool@0
+            displayName: Use Node.js $(NODE_VERSION)
+            inputs:
+              versionSpec: $(NODE_VERSION)
+
+          - script: npm ci
+            displayName: Install dependencies
+
+          - bash: |
+              if [ "$(Build.Reason)" = "PullRequest" ]; then
+                BASE_REF="origin/$(System.PullRequest.TargetBranch)"
+                BASE_REF="${BASE_REF#origin/refs/heads/}"
+                BASE_REF="origin/$BASE_REF"
+                HEAD_REF="$(Build.SourceVersion)"
+              else
+                if [ "$(Build.SourceVersion)" = "0000000000000000000000000000000000000000" ]; then
+                  BASE_REF="HEAD~1"
+                else
+                  BASE_REF="$(Build.SourceVersion)~1"
+                fi
+                HEAD_REF="$(Build.SourceVersion)"
+              fi
+
+              echo "##vso[task.setvariable variable=NX_BASE]$BASE_REF"
+              echo "##vso[task.setvariable variable=NX_HEAD]$HEAD_REF"
+              echo "Using NX_BASE=$BASE_REF NX_HEAD=$HEAD_REF"
+            displayName: Resolve Nx SHAs
+
+          - script: npx nx show projects --affected --base="$(NX_BASE)" --head="$(NX_HEAD)"
+            displayName: Show affected projects
+
+          - script: npx nx affected -t lint --base="$(NX_BASE)" --head="$(NX_HEAD)" --parallel=3
+            displayName: Lint affected
+
+          - script: npx nx affected -t test --configuration=ci --base="$(NX_BASE)" --head="$(NX_HEAD)" --parallel=3
+            displayName: Test affected (coverage)
+
+          - script: npx nx affected -t build --configuration=production --base="$(NX_BASE)" --head="$(NX_HEAD)" --parallel=3
+            displayName: Build affected (production)
+
+          - bash: |
+              if [ -n "$(SONAR_TOKEN)" ] && [ -n "$(SONAR_PROJECT_KEY)" ]; then
+                export SONAR_HOST_URL="${SONAR_HOST_URL:-https://sonarcloud.io}"
+                npx sonar-scanner -Dsonar.projectKey="$(SONAR_PROJECT_KEY)"
+              else
+                echo "Skipping Sonar because SONAR_TOKEN and/or SONAR_PROJECT_KEY are not set."
+              fi
+            env:
+              SONAR_TOKEN: $(SONAR_TOKEN)
+              SONAR_PROJECT_KEY: $(SONAR_PROJECT_KEY)
+              SONAR_HOST_URL: $(SONAR_HOST_URL)
+            displayName: Sonar scan (optional)
+
+          - task: PublishPipelineArtifact@1
+            displayName: Publish dist artifact
+            inputs:
+              targetPath: dist
+              artifact: dist-artifact
+              publishLocation: pipeline
+
+  - stage: deploy
+    displayName: Deploy to Azure
+    dependsOn: ci
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+    jobs:
+      - job: resolve_affected_apps
+        displayName: Resolve affected deployable apps
+        steps:
+          - checkout: self
+            fetchDepth: 0
+
+          - task: NodeTool@0
+            displayName: Use Node.js $(NODE_VERSION)
+            inputs:
+              versionSpec: $(NODE_VERSION)
+
+          - script: npm ci
+            displayName: Install dependencies
+
+          - bash: |
+              BASE_REF="$(Build.SourceVersion)~1"
+              HEAD_REF="$(Build.SourceVersion)"
+
+              RAW_APPS=$(npx nx show projects --affected --type=app --base="$BASE_REF" --head="$HEAD_REF")
+              FILTERED_APPS=$(echo "$RAW_APPS" | grep -E "$(DEPLOYABLE_APPS_REGEX)" || true)
+              AFFECTED_APPS=$(echo "$FILTERED_APPS" | tr '\n' ' ' | xargs)
+
+              echo "Affected deployable apps: ${AFFECTED_APPS:-none}"
+              echo "##vso[task.setvariable variable=AFFECTED_APPS;isOutput=true]$AFFECTED_APPS"
+            displayName: Detect deployable apps
+            name: detect_apps
+
+      - job: deploy_landing
+        displayName: Deploy landing
+        dependsOn: resolve_affected_apps
+        condition: contains(dependencies.resolve_affected_apps.outputs['detect_apps.AFFECTED_APPS'], 'landing')
+        steps:
+          - task: DownloadPipelineArtifact@2
+            inputs:
+              artifact: dist-artifact
+              path: $(Pipeline.Workspace)/dist-artifact
+
+          - task: AzureCLI@2
+            displayName: Upload landing static files
+            inputs:
+              azureSubscription: $(AZURE_SERVICE_CONNECTION)
+              scriptType: bash
+              scriptLocation: inlineScript
+              inlineScript: |
+                az storage blob upload-batch \
+                  --account-name "$(AZURE_STORAGE_ACCOUNT_LANDING)" \
+                  --destination '$web' \
+                  --source "$(Pipeline.Workspace)/dist-artifact/landing" \
+                  --overwrite true \
+                  --auth-mode login
+
+      - job: deploy_shop
+        displayName: Deploy shop
+        dependsOn: resolve_affected_apps
+        condition: contains(dependencies.resolve_affected_apps.outputs['detect_apps.AFFECTED_APPS'], 'shop')
+        steps:
+          - task: DownloadPipelineArtifact@2
+            inputs:
+              artifact: dist-artifact
+              path: $(Pipeline.Workspace)/dist-artifact
+
+          - task: AzureCLI@2
+            displayName: Upload shop static files
+            inputs:
+              azureSubscription: $(AZURE_SERVICE_CONNECTION)
+              scriptType: bash
+              scriptLocation: inlineScript
+              inlineScript: |
+                az storage blob upload-batch \
+                  --account-name "$(AZURE_STORAGE_ACCOUNT_SHOP)" \
+                  --destination '$web' \
+                  --source "$(Pipeline.Workspace)/dist-artifact/shop" \
+                  --overwrite true \
+                  --auth-mode login
+
+      - job: deploy_admin
+        displayName: Deploy admin
+        dependsOn: resolve_affected_apps
+        condition: contains(dependencies.resolve_affected_apps.outputs['detect_apps.AFFECTED_APPS'], 'admin')
+        steps:
+          - task: DownloadPipelineArtifact@2
+            inputs:
+              artifact: dist-artifact
+              path: $(Pipeline.Workspace)/dist-artifact
+
+          - task: AzureCLI@2
+            displayName: Upload admin static files
+            inputs:
+              azureSubscription: $(AZURE_SERVICE_CONNECTION)
+              scriptType: bash
+              scriptLocation: inlineScript
+              inlineScript: |
+                az storage blob upload-batch \
+                  --account-name "$(AZURE_STORAGE_ACCOUNT_ADMIN)" \
+                  --destination '$web' \
+                  --source "$(Pipeline.Workspace)/dist-artifact/admin" \
+                  --overwrite true \
+                  --auth-mode login
+
+      - job: deploy_auth
+        displayName: Deploy auth
+        dependsOn: resolve_affected_apps
+        condition: contains(dependencies.resolve_affected_apps.outputs['detect_apps.AFFECTED_APPS'], 'auth')
+        steps:
+          - task: DownloadPipelineArtifact@2
+            inputs:
+              artifact: dist-artifact
+              path: $(Pipeline.Workspace)/dist-artifact
+
+          - task: AzureCLI@2
+            displayName: Upload auth static files
+            inputs:
+              azureSubscription: $(AZURE_SERVICE_CONNECTION)
+              scriptType: bash
+              scriptLocation: inlineScript
+              inlineScript: |
+                az storage blob upload-batch \
+                  --account-name "$(AZURE_STORAGE_ACCOUNT_AUTH)" \
+                  --destination '$web' \
+                  --source "$(Pipeline.Workspace)/dist-artifact/auth" \
+                  --overwrite true \
+                  --auth-mode login
+
+      - job: deploy_shell
+        displayName: Deploy shell (after remotes)
+        dependsOn:
+          - resolve_affected_apps
+          - deploy_landing
+          - deploy_shop
+          - deploy_admin
+          - deploy_auth
+        condition: and(succeededOrFailed(), contains(dependencies.resolve_affected_apps.outputs['detect_apps.AFFECTED_APPS'], 'shell'))
+        steps:
+          - task: DownloadPipelineArtifact@2
+            inputs:
+              artifact: dist-artifact
+              path: $(Pipeline.Workspace)/dist-artifact
+
+          - task: AzureCLI@2
+            displayName: Upload shell static files
+            inputs:
+              azureSubscription: $(AZURE_SERVICE_CONNECTION)
+              scriptType: bash
+              scriptLocation: inlineScript
+              inlineScript: |
+                az storage blob upload-batch \
+                  --account-name "$(AZURE_STORAGE_ACCOUNT_SHELL)" \
+                  --destination '$web' \
+                  --source "$(Pipeline.Workspace)/dist-artifact/shell" \
+                  --overwrite true \
+                  --auth-mode login

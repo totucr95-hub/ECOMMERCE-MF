@@ -52,8 +52,7 @@ export class AdminProductsPage {
 
   private async refreshProducts(): Promise<void> {
     this.isLoading = true;
-    this.feedbackMessage =
-      'Consultando productos desde el endpoint simulado...';
+    this.feedbackMessage = 'Consultando productos desde la API...';
     this.cdr.markForCheck();
 
     const overview = await this.adminProductsFacade.loadOverview();

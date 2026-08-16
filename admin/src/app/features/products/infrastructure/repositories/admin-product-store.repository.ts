@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { ProductStore } from '@ecommerce-mf/shared-core';
+import { ProductService } from '@ecommerce-mf/shared-core';
 import { Product } from '@ecommerce-mf/shared-models';
 import { AdminProduct } from '../../domain/entities/admin-product.entity';
 import { ProductFormData } from '../../domain/product.models';
@@ -7,7 +7,7 @@ import { AdminProductRepository } from '../../domain/repositories/admin-product.
 
 @Injectable()
 export class AdminProductStoreRepository implements AdminProductRepository {
-  private readonly productStore = inject(ProductStore);
+  private readonly productService = inject(ProductService);
   private productsCache: AdminProduct[] | null = null;
 
   async findAll(): Promise<ReadonlyArray<AdminProduct>> {
@@ -83,11 +83,8 @@ export class AdminProductStoreRepository implements AdminProductRepository {
       return;
     }
 
-    await this.productStore.load();
-
-    this.productsCache = this.productStore
-      .products()
-      .map((product) => this.toEntity(product));
+    const products = await this.productService.getProducts();
+    this.productsCache = products.map((product) => this.toEntity(product));
   }
 
   private createProductId(payload: ProductFormData): string {

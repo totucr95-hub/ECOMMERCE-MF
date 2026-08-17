@@ -15,7 +15,11 @@
   &__overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(180deg, t.$color-overlay-hero-start 0%, t.$color-overlay-hero-end 100%);
+    background: linear-gradient(
+      180deg,
+      t.$color-overlay-hero-start 0%,
+      t.$color-overlay-hero-end 100%
+    );
   }
 
   &__content {
@@ -23,6 +27,7 @@
     z-index: 1;
     max-width: 900px;
     text-align: center;
+    width: 100%;
   }
 
   h1 {
@@ -81,13 +86,49 @@
   }
 }
 
+@include m.respond(md) {
+  .landing-hero {
+    min-height: 620px;
+    padding: 138px 1rem 64px;
+
+    h1 {
+      max-width: 16ch;
+    }
+
+    &__lead {
+      max-width: 54ch;
+    }
+  }
+}
+
 @include m.respond(sm) {
   .landing-hero {
     min-height: 580px;
-    padding-top: 128px;
+    padding: 126px 1rem 52px;
 
     &__lead {
       font-size: 0.95rem;
+    }
+  }
+}
+
+@include m.respond(xs) {
+  .landing-hero {
+    min-height: 520px;
+    padding: 118px 1rem 44px;
+
+    h1 {
+      font-size: clamp(1.8rem, 8vw, 2.3rem);
+      margin-top: 0.55rem;
+    }
+
+    &__actions {
+      gap: 0.6rem;
+    }
+
+    &__btn {
+      width: min(100%, 320px);
+      padding: 0.78rem 1rem;
     }
   }
 }

@@ -88,6 +88,37 @@
   .landing-benefits {
     &__content-grid {
       grid-template-columns: 1fr;
+      gap: 1.2rem;
+    }
+
+    &__showcase-image {
+      min-height: 250px;
+      max-height: 340px;
+    }
+
+    &__check-item {
+      padding: 0.95rem 0.95rem 0.95rem 2.7rem;
+    }
+
+    &__check-item::before {
+      left: 0.85rem;
+      top: 1rem;
+    }
+  }
+}
+
+@include m.respond(xs) {
+  .landing-benefits {
+    &__summary {
+      max-width: 100%;
+    }
+
+    &__checks {
+      gap: 0.8rem;
+    }
+
+    &__showcase-image {
+      min-height: 220px;
     }
   }
 }

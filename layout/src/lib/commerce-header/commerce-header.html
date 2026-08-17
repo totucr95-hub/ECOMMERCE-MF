@@ -7,6 +7,7 @@
       class="commerce-header__brand"
       routerLink="/landing"
       fragment="inicio"
+      (click)="closeMobileMenu()"
       aria-label="Ingecoplast, ir al inicio"
     >
       <span class="commerce-header__brand-mark" aria-hidden="true">ig</span>
@@ -22,6 +23,7 @@
         [class.is-active]="activeItem() === 'home'"
         routerLink="/landing"
         fragment="inicio"
+        (click)="closeMobileMenu()"
         >Inicio</a
       >
       <a
@@ -29,6 +31,7 @@
         [class.is-active]="activeItem() === 'wood'"
         routerLink="/landing"
         fragment="madera"
+        (click)="closeMobileMenu()"
         >Madera plastica</a
       >
       <a
@@ -36,12 +39,14 @@
         [class.is-active]="activeItem() === 'products'"
         routerLink="/landing"
         fragment="productos"
+        (click)="closeMobileMenu()"
         >Productos</a
       >
       <a
         class="commerce-header__menu-link"
         [class.is-active]="activeItem() === 'catalog'"
         routerLink="/shop"
+        (click)="closeMobileMenu()"
         >Catalogo</a
       >
     </nav>
@@ -62,6 +67,7 @@
         class="commerce-header__cart"
         [class.is-active]="activeItem() === 'cart'"
         [routerLink]="cartLink()"
+        (click)="closeMobileMenu()"
         aria-label="Ir al carrito"
       >
         <span class="commerce-header__cart-icon" aria-hidden="true">🛒</span>
@@ -75,8 +81,75 @@
         [class.is-active]="activeItem() === 'contact'"
         routerLink="/landing"
         fragment="contacto"
+        (click)="closeMobileMenu()"
         >Contacto</a
       >
+
+      <button
+        type="button"
+        class="commerce-header__mobile-toggle"
+        [attr.aria-expanded]="isMobileMenuOpen"
+        aria-controls="commerce-mobile-menu"
+        aria-label="Abrir menu"
+        (click)="toggleMobileMenu()"
+      >
+        <span aria-hidden="true">{{ isMobileMenuOpen ? '×' : '☰' }}</span>
+      </button>
     </div>
   </div>
+
+  <nav
+    id="commerce-mobile-menu"
+    class="commerce-header__mobile-panel"
+    [class.is-open]="isMobileMenuOpen"
+    aria-label="Menu movil"
+  >
+    <a
+      class="commerce-header__mobile-link"
+      [class.is-active]="activeItem() === 'home'"
+      routerLink="/landing"
+      fragment="inicio"
+      (click)="closeMobileMenu()"
+      >Inicio</a
+    >
+    <a
+      class="commerce-header__mobile-link"
+      [class.is-active]="activeItem() === 'wood'"
+      routerLink="/landing"
+      fragment="madera"
+      (click)="closeMobileMenu()"
+      >Madera plastica</a
+    >
+    <a
+      class="commerce-header__mobile-link"
+      [class.is-active]="activeItem() === 'products'"
+      routerLink="/landing"
+      fragment="productos"
+      (click)="closeMobileMenu()"
+      >Productos</a
+    >
+    <a
+      class="commerce-header__mobile-link"
+      [class.is-active]="activeItem() === 'catalog'"
+      routerLink="/shop"
+      (click)="closeMobileMenu()"
+      >Catalogo</a
+    >
+    <a
+      class="commerce-header__mobile-link commerce-header__mobile-link--cta"
+      [class.is-active]="activeItem() === 'contact'"
+      routerLink="/landing"
+      fragment="contacto"
+      (click)="closeMobileMenu()"
+      >Contacto</a
+    >
+  </nav>
+
+  <button
+    type="button"
+    class="commerce-header__mobile-backdrop"
+    [class.is-open]="isMobileMenuOpen"
+    aria-label="Cerrar menu"
+    (click)="closeMobileMenu()"
+  ></button>
 </header>

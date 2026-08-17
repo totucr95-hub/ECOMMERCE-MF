@@ -21,6 +21,7 @@ import { Product } from '@ecommerce-mf/shared-models';
 export class ProductsPage implements OnInit {
   readonly catalog = inject(ProductCatalogFacade);
   private readonly cartStore = inject(CartStore);
+  isFilterPanelOpen = false;
 
   async ngOnInit(): Promise<void> {
     await this.catalog.load();
@@ -36,6 +37,29 @@ export class ProductsPage implements OnInit {
 
   setSort(sort: ProductSort): void {
     this.catalog.setSort(sort);
+  }
+
+  toggleFilters(): void {
+    this.isFilterPanelOpen = !this.isFilterPanelOpen;
+  }
+
+  closeFilters(): void {
+    this.isFilterPanelOpen = false;
+  }
+
+  clearFilters(): void {
+    this.catalog.setQuery('');
+    this.catalog.setCategory('');
+    this.catalog.setSort('featured');
+  }
+
+  hasActiveFilters(): boolean {
+    const filters = this.catalog.filters();
+    return !!(
+      filters.query ||
+      filters.categoryId ||
+      filters.sort !== 'featured'
+    );
   }
 
   addToCart(product: Product): void {

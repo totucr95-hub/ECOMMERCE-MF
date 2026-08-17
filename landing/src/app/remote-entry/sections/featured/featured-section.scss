@@ -31,6 +31,7 @@
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 1.25rem;
     text-align: left;
+    align-items: stretch;
   }
 
   &__card {
@@ -43,7 +44,7 @@
 
   &__card-image {
     width: 100%;
-    height: 220px;
+    height: clamp(190px, 22vw, 240px);
     object-fit: cover;
   }
 
@@ -97,13 +98,35 @@
     &__cards {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
+
+    &__card-description {
+      min-height: auto;
+    }
   }
 }
 
 @include m.respond(xs) {
   .landing-products {
+    &__summary {
+      max-width: 100%;
+    }
+
     &__cards {
       grid-template-columns: 1fr;
+      gap: 0.95rem;
+    }
+
+    &__card-body {
+      padding: 0.9rem;
+    }
+
+    &__actions {
+      margin-top: 1.4rem;
+    }
+
+    &__catalog-btn {
+      width: min(100%, 320px);
+      text-align: center;
     }
   }
 }

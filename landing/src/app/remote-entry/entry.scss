@@ -4,6 +4,7 @@
   display: block;
   background: t.$color-page-bg;
   color: t.$color-text;
+  overflow-x: clip;
 }
 
 .landing-loader {

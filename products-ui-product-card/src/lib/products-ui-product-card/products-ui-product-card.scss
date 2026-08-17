@@ -23,6 +23,7 @@
     margin: 0;
     font-size: 1.02rem;
     color: #0f172a;
+    line-height: 1.35;
   }
 }
 
@@ -121,6 +122,35 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 0.6rem;
+}
+
+@media (max-width: 720px) {
+  .product-card {
+    padding: 0.9rem;
+    border-radius: 14px;
+  }
+
+  .product-image {
+    height: 180px;
+  }
+
+  .description {
+    min-height: auto;
+  }
+
+  .meta-row {
+    align-items: start;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .actions {
+    grid-template-columns: 1fr;
+  }
+
+  .favorite {
+    width: 100%;
+  }
 }
 
 button {

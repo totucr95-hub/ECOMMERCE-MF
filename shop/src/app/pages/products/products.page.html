@@ -3,10 +3,40 @@
     <div>
       <p class="eyebrow">Catalogo</p>
       <h1>Encuentra tu proximo producto</h1>
+      <p class="toolbar__summary">
+        Filtra por categoria, precio y nombre para encontrar opciones mas
+        rapido.
+      </p>
+    </div>
+
+    <div class="toolbar__actions">
+      <button type="button" class="toolbar__btn" (click)="toggleFilters()">
+        {{ isFilterPanelOpen ? 'Cerrar filtros' : 'Abrir filtros' }}
+      </button>
+      @if (hasActiveFilters()) {
+      <button
+        type="button"
+        class="toolbar__btn toolbar__btn--ghost"
+        (click)="clearFilters()"
+      >
+        Limpiar filtros
+      </button>
+      }
     </div>
   </div>
 
-  <div class="filters" aria-label="Filtros del catalogo">
+  <div
+    class="filters"
+    [class.filters--open]="isFilterPanelOpen"
+    aria-label="Filtros del catalogo"
+  >
+    <div class="filters__header">
+      <strong>Filtros</strong>
+      <button type="button" class="filters__close" (click)="closeFilters()">
+        Cerrar
+      </button>
+    </div>
+
     <label>
       <span>Buscar</span>
       <input
@@ -42,7 +72,24 @@
         <option value="price-desc">Mayor precio</option>
       </select>
     </label>
+
+    <div class="filters__actions">
+      <button type="button" class="filters__apply" (click)="closeFilters()">
+        Ver resultados
+      </button>
+      <button type="button" class="filters__clear" (click)="clearFilters()">
+        Restablecer
+      </button>
+    </div>
   </div>
+
+  <button
+    type="button"
+    class="filters-backdrop"
+    [class.filters-backdrop--open]="isFilterPanelOpen"
+    aria-label="Cerrar filtros"
+    (click)="closeFilters()"
+  ></button>
 
   @if (catalog.isLoading()) {
   <p class="status">Cargando catalogo...</p>

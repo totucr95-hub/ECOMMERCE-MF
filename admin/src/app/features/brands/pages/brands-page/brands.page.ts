@@ -61,7 +61,10 @@ export class BrandsPage {
   ): void => {
     this.onTableAction(actionId, row);
   };
-  readonly tablePageChangeHandler = (nextPage: number, nextSize: number): void => {
+  readonly tablePageChangeHandler = (
+    nextPage: number,
+    nextSize: number,
+  ): void => {
     this.onTablePageChange(nextPage, nextSize);
   };
   readonly tableSortChangeHandler = (
@@ -91,7 +94,7 @@ export class BrandsPage {
 
   private async refreshBrands(): Promise<void> {
     this.isLoading = true;
-    this.feedbackMessage = 'Consultando marcas desde endpoint simulado...';
+    this.feedbackMessage = 'Consultando marcas desde la API...';
     this.cdr.markForCheck();
 
     const summaries = await this.facade.loadSummaries();
@@ -119,7 +122,7 @@ export class BrandsPage {
 
   async onEdit(brand: BrandSummary): Promise<void> {
     this.isLoading = true;
-    this.feedbackMessage = 'Leyendo marca desde endpoint simulado...';
+    this.feedbackMessage = 'Leyendo marca desde la API...';
     this.cdr.markForCheck();
 
     const storedBrand = await this.facade.readBrand(brand.id);
@@ -152,7 +155,7 @@ export class BrandsPage {
 
   async onDelete(brand: BrandSummary): Promise<void> {
     this.isSaving = true;
-    this.feedbackMessage = 'Eliminando marca en endpoint simulado...';
+    this.feedbackMessage = 'Eliminando marca en la API...';
     this.cdr.markForCheck();
 
     const deleted = await this.facade.deleteBrand(brand.id);
@@ -199,13 +202,16 @@ export class BrandsPage {
   async submitEditor(): Promise<void> {
     this.isSaving = true;
     this.feedbackMessage = this.selectedBrandId
-      ? 'Actualizando marca en endpoint simulado...'
-      : 'Creando marca en endpoint simulado...';
+      ? 'Actualizando marca en la API...'
+      : 'Creando marca en la API...';
     this.cdr.markForCheck();
 
     const payload: BrandFormData = { ...this.formModel };
     if (this.selectedBrandId) {
-      const updated = await this.facade.updateBrand(this.selectedBrandId, payload);
+      const updated = await this.facade.updateBrand(
+        this.selectedBrandId,
+        payload,
+      );
       this.isSaving = false;
 
       if (!updated) {
@@ -255,7 +261,7 @@ export class BrandsPage {
     this.pageIndex = Math.max(0, nextPage);
     this.pageSize = Math.max(1, nextSize);
     this.applyServerQueryState();
-    this.feedbackMessage = `Pagina ${this.pageIndex + 1} cargada desde backend simulado.`;
+    this.feedbackMessage = `Pagina ${this.pageIndex + 1} cargada desde la API.`;
     this.cdr.markForCheck();
   }
 
@@ -292,10 +298,7 @@ export class BrandsPage {
     this.brands = sorted.slice(start, end);
   }
 
-  private toSortableValue(
-    brand: BrandSummary,
-    key: string,
-  ): number | string {
+  private toSortableValue(brand: BrandSummary, key: string): number | string {
     const dynamicValue = brand[key as keyof BrandSummary];
     if (typeof dynamicValue === 'number') {
       return dynamicValue;

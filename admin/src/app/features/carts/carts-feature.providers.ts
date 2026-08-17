@@ -6,7 +6,7 @@ import { GetCartByIdUseCase } from './application/use-cases/get-cart-by-id.use-c
 import { GetCartsSummaryUseCase } from './application/use-cases/get-carts-summary.use-case';
 import { UpdateCartUseCase } from './application/use-cases/update-cart.use-case';
 import { CartsRepository } from './domain/repositories/carts.repository';
-import { CartsInMemoryRepository } from './infrastructure/repositories/carts-in-memory.repository';
+import { CartsHttpRepository } from './infrastructure/repositories/carts-http.repository';
 
 export const provideAdminCartsFeature = (): EnvironmentProviders => {
   return makeEnvironmentProviders([
@@ -18,7 +18,7 @@ export const provideAdminCartsFeature = (): EnvironmentProviders => {
     UpdateCartUseCase,
     {
       provide: CartsRepository,
-      useClass: CartsInMemoryRepository,
+      useClass: CartsHttpRepository,
     },
   ]);
 };

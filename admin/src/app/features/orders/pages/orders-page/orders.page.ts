@@ -60,7 +60,10 @@ export class OrdersPage {
   ): void => {
     this.onTableAction(actionId, row);
   };
-  readonly tablePageChangeHandler = (nextPage: number, nextSize: number): void => {
+  readonly tablePageChangeHandler = (
+    nextPage: number,
+    nextSize: number,
+  ): void => {
     this.onTablePageChange(nextPage, nextSize);
   };
   readonly tableSortChangeHandler = (
@@ -89,7 +92,7 @@ export class OrdersPage {
 
   private async refreshOrders(): Promise<void> {
     this.isLoading = true;
-    this.feedbackMessage = 'Consultando pedidos desde el endpoint simulado...';
+    this.feedbackMessage = 'Consultando pedidos desde la API...';
     this.cdr.markForCheck();
 
     const summaries = await this.facade.loadSummaries();
@@ -117,7 +120,7 @@ export class OrdersPage {
 
   async onEdit(order: OrderSummary): Promise<void> {
     this.isLoading = true;
-    this.feedbackMessage = 'Leyendo pedido desde endpoint simulado...';
+    this.feedbackMessage = 'Leyendo pedido desde la API...';
     this.cdr.markForCheck();
 
     const storedOrder = await this.facade.readOrder(order.id);
@@ -149,7 +152,7 @@ export class OrdersPage {
 
   async onDelete(order: OrderSummary): Promise<void> {
     this.isSaving = true;
-    this.feedbackMessage = 'Eliminando pedido en endpoint simulado...';
+    this.feedbackMessage = 'Eliminando pedido en la API...';
     this.cdr.markForCheck();
 
     const deleted = await this.facade.deleteOrder(order.id);
@@ -196,8 +199,8 @@ export class OrdersPage {
   async submitEditor(): Promise<void> {
     this.isSaving = true;
     this.feedbackMessage = this.selectedOrderId
-      ? 'Actualizando pedido en endpoint simulado...'
-      : 'Creando pedido en endpoint simulado...';
+      ? 'Actualizando pedido en la API...'
+      : 'Creando pedido en la API...';
     this.cdr.markForCheck();
 
     const payload: OrderFormData = { ...this.formModel };
@@ -255,7 +258,7 @@ export class OrdersPage {
     this.pageIndex = Math.max(0, nextPage);
     this.pageSize = Math.max(1, nextSize);
     this.applyServerQueryState();
-    this.feedbackMessage = `Pagina ${this.pageIndex + 1} cargada desde backend simulado.`;
+    this.feedbackMessage = `Pagina ${this.pageIndex + 1} cargada desde la API.`;
     this.cdr.markForCheck();
   }
 

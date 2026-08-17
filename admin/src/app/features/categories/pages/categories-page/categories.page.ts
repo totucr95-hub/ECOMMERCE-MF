@@ -59,7 +59,10 @@ export class CategoriesPage {
   ): void => {
     this.onTableAction(actionId, row);
   };
-  readonly tablePageChangeHandler = (nextPage: number, nextSize: number): void => {
+  readonly tablePageChangeHandler = (
+    nextPage: number,
+    nextSize: number,
+  ): void => {
     this.onTablePageChange(nextPage, nextSize);
   };
   readonly tableSortChangeHandler = (
@@ -87,8 +90,7 @@ export class CategoriesPage {
 
   private async refreshCategories(): Promise<void> {
     this.isLoading = true;
-    this.feedbackMessage =
-      'Consultando categorias desde el endpoint simulado...';
+    this.feedbackMessage = 'Consultando categorias desde la API...';
     this.cdr.markForCheck();
 
     const summaries = await this.facade.loadSummaries();
@@ -116,7 +118,7 @@ export class CategoriesPage {
 
   async onEdit(category: CategorySummary): Promise<void> {
     this.isLoading = true;
-    this.feedbackMessage = 'Leyendo categoria desde endpoint simulado...';
+    this.feedbackMessage = 'Leyendo categoria desde la API...';
     this.cdr.markForCheck();
 
     const storedCategory = await this.facade.readCategory(category.id);
@@ -145,7 +147,7 @@ export class CategoriesPage {
 
   async onDelete(category: CategorySummary): Promise<void> {
     this.isSaving = true;
-    this.feedbackMessage = 'Eliminando categoria en endpoint simulado...';
+    this.feedbackMessage = 'Eliminando categoria en la API...';
     this.cdr.markForCheck();
 
     const deleted = await this.facade.deleteCategory(category.id);
@@ -192,8 +194,8 @@ export class CategoriesPage {
   async submitEditor(): Promise<void> {
     this.isSaving = true;
     this.feedbackMessage = this.selectedCategoryId
-      ? 'Actualizando categoria en endpoint simulado...'
-      : 'Creando categoria en endpoint simulado...';
+      ? 'Actualizando categoria en la API...'
+      : 'Creando categoria en la API...';
     this.cdr.markForCheck();
 
     const payload: CategoryFormData = { ...this.formModel };
@@ -255,7 +257,7 @@ export class CategoriesPage {
     this.pageIndex = Math.max(0, nextPage);
     this.pageSize = Math.max(1, nextSize);
     this.applyServerQueryState();
-    this.feedbackMessage = `Pagina ${this.pageIndex + 1} cargada desde backend simulado.`;
+    this.feedbackMessage = `Pagina ${this.pageIndex + 1} cargada desde la API.`;
     this.cdr.markForCheck();
   }
 

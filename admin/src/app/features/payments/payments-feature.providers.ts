@@ -6,7 +6,7 @@ import { GetPaymentByIdUseCase } from './application/use-cases/get-payment-by-id
 import { GetPaymentsSummaryUseCase } from './application/use-cases/get-payments-summary.use-case';
 import { UpdatePaymentUseCase } from './application/use-cases/update-payment.use-case';
 import { PaymentsRepository } from './domain/repositories/payments.repository';
-import { PaymentsInMemoryRepository } from './infrastructure/repositories/payments-in-memory.repository';
+import { PaymentsHttpRepository } from './infrastructure/repositories/payments-http.repository';
 
 export const provideAdminPaymentsFeature = (): EnvironmentProviders => {
   return makeEnvironmentProviders([
@@ -18,7 +18,7 @@ export const provideAdminPaymentsFeature = (): EnvironmentProviders => {
     UpdatePaymentUseCase,
     {
       provide: PaymentsRepository,
-      useClass: PaymentsInMemoryRepository,
+      useClass: PaymentsHttpRepository,
     },
   ]);
 };

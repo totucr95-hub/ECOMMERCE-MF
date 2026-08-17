@@ -6,7 +6,7 @@ import { GetOrderByIdUseCase } from './application/use-cases/get-order-by-id.use
 import { GetOrdersSummaryUseCase } from './application/use-cases/get-orders-summary.use-case';
 import { UpdateOrderUseCase } from './application/use-cases/update-order.use-case';
 import { OrdersRepository } from './domain/repositories/orders.repository';
-import { OrdersInMemoryRepository } from './infrastructure/repositories/orders-in-memory.repository';
+import { OrdersHttpRepository } from './infrastructure/repositories/orders-http.repository';
 
 export const provideAdminOrdersFeature = (): EnvironmentProviders => {
   return makeEnvironmentProviders([
@@ -18,7 +18,7 @@ export const provideAdminOrdersFeature = (): EnvironmentProviders => {
     UpdateOrderUseCase,
     {
       provide: OrdersRepository,
-      useClass: OrdersInMemoryRepository,
+      useClass: OrdersHttpRepository,
     },
   ]);
 };

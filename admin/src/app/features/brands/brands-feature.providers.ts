@@ -6,7 +6,7 @@ import { GetBrandByIdUseCase } from './application/use-cases/get-brand-by-id.use
 import { GetBrandsSummaryUseCase } from './application/use-cases/get-brands-summary.use-case';
 import { UpdateBrandUseCase } from './application/use-cases/update-brand.use-case';
 import { BrandsRepository } from './domain/repositories/brands.repository';
-import { BrandsInMemoryRepository } from './infrastructure/repositories/brands-in-memory.repository';
+import { BrandsHttpRepository } from './infrastructure/repositories/brands-http.repository';
 
 export const provideAdminBrandsFeature = (): EnvironmentProviders => {
   return makeEnvironmentProviders([
@@ -18,7 +18,7 @@ export const provideAdminBrandsFeature = (): EnvironmentProviders => {
     UpdateBrandUseCase,
     {
       provide: BrandsRepository,
-      useClass: BrandsInMemoryRepository,
+      useClass: BrandsHttpRepository,
     },
   ]);
 };

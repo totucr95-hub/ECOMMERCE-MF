@@ -61,7 +61,10 @@ export class CartsPage {
   ): void => {
     this.onTableAction(actionId, row);
   };
-  readonly tablePageChangeHandler = (nextPage: number, nextSize: number): void => {
+  readonly tablePageChangeHandler = (
+    nextPage: number,
+    nextSize: number,
+  ): void => {
     this.onTablePageChange(nextPage, nextSize);
   };
   readonly tableSortChangeHandler = (
@@ -91,7 +94,7 @@ export class CartsPage {
 
   private async refreshCarts(): Promise<void> {
     this.isLoading = true;
-    this.feedbackMessage = 'Consultando carritos desde endpoint simulado...';
+    this.feedbackMessage = 'Consultando carritos desde la API...';
     this.cdr.markForCheck();
 
     const summaries = await this.facade.loadSummaries();
@@ -119,7 +122,7 @@ export class CartsPage {
 
   async onEdit(cart: CartSummary): Promise<void> {
     this.isLoading = true;
-    this.feedbackMessage = 'Leyendo carrito desde endpoint simulado...';
+    this.feedbackMessage = 'Leyendo carrito desde la API...';
     this.cdr.markForCheck();
 
     const storedCart = await this.facade.readCart(cart.id);
@@ -152,7 +155,7 @@ export class CartsPage {
 
   async onDelete(cart: CartSummary): Promise<void> {
     this.isSaving = true;
-    this.feedbackMessage = 'Eliminando carrito en endpoint simulado...';
+    this.feedbackMessage = 'Eliminando carrito en la API...';
     this.cdr.markForCheck();
 
     const deleted = await this.facade.deleteCart(cart.id);
@@ -199,13 +202,16 @@ export class CartsPage {
   async submitEditor(): Promise<void> {
     this.isSaving = true;
     this.feedbackMessage = this.selectedCartId
-      ? 'Actualizando carrito en endpoint simulado...'
-      : 'Creando carrito en endpoint simulado...';
+      ? 'Actualizando carrito en la API...'
+      : 'Creando carrito en la API...';
     this.cdr.markForCheck();
 
     const payload: CartFormData = { ...this.formModel };
     if (this.selectedCartId) {
-      const updated = await this.facade.updateCart(this.selectedCartId, payload);
+      const updated = await this.facade.updateCart(
+        this.selectedCartId,
+        payload,
+      );
       this.isSaving = false;
 
       if (!updated) {
@@ -255,7 +261,7 @@ export class CartsPage {
     this.pageIndex = Math.max(0, nextPage);
     this.pageSize = Math.max(1, nextSize);
     this.applyServerQueryState();
-    this.feedbackMessage = `Pagina ${this.pageIndex + 1} cargada desde backend simulado.`;
+    this.feedbackMessage = `Pagina ${this.pageIndex + 1} cargada desde la API.`;
     this.cdr.markForCheck();
   }
 

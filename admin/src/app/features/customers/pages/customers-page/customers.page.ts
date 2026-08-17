@@ -61,7 +61,10 @@ export class CustomersPage {
   ): void => {
     this.onTableAction(actionId, row);
   };
-  readonly tablePageChangeHandler = (nextPage: number, nextSize: number): void => {
+  readonly tablePageChangeHandler = (
+    nextPage: number,
+    nextSize: number,
+  ): void => {
     this.onTablePageChange(nextPage, nextSize);
   };
   readonly tableSortChangeHandler = (
@@ -91,7 +94,7 @@ export class CustomersPage {
 
   private async refreshCustomers(): Promise<void> {
     this.isLoading = true;
-    this.feedbackMessage = 'Consultando clientes desde endpoint simulado...';
+    this.feedbackMessage = 'Consultando clientes desde la API...';
     this.cdr.markForCheck();
 
     const summaries = await this.facade.loadSummaries();
@@ -119,7 +122,7 @@ export class CustomersPage {
 
   async onEdit(customer: CustomerSummary): Promise<void> {
     this.isLoading = true;
-    this.feedbackMessage = 'Leyendo cliente desde endpoint simulado...';
+    this.feedbackMessage = 'Leyendo cliente desde la API...';
     this.cdr.markForCheck();
 
     const storedCustomer = await this.facade.readCustomer(customer.id);
@@ -153,7 +156,7 @@ export class CustomersPage {
 
   async onDelete(customer: CustomerSummary): Promise<void> {
     this.isSaving = true;
-    this.feedbackMessage = 'Eliminando cliente en endpoint simulado...';
+    this.feedbackMessage = 'Eliminando cliente en la API...';
     this.cdr.markForCheck();
 
     const deleted = await this.facade.deleteCustomer(customer.id);
@@ -200,8 +203,8 @@ export class CustomersPage {
   async submitEditor(): Promise<void> {
     this.isSaving = true;
     this.feedbackMessage = this.selectedCustomerId
-      ? 'Actualizando cliente en endpoint simulado...'
-      : 'Creando cliente en endpoint simulado...';
+      ? 'Actualizando cliente en la API...'
+      : 'Creando cliente en la API...';
     this.cdr.markForCheck();
 
     const payload: CustomerFormData = { ...this.formModel };
@@ -259,7 +262,7 @@ export class CustomersPage {
     this.pageIndex = Math.max(0, nextPage);
     this.pageSize = Math.max(1, nextSize);
     this.applyServerQueryState();
-    this.feedbackMessage = `Pagina ${this.pageIndex + 1} cargada desde backend simulado.`;
+    this.feedbackMessage = `Pagina ${this.pageIndex + 1} cargada desde la API.`;
     this.cdr.markForCheck();
   }
 

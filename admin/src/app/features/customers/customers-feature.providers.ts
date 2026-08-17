@@ -6,7 +6,7 @@ import { GetCustomerByIdUseCase } from './application/use-cases/get-customer-by-
 import { GetCustomersSummaryUseCase } from './application/use-cases/get-customers-summary.use-case';
 import { UpdateCustomerUseCase } from './application/use-cases/update-customer.use-case';
 import { CustomersRepository } from './domain/repositories/customers.repository';
-import { CustomersInMemoryRepository } from './infrastructure/repositories/customers-in-memory.repository';
+import { CustomersHttpRepository } from './infrastructure/repositories/customers-http.repository';
 
 export const provideAdminCustomersFeature = (): EnvironmentProviders => {
   return makeEnvironmentProviders([
@@ -18,7 +18,7 @@ export const provideAdminCustomersFeature = (): EnvironmentProviders => {
     UpdateCustomerUseCase,
     {
       provide: CustomersRepository,
-      useClass: CustomersInMemoryRepository,
+      useClass: CustomersHttpRepository,
     },
   ]);
 };

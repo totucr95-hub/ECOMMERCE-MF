@@ -54,7 +54,10 @@ export class ReportsPage {
     country: 'Colombia',
   };
 
-  readonly tablePageChangeHandler = (nextPage: number, nextSize: number): void => {
+  readonly tablePageChangeHandler = (
+    nextPage: number,
+    nextSize: number,
+  ): void => {
     this.onTablePageChange(nextPage, nextSize);
   };
   readonly tableSortChangeHandler = (
@@ -66,7 +69,7 @@ export class ReportsPage {
 
   async runReport(): Promise<void> {
     this.isLoading = true;
-    this.feedbackMessage = 'Generando reporte desde endpoint simulado...';
+    this.feedbackMessage = 'Generando reporte desde la API...';
     this.cdr.markForCheck();
 
     this.result = await this.facade.generate({ ...this.filters });

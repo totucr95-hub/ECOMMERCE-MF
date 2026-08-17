@@ -61,7 +61,10 @@ export class PaymentsPage {
   ): void => {
     this.onTableAction(actionId, row);
   };
-  readonly tablePageChangeHandler = (nextPage: number, nextSize: number): void => {
+  readonly tablePageChangeHandler = (
+    nextPage: number,
+    nextSize: number,
+  ): void => {
     this.onTablePageChange(nextPage, nextSize);
   };
   readonly tableSortChangeHandler = (
@@ -91,7 +94,7 @@ export class PaymentsPage {
 
   private async refreshPayments(): Promise<void> {
     this.isLoading = true;
-    this.feedbackMessage = 'Consultando pagos desde endpoint simulado...';
+    this.feedbackMessage = 'Consultando pagos desde la API...';
     this.cdr.markForCheck();
 
     const summaries = await this.facade.loadSummaries();
@@ -119,7 +122,7 @@ export class PaymentsPage {
 
   async onEdit(payment: PaymentSummary): Promise<void> {
     this.isLoading = true;
-    this.feedbackMessage = 'Leyendo pago desde endpoint simulado...';
+    this.feedbackMessage = 'Leyendo pago desde la API...';
     this.cdr.markForCheck();
 
     const storedPayment = await this.facade.readPayment(payment.id);
@@ -153,7 +156,7 @@ export class PaymentsPage {
 
   async onDelete(payment: PaymentSummary): Promise<void> {
     this.isSaving = true;
-    this.feedbackMessage = 'Eliminando pago en endpoint simulado...';
+    this.feedbackMessage = 'Eliminando pago en la API...';
     this.cdr.markForCheck();
 
     const deleted = await this.facade.deletePayment(payment.id);
@@ -200,13 +203,16 @@ export class PaymentsPage {
   async submitEditor(): Promise<void> {
     this.isSaving = true;
     this.feedbackMessage = this.selectedPaymentId
-      ? 'Actualizando pago en endpoint simulado...'
-      : 'Creando pago en endpoint simulado...';
+      ? 'Actualizando pago en la API...'
+      : 'Creando pago en la API...';
     this.cdr.markForCheck();
 
     const payload: PaymentFormData = { ...this.formModel };
     if (this.selectedPaymentId) {
-      const updated = await this.facade.updatePayment(this.selectedPaymentId, payload);
+      const updated = await this.facade.updatePayment(
+        this.selectedPaymentId,
+        payload,
+      );
       this.isSaving = false;
 
       if (!updated) {
@@ -256,7 +262,7 @@ export class PaymentsPage {
     this.pageIndex = Math.max(0, nextPage);
     this.pageSize = Math.max(1, nextSize);
     this.applyServerQueryState();
-    this.feedbackMessage = `Pagina ${this.pageIndex + 1} cargada desde backend simulado.`;
+    this.feedbackMessage = `Pagina ${this.pageIndex + 1} cargada desde la API.`;
     this.cdr.markForCheck();
   }
 

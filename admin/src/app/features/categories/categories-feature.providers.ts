@@ -6,7 +6,7 @@ import { GetCategoryByIdUseCase } from './application/use-cases/get-category-by-
 import { GetCategoriesSummaryUseCase } from './application/use-cases/get-categories-summary.use-case';
 import { UpdateCategoryUseCase } from './application/use-cases/update-category.use-case';
 import { CategoriesRepository } from './domain/repositories/categories.repository';
-import { CategoriesInMemoryRepository } from './infrastructure/repositories/categories-in-memory.repository';
+import { CategoriesHttpRepository } from './infrastructure/repositories/categories-http.repository';
 
 export const provideAdminCategoriesFeature = (): EnvironmentProviders => {
   return makeEnvironmentProviders([
@@ -18,7 +18,7 @@ export const provideAdminCategoriesFeature = (): EnvironmentProviders => {
     UpdateCategoryUseCase,
     {
       provide: CategoriesRepository,
-      useClass: CategoriesInMemoryRepository,
+      useClass: CategoriesHttpRepository,
     },
   ]);
 };

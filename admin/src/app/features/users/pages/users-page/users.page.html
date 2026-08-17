@@ -6,11 +6,91 @@
     </p>
   </header>
 
+  @if (feedbackMessage) {
+  <div class="admin-page__feedback">{{ feedbackMessage }}</div>
+  }
+
+  <button
+    type="button"
+    class="admin-page__primary"
+    (click)="openCreateEditor()"
+  >
+    Nuevo usuario
+  </button>
+
+  @if (isEditorOpen) {
+  <form class="admin-page__editor" (ngSubmit)="saveUser()">
+    <h2>{{ selectedUserId ? 'Editar usuario' : 'Crear usuario' }}</h2>
+
+    <div class="admin-page__field-grid">
+      <label>
+        <span>Nombre de usuario</span>
+        <input [(ngModel)]="editorModel.username" name="username" type="text" />
+      </label>
+      <label>
+        <span>Nombre</span>
+        <input
+          [(ngModel)]="editorModel.firstName"
+          name="firstName"
+          type="text"
+        />
+      </label>
+      <label>
+        <span>Apellido</span>
+        <input [(ngModel)]="editorModel.lastName" name="lastName" type="text" />
+      </label>
+      <label>
+        <span>Correo</span>
+        <input [(ngModel)]="editorModel.email" name="email" type="email" />
+      </label>
+      @if (!selectedUserId) {
+      <label>
+        <span>Contraseña</span>
+        <input
+          [(ngModel)]="editorModel.password"
+          name="password"
+          type="password"
+          autocomplete="new-password"
+        />
+      </label>
+      }
+      <label>
+        <span>Roles</span>
+        <input [(ngModel)]="editorModel.roles" name="roles" type="text" />
+      </label>
+      <label class="admin-page__checkbox">
+        <input
+          [(ngModel)]="editorModel.enabled"
+          name="enabled"
+          type="checkbox"
+        />
+        <span>Usuario activo</span>
+      </label>
+    </div>
+
+    <div class="admin-page__editor-actions">
+      <button
+        type="button"
+        class="admin-page__secondary"
+        (click)="closeEditor()"
+      >
+        Cancelar
+      </button>
+      <button type="submit" class="admin-page__primary" [disabled]="isSaving">
+        {{ isSaving ? 'Guardando...' : (selectedUserId ? 'Guardar cambios' :
+        'Crear usuario') }}
+      </button>
+    </div>
+  </form>
+  }
+
   <admin-reusable-table
     [title]="'Usuarios del sistema'"
     [subtitle]="'Roles y estados operativos de la plataforma'"
     [columns]="columns"
     [rows]="rows"
+    [actions]="tableActions"
+    [onAction]="tableActionHandler"
     [pageIndex]="pageIndex"
     [pageSize]="pageSize"
     [totalItems]="totalItems"

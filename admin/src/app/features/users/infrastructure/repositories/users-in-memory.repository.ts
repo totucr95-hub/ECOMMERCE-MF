@@ -1,48 +1,88 @@
-import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Injectable, inject } from '@angular/core';
+import { appConfig } from '@ecommerce-mf/config';
+import { firstValueFrom } from 'rxjs';
 import { UserSummary } from '../../domain/entities/user-summary.entity';
 import { UsersRepository } from '../../domain/repositories/users.repository';
 
 @Injectable()
 export class UsersInMemoryRepository implements UsersRepository {
+  private readonly http = inject(HttpClient);
+  private readonly apiBaseUrl = appConfig.apiBaseUrl.replace(/\/$/, '');
+
   async findSummaries(): Promise<ReadonlyArray<UserSummary>> {
-    const firstNames = [
-      'Ana',
-      'Pablo',
-      'Laura',
-      'Juan',
-      'Sofia',
-      'Diego',
-      'Maria',
-      'Camilo',
-      'Valentina',
-      'Andres',
-    ];
-    const lastNames = [
-      'Torres',
-      'Cruz',
-      'Perez',
-      'Soto',
-      'Rojas',
-      'Lopez',
-      'Gomez',
-      'Ruiz',
-      'Mora',
-      'Diaz',
-    ];
-    const roles = ['Admin', 'Soporte', 'Operador', 'Analista', 'Finanzas'];
-    const statuses = ['Activo', 'Activo', 'Activo', 'Suspendido'];
+    return firstValueFrom(
+      this.http.get<UserSummary[]>(`${this.apiBaseUrl}/admin/users`),
+    );
+  }
 
-    return Array.from({ length: 100 }, (_unused, index) => {
-      const item = index + 1;
-      const firstName = firstNames[index % firstNames.length];
-      const lastName = lastNames[(index * 2) % lastNames.length];
+  async create(
+    payload: Partial<UserSummary> & { password?: string },
+  ): Promise<UserSummary | null> {
+    try {
+      return await firstValueFrom(
+        this.http.post<UserSummary>(`${this.apiBaseUrl}/admin/users`, {
+          username: payload.username ?? '',
+          firstName: payload.firstName ?? '',
+          lastName: payload.lastName ?? '',
+          email: payload.email ?? '',
+          password: payload.password ?? '',
+          enabled: payload.enabled ?? true,
+          emailVerified: payload.emailVerified ?? true,
+          roles: payload.roles ?? [],
+        }),
+      );
+    } catch {
+      return null;
+    }
+  }
 
-      return {
-        name: `${firstName} ${lastName}`,
-        email: `${firstName.toLowerCase()}.${lastName.toLowerCase()}${item}@ingecoplast.co`,
-        role: roles[index % roles.length],
-        status: statuses[index % statuses.length],
-      };
-    });
+  async findById(id: string): Promise<UserSummary | null> {
+    try {
+      return await firstValueFrom(
+        this.http.get<UserSummary>(
+          `${this.apiBaseUrl}/admin/users/${encodeURIComponent(id)}`,
+        ),
+      );
+    } catch {
+      return null;
+    }
+  }
+
+  async update(
+    id: string,
+    payload: Partial<UserSummary>,
+  ): Promise<UserSummary | null> {
+    try {
+      return await firstValueFrom(
+        this.http.put<UserSummary>(
+          `${this.apiBaseUrl}/admin/users/${encodeURIComponent(id)}`,
+          {
+            username: payload.username ?? '',
+            firstName: payload.firstName ?? '',
+            lastName: payload.lastName ?? '',
+            email: payload.email ?? '',
+            enabled: payload.enabled ?? true,
+            emailVerified: payload.emailVerified ?? false,
+            roles: payload.roles ?? [],
+          },
+        ),
+      );
+    } catch {
+      return null;
+    }
+  }
+
+  async delete(id: string): Promise<boolean> {
+    try {
+      await firstValueFrom(
+        this.http.delete<void>(
+          `${this.apiBaseUrl}/admin/users/${encodeURIComponent(id)}`,
+        ),
+      );
+      return true;
+    } catch {
+      return false;
+    }
   }
 }

@@ -78,7 +78,7 @@
       "implicitFlowEnabled": false,
       "directAccessGrantsEnabled": false,
       "serviceAccountsEnabled": true,
-      "secret": "CHANGE_ME_ECOMMERCE_API_SECRET",
+      "secret": "ecommerce-api-secret-2026",
       "attributes": {
         "client.secret.creation.time": "0"
       },

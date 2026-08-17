@@ -81,6 +81,13 @@ export const remoteRoutes: Route[] = [
           ),
       },
       {
+        path: 'leads',
+        loadComponent: () =>
+          import('../features/leads/pages/leads-page/leads.page').then(
+            (m) => m.LeadsPage,
+          ),
+      },
+      {
         path: 'settings',
         loadComponent: () =>
           import('../features/settings/pages/settings-page/settings.page').then(

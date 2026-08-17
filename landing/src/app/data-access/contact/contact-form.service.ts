@@ -1,31 +1,33 @@
 import { Injectable } from '@angular/core';
-import { Observable, of, throwError } from 'rxjs';
-import { delay, switchMap } from 'rxjs/operators';
-import { ContactFormPayload, ContactFormResponse, CONTACT_SIMULATION_RULES } from '../../domain';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Observable, catchError, throwError } from 'rxjs';
+import { inject } from '@angular/core';
+import { ContactFormPayload, ContactFormResponse } from '../../domain';
 
 @Injectable({ providedIn: 'root' })
 export class ContactFormService {
+  private readonly http = inject(HttpClient);
+  private readonly apiBaseUrl = this.resolveApiBaseUrl();
+
+  private resolveApiBaseUrl(): string {
+    const configured = localStorage.getItem('api.baseUrl')?.trim();
+    const fallback = 'http://localhost:5015/api';
+    return (
+      configured && configured.length > 0 ? configured : fallback
+    ).replace(/\/$/, '');
+  }
+
   submit(payload: ContactFormPayload): Observable<ContactFormResponse> {
-    return of(payload).pipe(
-      delay(CONTACT_SIMULATION_RULES.delayMs),
-      switchMap((request) => {
-        if (request.website.trim()) {
-          return throwError(() => new Error('Solicitud rechazada por validacion anti-spam.'));
-        }
+    return this.http
+      .post<ContactFormResponse>(`${this.apiBaseUrl}/contact/lead`, payload)
+      .pipe(
+        catchError((error: HttpErrorResponse) => {
+          const message =
+            (error.error?.message as string | undefined) ??
+            'No se pudo enviar el formulario. Intenta nuevamente.';
 
-        if (!request.captchaToken.trim()) {
-          return throwError(() => new Error('Debes validar el captcha antes de enviar.'));
-        }
-
-        if (request.message.toLowerCase().includes(CONTACT_SIMULATION_RULES.forcedErrorKeyword)) {
-          return throwError(() => new Error('Error simulado del endpoint. Intenta de nuevo.'));
-        }
-
-        return of({
-          ok: true,
-          message: 'Mensaje enviado con exito (simulado). Te contactaremos pronto.',
-        });
-      })
-    );
+          return throwError(() => new Error(message));
+        }),
+      );
   }
 }

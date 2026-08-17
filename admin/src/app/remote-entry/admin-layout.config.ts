@@ -21,6 +21,7 @@ export const ADMIN_NAVIGATION_ITEMS: AdminNavigationItem[] = [
   { label: 'Pagos', path: '/admin/payments', icon: '◌' },
   { label: 'Reportes', path: '/admin/reports', icon: '◍' },
   { label: 'Usuarios', path: '/admin/users', icon: '◉' },
+  { label: 'Leads', path: '/admin/leads', icon: '✉' },
   { label: 'Configuracion', path: '/admin/settings', icon: '⚙' },
 ];
 

@@ -10,6 +10,7 @@ import { provideAdminPaymentsFeature } from './payments/payments-feature.provide
 import { provideAdminReportsFeature } from './reports/reports-feature.providers';
 import { provideAdminUsersFeature } from './users/users-feature.providers';
 import { provideAdminSettingsFeature } from './settings/settings-feature.providers';
+import { provideAdminLeadsFeature } from './leads/leads-feature.providers';
 
 export const provideAdminFeatures = (): EnvironmentProviders => {
   return makeEnvironmentProviders([
@@ -23,6 +24,7 @@ export const provideAdminFeatures = (): EnvironmentProviders => {
     provideAdminPaymentsFeature(),
     provideAdminReportsFeature(),
     provideAdminUsersFeature(),
+    provideAdminLeadsFeature(),
     provideAdminSettingsFeature(),
   ]);
 };

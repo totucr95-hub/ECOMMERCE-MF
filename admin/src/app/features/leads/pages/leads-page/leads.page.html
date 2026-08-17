@@ -1,0 +1,228 @@
+<section class="admin-page">
+  <header class="admin-page__header">
+    <h1 class="admin-page__title">Leads de contacto</h1>
+    <p class="admin-page__subtitle">
+      Gestiona las solicitudes que llegan desde el formulario de contacto.
+    </p>
+    <div class="admin-page__top-actions">
+      <button
+        type="button"
+        class="admin-page__button-ghost"
+        (click)="onExportCsv()"
+        [disabled]="isLoading || isSaving || isExporting"
+      >
+        {{ isExporting ? 'Exportando...' : 'Exportar CSV' }}
+      </button>
+      <button
+        type="button"
+        class="admin-page__button-primary"
+        (click)="openCreateModal()"
+      >
+        + Crear lead
+      </button>
+    </div>
+    @if (feedbackMessage) {
+    <p class="admin-page__status">{{ feedbackMessage }}</p>
+    }
+  </header>
+
+  <section class="admin-page__surface">
+    <div class="admin-page__filters">
+      <label class="admin-control-label">
+        Estado
+        <select
+          class="admin-control-select"
+          [(ngModel)]="filterStatus"
+          name="filterStatus"
+        >
+          <option value="">Todos</option>
+          <option value="nuevo">Nuevo</option>
+          <option value="contactado">Contactado</option>
+          <option value="cerrado">Cerrado</option>
+        </select>
+      </label>
+
+      <label class="admin-control-label">
+        Desde
+        <input
+          class="admin-control-input"
+          [(ngModel)]="filterFrom"
+          name="filterFrom"
+          type="date"
+        />
+      </label>
+
+      <label class="admin-control-label">
+        Hasta
+        <input
+          class="admin-control-input"
+          [(ngModel)]="filterTo"
+          name="filterTo"
+          type="date"
+        />
+      </label>
+
+      <div class="admin-page__filter-actions">
+        <button
+          type="button"
+          class="admin-page__button-primary"
+          (click)="onApplyFilters()"
+          [disabled]="isLoading || isSaving"
+        >
+          Aplicar filtros
+        </button>
+        <button
+          type="button"
+          class="admin-page__button-ghost"
+          (click)="onClearFilters()"
+          [disabled]="isLoading || isSaving"
+        >
+          Limpiar
+        </button>
+      </div>
+    </div>
+
+    <admin-reusable-table
+      [title]="'Bandeja de leads'"
+      [subtitle]="'Seguimiento comercial de contactos entrantes'"
+      [columns]="columns"
+      [rows]="rows"
+      [actions]="tableActions"
+      [onAction]="tableActionHandler"
+      [pageIndex]="pageIndex"
+      [pageSize]="pageSize"
+      [totalItems]="totalItems"
+      [pageSizeOptions]="pageSizeOptions"
+      [onPageChange]="tablePageChangeHandler"
+      [sortKey]="sortKey"
+      [sortDirection]="sortDirection"
+      [onSortChange]="tableSortChangeHandler"
+      [emptyMessage]="'No hay leads registrados.'"
+    ></admin-reusable-table>
+  </section>
+
+  @if (isEditorOpen) {
+  <button
+    type="button"
+    class="admin-page__modal-backdrop"
+    aria-label="Cerrar editor"
+    (click)="closeEditor()"
+  ></button>
+
+  <section
+    class="admin-page__modal"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Editor de lead"
+  >
+    <header class="admin-page__modal-header">
+      <div>
+        <p class="admin-page__modal-eyebrow">Contact leads</p>
+        <h2 class="admin-page__modal-title">
+          {{ selectedLeadId ? 'Editar lead' : 'Crear lead' }}
+        </h2>
+      </div>
+      <button
+        type="button"
+        class="admin-page__modal-close"
+        (click)="closeEditor()"
+      >
+        ×
+      </button>
+    </header>
+
+    <div class="admin-page__modal-body">
+      <div class="admin-page__form-grid">
+        <label class="admin-control-label">
+          Nombre completo
+          <input
+            class="admin-control-input"
+            [(ngModel)]="formModel.fullName"
+            name="fullName"
+            placeholder="Nombre del lead"
+          />
+        </label>
+
+        <label class="admin-control-label">
+          Email
+          <input
+            class="admin-control-input"
+            [(ngModel)]="formModel.email"
+            name="email"
+            type="email"
+            placeholder="correo@empresa.co"
+          />
+        </label>
+
+        <label class="admin-control-label">
+          Telefono
+          <input
+            class="admin-control-input"
+            [(ngModel)]="formModel.phone"
+            name="phone"
+            placeholder="+57 300 123 4567"
+          />
+        </label>
+
+        <label class="admin-control-label">
+          Estado
+          <select
+            class="admin-control-select"
+            [(ngModel)]="formModel.status"
+            name="status"
+          >
+            <option value="nuevo">Nuevo</option>
+            <option value="contactado">Contactado</option>
+            <option value="cerrado">Cerrado</option>
+          </select>
+        </label>
+
+        <label class="admin-control-label">
+          Origen
+          <select
+            class="admin-control-select"
+            [(ngModel)]="formModel.source"
+            name="source"
+          >
+            <option value="landing">Landing</option>
+            <option value="admin">Admin</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="admin-page__form-grid admin-page__form-grid--single">
+        <label class="admin-control-label">
+          Mensaje
+          <textarea
+            class="admin-control-textarea"
+            [(ngModel)]="formModel.message"
+            name="message"
+            rows="4"
+            placeholder="Describe la necesidad del cliente"
+          ></textarea>
+        </label>
+      </div>
+    </div>
+
+    <footer class="admin-page__modal-actions">
+      <button
+        type="button"
+        class="admin-page__button-ghost"
+        (click)="closeEditor()"
+        [disabled]="isSaving"
+      >
+        Cancelar
+      </button>
+
+      <button
+        type="button"
+        class="admin-page__button-primary"
+        (click)="submitEditor()"
+        [disabled]="isSaving || isLoading"
+      >
+        {{ selectedLeadId ? 'Actualizar lead' : 'Crear lead' }}
+      </button>
+    </footer>
+  </section>
+  }
+</section>

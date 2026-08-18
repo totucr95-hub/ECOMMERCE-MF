@@ -14,10 +14,13 @@ pool:
 variables:
   NODE_VERSION: '22.x'
   DOTNET_VERSION: '10.x'
+  AZURE_SERVICE_CONNECTION: 'AZURE_SERVICE_CONNECTION'
+  KEYCLOAK_URL_STAGING: 'https://your-keycloak-staging-url'
+  KEYCLOAK_URL_PRODUCTION: 'https://your-keycloak-production-url'
   AZURE_LOCATION: 'eastus2'
   AZURE_NAME_PREFIX: 'ecommercemf'
   APP_SERVICE_SKU: 'B1'
-  DEPLOY_ENABLED: 'false'
+  DEPLOY_ENABLED: 'true'
 
 stages:
   - stage: ci

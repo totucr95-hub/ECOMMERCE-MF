@@ -329,6 +329,31 @@
         </div>
       </section>
 
+      @if (paymentMethod !== 'cash') {
+      <section class="form-section simulation-control">
+        <header class="section-heading">
+          <span>5</span>
+          <div>
+            <h2>Simulación de resultado de pago</h2>
+            <p>
+              Control de pruebas para validar los caminos approved/rejected.
+            </p>
+          </div>
+        </header>
+
+        <label class="field field--full">
+          <span>Resultado simulado del webhook</span>
+          <select
+            name="simulatedPaymentOutcome"
+            [(ngModel)]="simulatedPaymentOutcome"
+          >
+            <option value="approved">Aprobado</option>
+            <option value="rejected">Rechazado</option>
+          </select>
+        </label>
+      </section>
+      }
+
       <label class="terms-check">
         <input
           type="checkbox"

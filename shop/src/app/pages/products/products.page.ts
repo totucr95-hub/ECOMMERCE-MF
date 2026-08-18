@@ -11,7 +11,7 @@ import { ProductsUiProductCard } from '@ecommerce-mf/products-ui-product-card';
 import { Product } from '@ecommerce-mf/shared-models';
 
 @Component({
-  selector: 'shop-products-page',
+  selector: 'app-products-page',
   standalone: true,
   imports: [ProductsUiProductCard],
   templateUrl: './products.page.html',

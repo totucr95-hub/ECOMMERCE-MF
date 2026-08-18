@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { OrderFormData } from '../../domain/order.models';
+import { OrderFormData, OrderSupportSummary } from '../../domain/order.models';
 import { OrderSummary } from '../../domain/entities/order-summary.entity';
 import { OrdersRepository } from '../../domain/repositories/orders.repository';
 
@@ -77,6 +77,13 @@ export class OrdersInMemoryRepository implements OrdersRepository {
     return this.ordersCache.length < before;
   }
 
+  async findSupportSummaryByReference(
+    _reference: string,
+  ): Promise<OrderSupportSummary | null> {
+    await this.simulateEndpointLatency();
+    return null;
+  }
+
   private createOrderId(): string {
     return `ord-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
   }
@@ -97,9 +104,21 @@ export class OrdersInMemoryRepository implements OrdersRepository {
       'Pablo Cruz',
       'Sofia Lemos',
     ];
-    const statuses = ['Pendiente', 'Pagado', 'Despachado', 'Entregado', 'Cancelado'];
+    const statuses = [
+      'Pendiente',
+      'Pagado',
+      'Despachado',
+      'Entregado',
+      'Cancelado',
+    ];
     const methods = ['Tarjeta', 'PSE', 'Transferencia', 'Contraentrega'];
-    const cities = ['Bogota', 'Medellin', 'Cali', 'Barranquilla', 'Bucaramanga'];
+    const cities = [
+      'Bogota',
+      'Medellin',
+      'Cali',
+      'Barranquilla',
+      'Bucaramanga',
+    ];
 
     return Array.from({ length: 100 }, (_unused, index) => {
       const item = index + 1;

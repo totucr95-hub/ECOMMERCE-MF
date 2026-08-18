@@ -21,7 +21,7 @@ interface ProductReview {
 }
 
 @Component({
-  selector: 'shop-product-detail-page',
+  selector: 'app-product-detail-page',
   standalone: true,
   imports: [CommonModule, RouterLink],
   templateUrl: './product-detail.page.html',

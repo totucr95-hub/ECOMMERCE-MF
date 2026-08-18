@@ -80,6 +80,36 @@ public static class AdminPaymentStore
         }
     }
 
+    public static AdminPaymentDto? UpdateStatusByPaymentReference(string paymentRef, string status, string note)
+    {
+        lock (SyncRoot)
+        {
+            var index = Payments.FindIndex(payment =>
+                string.Equals(payment.PaymentRef, paymentRef, StringComparison.OrdinalIgnoreCase));
+            if (index < 0)
+            {
+                return null;
+            }
+
+            var current = Payments[index];
+            var mergedNotes = string.IsNullOrWhiteSpace(note)
+                ? current.Notes
+                : string.IsNullOrWhiteSpace(current.Notes)
+                    ? note.Trim()
+                    : $"{current.Notes} | {note.Trim()}";
+
+            var updated = current with
+            {
+                Status = status.Trim(),
+                LastAttemptAt = DateOnly.FromDateTime(DateTime.UtcNow).ToString("yyyy-MM-dd"),
+                Notes = mergedNotes,
+            };
+
+            Payments[index] = updated;
+            return updated;
+        }
+    }
+
     private static AdminPaymentDto BuildPayment(string id, AdminPaymentUpsertRequest request)
     {
         return new AdminPaymentDto(

@@ -19,6 +19,121 @@
   </header>
 
   <section class="admin-page__surface">
+    <section
+      class="admin-page__support-surface"
+      aria-label="Soporte de pedidos"
+    >
+      <div class="admin-page__support-header">
+        <h3>Soporte por referencia</h3>
+        <p>Consulta orden, pago, historial e inventario en una sola vista.</p>
+      </div>
+
+      <div class="admin-page__support-actions">
+        <label class="admin-control-label">
+          Referencia de pedido
+          <input
+            class="admin-control-input"
+            [(ngModel)]="supportReference"
+            name="supportReference"
+            placeholder="PED-YYMMDD-1234"
+          />
+        </label>
+
+        <div class="admin-page__support-buttons">
+          <button
+            type="button"
+            class="admin-page__button-primary"
+            (click)="loadSupportSummary()"
+            [disabled]="isSupportLoading"
+          >
+            {{ isSupportLoading ? 'Consultando...' : 'Consultar' }}
+          </button>
+          <button
+            type="button"
+            class="admin-page__button-ghost"
+            (click)="clearSupportSummary()"
+            [disabled]="isSupportLoading"
+          >
+            Limpiar
+          </button>
+        </div>
+      </div>
+
+      @if (supportSummary; as summary) {
+      <div class="admin-page__support-grid">
+        <article class="admin-page__support-card">
+          <h4>Orden</h4>
+          <p><strong>Pedido:</strong> {{ summary.order.orderNumber }}</p>
+          <p><strong>Estado orden:</strong> {{ summary.order.orderStatus }}</p>
+          <p><strong>Estado pago:</strong> {{ summary.order.paymentStatus }}</p>
+          <p>
+            <strong>Transaccion:</strong> {{ summary.order.transactionReference
+            }}
+          </p>
+          <p>
+            <strong>Total:</strong> {{ summary.order.total | number:'1.0-0' }}
+          </p>
+        </article>
+
+        <article class="admin-page__support-card">
+          <h4>Pago</h4>
+          <p><strong>Metodo:</strong> {{ summary.order.paymentMethod }}</p>
+          <p>
+            <strong>Intento:</strong> {{ summary.paymentIntent?.id ?? 'N/A' }}
+          </p>
+          <p>
+            <strong>Gateway:</strong> {{ summary.paymentIntent?.gatewayEvent ??
+            'N/A' }}
+          </p>
+          <p>
+            <strong>Monto:</strong> {{ summary.paymentIntent?.amount ?? 0 |
+            number:'1.0-0' }}
+          </p>
+        </article>
+
+        <article class="admin-page__support-card">
+          <h4>Items</h4>
+          <p><strong>Lineas:</strong> {{ summary.items.length }}</p>
+          @for (item of summary.items; track item.id) {
+          <p>
+            {{ item.productName }} x{{ item.quantity }}
+            <small>({{ item.lineTotal | number:'1.0-0' }})</small>
+          </p>
+          }
+        </article>
+
+        <article class="admin-page__support-card">
+          <h4>Historial</h4>
+          <p><strong>Eventos:</strong> {{ summary.history.length }}</p>
+          @for (event of summary.history; track event.id) {
+          <p>
+            {{ event.status }}
+            <small>{{ event.changedAt | date:'short' }}</small>
+          </p>
+          }
+        </article>
+
+        <article
+          class="admin-page__support-card admin-page__support-card--wide"
+        >
+          <h4>Movimientos de inventario</h4>
+          <p>
+            <strong>Registros:</strong> {{ summary.inventoryMovements.length }}
+          </p>
+          @for (movement of summary.inventoryMovements; track movement.id) {
+          <p>
+            {{ movement.movementType }} · {{ movement.productName }} x{{
+            movement.quantity }}
+            <small
+              >({{ movement.stockBefore }} → {{ movement.stockAfter }})</small
+            >
+          </p>
+          }
+        </article>
+      </div>
+      }
+    </section>
+
     <admin-reusable-table
       [title]="'Flujo de pedidos'"
       [subtitle]="'Control de estado y montos por transaccion'"

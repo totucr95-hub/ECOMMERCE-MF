@@ -4,6 +4,8 @@ export const COMPLETED_ORDER_STORAGE_KEY = 'checkout.completed-order';
 
 export interface CompletedOrder {
   orderNumber: string;
+  orderStatus?: string;
+  paymentStatus?: string;
   transactionReference: string;
   createdAt: string;
   contactEmail: string;

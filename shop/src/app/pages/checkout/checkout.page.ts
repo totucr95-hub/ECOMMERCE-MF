@@ -9,8 +9,8 @@ import { FormsModule, NgForm } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import {
   CartStore,
+  CheckoutService,
   NotificationService,
-  PaymentService,
   StorageService,
 } from '@ecommerce-mf/shared-core';
 import {
@@ -20,9 +20,10 @@ import {
 
 type DeliveryMethod = 'shipping' | 'pickup';
 type PaymentMethod = 'card' | 'pse' | 'cash';
+type SimulatedPaymentOutcome = 'approved' | 'rejected';
 
 @Component({
-  selector: 'shop-checkout-page',
+  selector: 'app-checkout-page',
   standalone: true,
   imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './checkout.page.html',
@@ -31,7 +32,7 @@ type PaymentMethod = 'card' | 'pse' | 'cash';
 })
 export class CheckoutPage {
   readonly store = inject(CartStore);
-  private readonly paymentService = inject(PaymentService);
+  private readonly checkoutService = inject(CheckoutService);
   private readonly router = inject(Router);
   private readonly notifications = inject(NotificationService);
   private readonly storage = inject(StorageService);
@@ -44,6 +45,7 @@ export class CheckoutPage {
   selectedBank = '';
   documentType = 'CC';
   billingCountry = 'Colombia';
+  simulatedPaymentOutcome: SimulatedPaymentOutcome = 'approved';
   acceptedTerms = false;
   orderNote = '';
 
@@ -74,31 +76,100 @@ export class CheckoutPage {
     this.isSubmitting.set(true);
 
     try {
-      const payment = await this.paymentService.pay(
-        this.orderTotal(),
-        this.paymentMethod,
-      );
-      const completedOrder: CompletedOrder = {
-        orderNumber: `PED-${Date.now().toString().slice(-8)}`,
-        transactionReference: payment.transactionRef,
-        createdAt: new Date().toISOString(),
+      const formValue = form.value as {
+        firstName?: string;
+        lastName?: string;
+        address?: string;
+        city?: string;
+        state?: string;
+        postalCode?: string;
+        phone?: string;
+        personType?: string;
+        documentNumber?: string;
+      };
+
+      const cartSnapshot = this.store.items().map((item) => ({
+        product: { ...item.product },
+        quantity: item.quantity,
+      }));
+
+      const createdSession = await this.checkoutService.createSession({
         contactEmail: this.contactEmail,
         deliveryMethod: this.deliveryMethod,
         paymentMethod: this.paymentMethod,
-        items: this.store.items().map((item) => ({
-          product: { ...item.product },
+        firstName: formValue.firstName?.trim() ?? '',
+        lastName: formValue.lastName?.trim() ?? '',
+        billingCountry: this.billingCountry,
+        city: formValue.city?.trim() ?? '',
+        state: formValue.state?.trim() ?? '',
+        addressLine: formValue.address?.trim() ?? '',
+        postalCode: formValue.postalCode?.trim() ?? '',
+        phone: formValue.phone?.trim() ?? '',
+        documentType: this.documentType,
+        documentNumber: formValue.documentNumber?.trim() ?? '',
+        personType: formValue.personType?.trim() ?? 'individual',
+        selectedBank: this.selectedBank,
+        orderNote: this.orderNote,
+        acceptedTerms: this.acceptedTerms,
+        items: cartSnapshot.map((item) => ({
+          productId: item.product.id,
           quantity: item.quantity,
         })),
-        subtotal: this.store.subtotal(),
-        taxes: this.store.taxes(),
-        shipping: this.shippingCost(),
-        total: this.orderTotal(),
+      });
+
+      const confirmed = await this.checkoutService.confirmSession(
+        createdSession.id,
+      );
+      let finalized = confirmed;
+
+      if (
+        this.paymentMethod !== 'cash' &&
+        confirmed.paymentStatus !== 'approved'
+      ) {
+        const webhookResult = await this.checkoutService.simulatePaymentResult({
+          orderNumber: confirmed.orderNumber,
+          status: this.simulatedPaymentOutcome,
+          eventName: 'checkout.simulated-from-ui',
+        });
+
+        if (webhookResult.paymentStatus === 'rejected') {
+          this.notifications.push(
+            'Pago rechazado por simulacion. Puedes ajustar datos e intentar de nuevo.',
+          );
+          return;
+        }
+
+        finalized = await this.checkoutService.getOrderByReference(
+          confirmed.orderNumber,
+        );
+      }
+
+      const completedOrder: CompletedOrder = {
+        orderNumber: finalized.orderNumber,
+        orderStatus: finalized.orderStatus,
+        paymentStatus: finalized.paymentStatus,
+        transactionReference: finalized.transactionReference,
+        createdAt: finalized.createdAt,
+        contactEmail: finalized.contactEmail,
+        deliveryMethod: finalized.deliveryMethod,
+        paymentMethod: finalized.paymentMethod,
+        items: cartSnapshot,
+        subtotal: finalized.subtotal,
+        taxes: finalized.taxes,
+        shipping: finalized.shipping,
+        total: finalized.total,
       };
 
       this.storage.set(COMPLETED_ORDER_STORAGE_KEY, completedOrder);
       this.notifications.push('Compra confirmada correctamente');
       this.store.clear();
-      await this.router.navigate(['/shop/order-completed']);
+      await this.router.navigate(['/shop/order-completed'], {
+        queryParams: { reference: completedOrder.orderNumber },
+      });
+    } catch {
+      this.notifications.push(
+        'No se pudo finalizar la compra. Intenta nuevamente.',
+      );
     } finally {
       this.isSubmitting.set(false);
     }

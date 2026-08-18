@@ -3,7 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { appConfig } from '@ecommerce-mf/config';
 import { firstValueFrom } from 'rxjs';
 import { OrderSummary } from '../../domain/entities/order-summary.entity';
-import { OrderFormData } from '../../domain/order.models';
+import { OrderFormData, OrderSupportSummary } from '../../domain/order.models';
 
 interface AdminOrderPayload {
   orderNumber: string;
@@ -78,6 +78,20 @@ export class AdminOrdersApiService {
       return true;
     } catch {
       return false;
+    }
+  }
+
+  async getOrderSupportSummaryByReference(
+    reference: string,
+  ): Promise<OrderSupportSummary | null> {
+    try {
+      return await firstValueFrom(
+        this.http.get<OrderSupportSummary>(
+          `${this.apiBaseUrl}/orders/by-reference/${encodeURIComponent(reference)}/summary`,
+        ),
+      );
+    } catch {
+      return null;
     }
   }
 

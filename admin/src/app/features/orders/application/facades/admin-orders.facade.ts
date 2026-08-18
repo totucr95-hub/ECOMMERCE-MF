@@ -4,7 +4,7 @@ import { DeleteOrderUseCase } from '../use-cases/delete-order.use-case';
 import { GetOrderByIdUseCase } from '../use-cases/get-order-by-id.use-case';
 import { GetOrdersSummaryUseCase } from '../use-cases/get-orders-summary.use-case';
 import { UpdateOrderUseCase } from '../use-cases/update-order.use-case';
-import { OrderFormData } from '../../domain/order.models';
+import { OrderFormData, OrderSupportSummary } from '../../domain/order.models';
 import { OrderSummary } from '../../domain/entities/order-summary.entity';
 
 @Injectable()
@@ -36,5 +36,9 @@ export class AdminOrdersFacade {
 
   deleteOrder(id: string): Promise<boolean> {
     return this.deleteOrderUseCase.execute(id);
+  }
+
+  loadSupportSummary(reference: string): Promise<OrderSupportSummary | null> {
+    return this.getOrdersSummaryUseCase.executeByReference(reference);
   }
 }

@@ -4,8 +4,9 @@ import {
   Component,
   inject,
 } from '@angular/core';
+import { DatePipe, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { OrderFormData } from '../../domain/order.models';
+import { OrderFormData, OrderSupportSummary } from '../../domain/order.models';
 import { OrderSummary } from '../../domain/entities/order-summary.entity';
 import {
   ReusableSortDirection,
@@ -18,7 +19,7 @@ import { AdminOrdersFacade } from '../../application/facades/admin-orders.facade
 @Component({
   selector: 'admin-orders-page',
   standalone: true,
-  imports: [FormsModule, ReusableTableComponent],
+  imports: [FormsModule, ReusableTableComponent, DecimalPipe, DatePipe],
   templateUrl: './orders.page.html',
   styleUrl: './orders.page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -37,9 +38,12 @@ export class OrdersPage {
   selectedOrderId: string | null = null;
   isSaving = false;
   isLoading = false;
+  isSupportLoading = false;
   feedbackMessage = '';
   isEditorOpen = false;
   editorStep = 0;
+  supportReference = '';
+  supportSummary: OrderSupportSummary | null = null;
 
   readonly editorSteps = ['Cliente', 'Pago y estado', 'Logistica'];
   readonly columns: ReusableTableColumn[] = [
@@ -338,6 +342,42 @@ export class OrdersPage {
     this.editorStep = 0;
     this.isEditorOpen = false;
     this.feedbackMessage = 'Edicion cancelada.';
+    this.cdr.markForCheck();
+  }
+
+  async loadSupportSummary(): Promise<void> {
+    const reference = this.supportReference.trim();
+    if (!reference) {
+      this.feedbackMessage =
+        'Ingresa un numero de pedido para consultar soporte.';
+      this.supportSummary = null;
+      this.cdr.markForCheck();
+      return;
+    }
+
+    this.isSupportLoading = true;
+    this.feedbackMessage = `Consultando resumen consolidado para ${reference}...`;
+    this.cdr.markForCheck();
+
+    const summary = await this.facade.loadSupportSummary(reference);
+    this.isSupportLoading = false;
+
+    if (!summary) {
+      this.supportSummary = null;
+      this.feedbackMessage = 'No se encontro un pedido con esa referencia.';
+      this.cdr.markForCheck();
+      return;
+    }
+
+    this.supportSummary = summary;
+    this.feedbackMessage = `Resumen de soporte cargado para ${summary.order.orderNumber}.`;
+    this.cdr.markForCheck();
+  }
+
+  clearSupportSummary(): void {
+    this.supportReference = '';
+    this.supportSummary = null;
+    this.feedbackMessage = 'Consulta de soporte limpiada.';
     this.cdr.markForCheck();
   }
 }

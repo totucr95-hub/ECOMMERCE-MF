@@ -1,5 +1,5 @@
 import { OrderSummary } from '../entities/order-summary.entity';
-import { OrderFormData } from '../order.models';
+import { OrderFormData, OrderSupportSummary } from '../order.models';
 
 export abstract class OrdersRepository {
   abstract findSummaries(): Promise<ReadonlyArray<OrderSummary>>;
@@ -10,4 +10,7 @@ export abstract class OrdersRepository {
     payload: OrderFormData,
   ): Promise<OrderSummary | null>;
   abstract delete(id: string): Promise<boolean>;
+  abstract findSupportSummaryByReference(
+    reference: string,
+  ): Promise<OrderSupportSummary | null>;
 }

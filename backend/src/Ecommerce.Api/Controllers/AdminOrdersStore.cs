@@ -76,6 +76,36 @@ public static class AdminOrderStore
         }
     }
 
+    public static AdminOrderDto? UpdateStatusByOrderNumber(string orderNumber, string status, string note)
+    {
+        lock (SyncRoot)
+        {
+            var index = Orders.FindIndex(order =>
+                string.Equals(order.OrderNumber, orderNumber, StringComparison.OrdinalIgnoreCase));
+            if (index < 0)
+            {
+                return null;
+            }
+
+            var current = Orders[index];
+            var mergedNotes = string.IsNullOrWhiteSpace(note)
+                ? current.Notes
+                : string.IsNullOrWhiteSpace(current.Notes)
+                    ? note.Trim()
+                    : $"{current.Notes} | {note.Trim()}";
+
+            var updated = current with
+            {
+                Status = status.Trim(),
+                Notes = mergedNotes,
+                CreatedAt = DateOnly.FromDateTime(DateTime.UtcNow).ToString("yyyy-MM-dd"),
+            };
+
+            Orders[index] = updated;
+            return updated;
+        }
+    }
+
     private static AdminOrderDto BuildOrder(string id, AdminOrderUpsertRequest request)
     {
         return new AdminOrderDto(

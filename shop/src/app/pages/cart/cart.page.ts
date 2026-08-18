@@ -13,7 +13,7 @@ import { Product } from '@ecommerce-mf/shared-models';
 import { ProductsUiProductCard } from '@ecommerce-mf/products-ui-product-card';
 
 @Component({
-  selector: 'shop-cart-page',
+  selector: 'app-cart-page',
   standalone: true,
   imports: [CommonModule, RouterLink, ProductsUiProductCard],
   templateUrl: './cart.page.html',

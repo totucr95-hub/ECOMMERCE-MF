@@ -3,8 +3,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import {
   CartStore,
+  CheckoutService,
   NotificationService,
-  PaymentService,
 } from '@ecommerce-mf/shared-core';
 import { CheckoutPage } from './checkout.page';
 
@@ -19,7 +19,10 @@ describe('CheckoutPage', () => {
     total: signal(0),
     clear: jasmine.createSpy('clear'),
   };
-  const paymentServiceMock = { pay: jasmine.createSpy('pay') };
+  const checkoutServiceMock = {
+    createSession: jasmine.createSpy('createSession'),
+    confirmSession: jasmine.createSpy('confirmSession'),
+  };
   const notificationServiceMock = { push: jasmine.createSpy('push') };
 
   beforeEach(async () => {
@@ -28,7 +31,7 @@ describe('CheckoutPage', () => {
       providers: [
         provideRouter([]),
         { provide: CartStore, useValue: cartStoreMock },
-        { provide: PaymentService, useValue: paymentServiceMock },
+        { provide: CheckoutService, useValue: checkoutServiceMock },
         { provide: NotificationService, useValue: notificationServiceMock },
       ],
     }).compileComponents();

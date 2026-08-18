@@ -18,14 +18,13 @@ variables:
   AZURE_NAME_PREFIX: 'ecommercemf'
   APP_SERVICE_SKU: 'B1'
   DEPLOY_ENABLED: 'false'
-  SONAR_ENABLED: 'false'
 
 stages:
   - stage: ci
-    displayName: Validate and analyze
+    displayName: Validate
     jobs:
       - job: validate
-        displayName: Lint, test, build and SonarCloud
+        displayName: Lint, test and build
         steps:
           - checkout: self
             fetchDepth: 0
@@ -41,21 +40,6 @@ stages:
               packageType: sdk
               version: $(DOTNET_VERSION)
 
-          - task: SonarCloudPrepare@3
-            displayName: Prepare SonarCloud analysis
-            condition: eq(variables['SONAR_ENABLED'], 'true')
-            inputs:
-              SonarCloud: $(SONAR_SERVICE_CONNECTION)
-              organization: $(SONAR_ORGANIZATION)
-              scannerMode: dotnet
-              projectKey: $(SONAR_PROJECT_KEY)
-              projectName: $(SONAR_PROJECT_NAME)
-              extraProperties: |
-                sonar.sourceEncoding=UTF-8
-                sonar.javascript.lcov.reportPaths=coverage/**/lcov.info
-                sonar.exclusions=**/node_modules/**,**/dist/**,**/.nx/**,**/.angular/**,**/coverage/**,**/*.d.ts,**/webpack*.ts,**/jest.config.*
-                sonar.cpd.exclusions=**/*.spec.ts,**/*.test.ts
-
           - script: npm ci
             displayName: Install frontend dependencies
 
@@ -70,16 +54,6 @@ stages:
 
           - script: dotnet build backend/Ecommerce.Api.slnx --configuration Release
             displayName: Build ASP.NET API
-
-          - task: SonarCloudAnalyze@3
-            displayName: Run SonarCloud analysis
-            condition: eq(variables['SONAR_ENABLED'], 'true')
-
-          - task: SonarCloudPublish@3
-            displayName: Publish SonarCloud quality gate
-            condition: eq(variables['SONAR_ENABLED'], 'true')
-            inputs:
-              pollingTimeoutSec: '300'
 
   - stage: deploy_staging
     displayName: Deploy staging

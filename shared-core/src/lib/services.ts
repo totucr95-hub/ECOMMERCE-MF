@@ -347,6 +347,216 @@ export class OrderService {
   }
 }
 
+export interface CheckoutSessionCreateItem {
+  productId: string;
+  quantity: number;
+}
+
+export interface CheckoutSessionCreatePayload {
+  contactEmail: string;
+  deliveryMethod: 'shipping' | 'pickup';
+  paymentMethod: 'card' | 'pse' | 'cash';
+  firstName: string;
+  lastName: string;
+  billingCountry: string;
+  city: string;
+  state: string;
+  addressLine: string;
+  postalCode: string;
+  phone: string;
+  documentType: string;
+  documentNumber: string;
+  personType: string;
+  selectedBank: string;
+  orderNote: string;
+  acceptedTerms: boolean;
+  items: CheckoutSessionCreateItem[];
+}
+
+export interface CheckoutSessionItem {
+  productId: string;
+  productName: string;
+  productImage: string;
+  quantity: number;
+  unitPrice: number;
+}
+
+export interface CheckoutSession {
+  id: string;
+  status: string;
+  contactEmail: string;
+  deliveryMethod: 'shipping' | 'pickup';
+  paymentMethod: 'card' | 'pse' | 'cash';
+  customerFullName: string;
+  billingCountry: string;
+  city: string;
+  state: string;
+  addressLine: string;
+  postalCode: string;
+  phone: string;
+  orderNote: string;
+  subtotal: number;
+  taxes: number;
+  shipping: number;
+  total: number;
+  items: CheckoutSessionItem[];
+  createdAt: string;
+  updatedAt: string;
+  confirmedOrderId: string | null;
+  confirmedOrderNumber: string | null;
+  paymentReference: string | null;
+}
+
+export interface CheckoutConfirmResult {
+  orderId: string;
+  orderNumber: string;
+  orderStatus: string;
+  paymentStatus: string;
+  transactionReference: string;
+  createdAt: string;
+  contactEmail: string;
+  deliveryMethod: 'shipping' | 'pickup';
+  paymentMethod: 'card' | 'pse' | 'cash';
+  subtotal: number;
+  taxes: number;
+  shipping: number;
+  total: number;
+  items: CheckoutSessionItem[];
+}
+
+export interface CheckoutPaymentWebhookPayload {
+  transactionReference: string;
+  status: 'approved' | 'rejected' | 'pending';
+  eventName?: string;
+}
+
+export interface CheckoutPaymentWebhookResult {
+  transactionReference: string;
+  sessionId: string;
+  orderId: string;
+  orderNumber: string;
+  paymentStatus: string;
+  orderStatus: string;
+  updatedAt: string;
+}
+
+export interface CheckoutPaymentSimulationPayload {
+  orderNumber: string;
+  status: 'approved' | 'rejected' | 'pending';
+  eventName?: string;
+}
+
+export interface CheckoutOrderSummary {
+  order: CheckoutConfirmResult;
+  items: Array<{
+    id: string;
+    orderId: string;
+    orderNumber: string;
+    productId: string;
+    productName: string;
+    quantity: number;
+    unitPrice: number;
+    lineTotal: number;
+    createdAt: string;
+  }>;
+  history: Array<{
+    id: string;
+    orderId: string;
+    orderNumber: string;
+    status: string;
+    note: string;
+    changedAt: string;
+  }>;
+  inventoryMovements: Array<{
+    id: string;
+    orderId: string;
+    orderNumber: string;
+    productId: string;
+    productName: string;
+    movementType: string;
+    quantity: number;
+    stockBefore: number;
+    stockAfter: number;
+    note: string;
+    createdAt: string;
+  }>;
+  paymentIntent: {
+    id: string;
+    sessionId: string;
+    method: string;
+    amount: number;
+    status: string;
+    transactionReference: string;
+    gatewayEvent: string;
+    createdAt: string;
+    updatedAt: string;
+  } | null;
+}
+
+@Injectable({ providedIn: 'root' })
+export class CheckoutService {
+  private readonly http = inject(HttpClient);
+  private readonly apiBaseUrl = appConfig.apiBaseUrl.replace(/\/$/, '');
+
+  createSession(
+    payload: CheckoutSessionCreatePayload,
+  ): Promise<CheckoutSession> {
+    return firstValueFrom(
+      this.http.post<CheckoutSession>(
+        `${this.apiBaseUrl}/checkout/sessions`,
+        payload,
+      ),
+    );
+  }
+
+  confirmSession(sessionId: string): Promise<CheckoutConfirmResult> {
+    return firstValueFrom(
+      this.http.post<CheckoutConfirmResult>(
+        `${this.apiBaseUrl}/checkout/sessions/${encodeURIComponent(sessionId)}/confirm`,
+        {},
+      ),
+    );
+  }
+
+  processPaymentWebhook(
+    payload: CheckoutPaymentWebhookPayload,
+  ): Promise<CheckoutPaymentWebhookResult> {
+    return firstValueFrom(
+      this.http.post<CheckoutPaymentWebhookResult>(
+        `${this.apiBaseUrl}/payments/webhook`,
+        payload,
+      ),
+    );
+  }
+
+  simulatePaymentResult(
+    payload: CheckoutPaymentSimulationPayload,
+  ): Promise<CheckoutPaymentWebhookResult> {
+    return firstValueFrom(
+      this.http.post<CheckoutPaymentWebhookResult>(
+        `${this.apiBaseUrl}/payments/simulate-webhook`,
+        payload,
+      ),
+    );
+  }
+
+  getOrderByReference(reference: string): Promise<CheckoutConfirmResult> {
+    return firstValueFrom(
+      this.http.get<CheckoutConfirmResult>(
+        `${this.apiBaseUrl}/orders/by-reference/${encodeURIComponent(reference)}`,
+      ),
+    );
+  }
+
+  getOrderSummaryByReference(reference: string): Promise<CheckoutOrderSummary> {
+    return firstValueFrom(
+      this.http.get<CheckoutOrderSummary>(
+        `${this.apiBaseUrl}/orders/by-reference/${encodeURIComponent(reference)}/summary`,
+      ),
+    );
+  }
+}
+
 @Injectable({ providedIn: 'root' })
 export class PaymentService {
   async pay(amount: number, method: Payment['method']): Promise<Payment> {
